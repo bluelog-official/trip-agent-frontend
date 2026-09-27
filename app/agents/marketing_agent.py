@@ -8,6 +8,11 @@ from urllib.parse import quote
 import requests
 
 from app.services.marketing_service import save_marketing_alert
+from app.services.reddit_draft_service import (
+    build_reddit_draft,
+    destination_from_guide_id,
+    reddit_draft_needs_refresh,
+)
 
 _IMAGE_URL = re.compile(r"!\[[^\]]*\]\((https?://[^)\s]+)\)")
 _DEFAULT_SITE_URL = "https://bluelogtrip.com"
@@ -126,8 +131,21 @@ def draft_reddit_post(guide_data: Any) -> Dict[str, Any]:
     subreddit = str(reddit.get("subreddit") or "travel").strip() or "travel"
     title = str(reddit.get("title") or _guide_title(payload)).strip()
     body = str(reddit.get("body") or "").strip()
-    if not body:
-        body = "A first-visit walking route. The full guide is linked below."
+    if reddit_draft_needs_refresh(title, body):
+        guide_id = str(payload.get("id") or "").strip()
+        destination = str(payload.get("destination") or destination_from_guide_id(guide_id)).strip()
+        research = payload.get("research") if isinstance(payload.get("research"), dict) else {}
+        refreshed = build_reddit_draft(
+            destination=destination,
+            attractions=list(research.get("attractions") or []),
+            food_spots=list(research.get("food_spots") or []),
+            local_tip=str(research.get("local_tip") or ""),
+            currency=str(research.get("target_currency") or ""),
+            article_markdown=str(payload.get("article_markdown") or payload.get("content") or ""),
+        )
+        subreddit = refreshed["subreddit"]
+        title = refreshed["title"]
+        body = refreshed["body"]
     guide_url = _guide_url(payload)
     markdown = "\n".join(
         [

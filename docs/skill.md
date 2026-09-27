@@ -151,4 +151,7 @@ class GenerateResponse(BaseModel):
 - **Trigger:** `POST /api/v1/guides/{guide_id}/approve`가 게시에 성공한 뒤 `run_marketing_pipeline(guide_data)`를 Background Task로 실행한다. 매일 09:00 자동 발행(`publish_approved_guide`, QA >= 75)도 같은 파이프라인을 백그라운드 스레드로 트리거한다.
 - `post_to_pinterest(guide_data)`: Pins API 형태의 `title`, `description`, `alt_text`, `link`, `media_source`를 만든다. 전송은 하지 않는다.
 - `send_discord_webhook(guide_data)`: `DISCORD_WEBHOOK_URL`이 있으면 `requests.post`로 발행 알림을 보낸다. 없으면 건너뛴다.
-- `draft_reddit_post(guide_data)`: Reddit에는 올리지 않고 r/travel 등 마크다운 초안을 `marketing_alerts` 테이블에 관리자 알림으로 저장한다.
+- `draft_reddit_post(guide_data)`: Reddit에는 올리지 않고 마크다운 초안을 `marketing_alerts` 테이블에 관리자 알림으로 저장한다.
+- 해외 서브레딧 초안은 `app/services/reddit_draft_service.py`가 가이드 본문·리서치 스팟으로 100% 영문 작성한다. 스타일은 경험 공유, 질문, 팁 세 가지를 도시마다 나눈다.
+- 서브레딧: 일본 도시(Tokyo, Osaka, Kyoto 등)는 `JapanTravel` 또는 `travel`. 유럽은 `travel`, `solotravel`, `Europe`. 그 외 도시는 `travel` 또는 `solotravel`. 본문 끝에 도시·스팟 태그를 붙인다.
+- 한글 정형문(`첫 방문 때 실제로 도움이 됐던 동선`)이 남아 있으면 알림 저장 전에 영문 초안으로 다시 쓴다.

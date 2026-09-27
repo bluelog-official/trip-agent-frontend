@@ -10,6 +10,7 @@ from app.schemas.guide_schema import (
     ResearchOutput,
     SyndicationOutput,
 )
+from app.services.reddit_draft_service import build_reddit_draft
 
 
 def _join(items: List[str], limit: int) -> str:
@@ -27,18 +28,46 @@ def run_syndication_agent(
     research: Optional[ResearchOutput] = None,
     guide_id: str = "",
     target_language: str = "ko",
+    article_markdown: str = "",
 ) -> SyndicationOutput:
     """Reddit, Quora, Pinterest, 백링크용 초안을 각각 독립 구조로 만든다."""
     place = destination.strip() or "this city"
     slug = guide_id or "{0}_guide.md".format(place.lower().replace(" ", "_"))
-    attractions = _join(research.attractions, 3) if research else ""
-    foods = _join(research.food_spots, 3) if research else ""
+    attraction_names = list(research.attractions) if research else []
+    food_names = list(research.food_spots) if research else []
+    attractions = _join(attraction_names, 3)
+    foods = _join(food_names, 3)
     keywords = list(research.seo_keywords) if research else []
     tip = research.local_tip.strip() if research and research.local_tip else ""
     currency = research.target_currency.strip() if research and research.target_currency else ""
+    reddit = _reddit_draft(place, attraction_names, food_names, tip, currency, article_markdown)
     if is_english_language(target_language):
-        return _english_syndication(place, slug, attractions, foods, keywords, tip, currency)
-    return _korean_syndication(place, slug, attractions, foods, keywords, tip, currency)
+        return _english_syndication(place, slug, attractions, foods, keywords, tip, currency, reddit)
+    return _korean_syndication(place, slug, attractions, foods, keywords, tip, currency, reddit)
+
+
+def _reddit_draft(
+    place: str,
+    attractions: List[str],
+    foods: List[str],
+    tip: str,
+    currency: str,
+    article_markdown: str,
+) -> RedditSyndication:
+    """해외 서브레딧용 초안은 가이드 언어와 상관없이 영문으로 만든다."""
+    draft = build_reddit_draft(
+        destination=place,
+        attractions=attractions,
+        food_spots=foods,
+        local_tip=tip,
+        currency=currency,
+        article_markdown=article_markdown,
+    )
+    return RedditSyndication(
+        subreddit=draft["subreddit"],
+        title=draft["title"],
+        body=draft["body"],
+    )
 
 
 def _english_syndication(
@@ -49,6 +78,7 @@ def _english_syndication(
     keywords: List[str],
     tip: str,
     currency: str,
+    reddit: RedditSyndication,
 ) -> SyndicationOutput:
     """글로벌 채널용 영문 티저. 작성 언어가 English일 때 사용한다."""
     teasers = ["A short local route through {0}".format(place)]
@@ -72,14 +102,7 @@ def _english_syndication(
     return SyndicationOutput(
         social_teasers=teasers,
         platform_hashtags=hashtags,
-        reddit=RedditSyndication(
-            subreddit="travel",
-            title="The {0} route that actually helped on a first visit".format(place),
-            body=(
-                "For a first visit to {0}, I grouped sights ({1}) and meals ({2}) into one walking day. "
-                "{3} {4}"
-            ).format(place, attraction_line, food_line, tip_line, cost_line),
-        ),
+        reddit=reddit,
         quora=QuoraSyndication(
             question="What should you prioritize on a first trip to {0}?".format(place),
             answer=(
@@ -111,6 +134,7 @@ def _korean_syndication(
     keywords: List[str],
     tip: str,
     currency: str,
+    reddit: RedditSyndication,
 ) -> SyndicationOutput:
 
     teasers = ["{0}에서 현지인처럼 움직이는 짧은 동선".format(place)]
@@ -130,14 +154,7 @@ def _korean_syndication(
     return SyndicationOutput(
         social_teasers=teasers,
         platform_hashtags=hashtags,
-        reddit=RedditSyndication(
-            subreddit="travel",
-            title="{0} 첫 방문 때 실제로 도움이 됐던 동선".format(place),
-            body=(
-                "{0}을 처음 가는 기준으로 관광지({1})와 식사({2})를 하루 동선으로 묶어 봤다. "
-                "{3} {4}"
-            ).format(place, attraction_line, food_line, tip_line, cost_line),
-        ),
+        reddit=reddit,
         quora=QuoraSyndication(
             question="{0}에 처음 가면 어디를 우선해야 할까?".format(place),
             answer=(

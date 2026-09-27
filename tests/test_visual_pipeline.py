@@ -151,15 +151,22 @@ def test_english_syndication_matches_writing_language():
         [
             english.social_teasers[0],
             english.reddit.title,
+            english.reddit.body,
             english.quora.question,
             english.pinterest.pin_title,
         ]
     )
-    assert "The Rome route that actually helped on a first visit" == english.reddit.title
+    assert "Colosseum" in "{0} {1}".format(english.reddit.title, english.reddit.body)
+    assert "actually helped on a first visit" not in english.reddit.title
+    assert english.reddit.subreddit in {"travel", "solotravel", "Europe"}
     assert english.quora.question.startswith("What should you prioritize")
     assert english.pinterest.pin_title == "Rome travel route and where to eat"
     assert not any("\uac00" <= char <= "\ud7a3" for char in english_copy)
-    assert "첫 방문" in korean.reddit.title
+    korean_reddit = "{0} {1}".format(korean.reddit.title, korean.reddit.body)
+    assert "첫 방문" not in korean_reddit
+    assert not any("\uac00" <= char <= "\ud7a3" for char in korean_reddit)
+    assert "Colosseum" in korean_reddit
+    assert korean.quora.question.startswith("Rome에 처음")
 
     prompt = build_writer_prompt("Rome", research, target_language="en")
     assert "natural English" in prompt

@@ -40,9 +40,9 @@ class QAOutput(BaseModel):
 
 
 class RedditSyndication(BaseModel):
-    subreddit: str = Field(description="게시할 서브레딧 이름")
-    title: str = Field(description="Reddit 게시 제목")
-    body: str = Field(description="경험 공유형 본문")
+    subreddit: str = Field(description="도시 권역에 맞춘 해외 서브레딧 이름")
+    title: str = Field(description="영문 Reddit 게시 제목")
+    body: str = Field(description="스팟이 들어간 영문 본문")
 
 
 class QuoraSyndication(BaseModel):

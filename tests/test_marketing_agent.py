@@ -93,6 +93,33 @@ def test_discord_posts_when_webhook_is_configured(isolated_db, monkeypatch):
     assert "https://discord.example/api/webhooks/1/token" == captured["url"]
 
 
+def test_korean_boilerplate_reddit_draft_is_rewritten_in_english(isolated_db):
+    guide = {
+        "id": "prague_guide.md",
+        "destination": "Prague",
+        "article_markdown": (
+            "## Old Town Square\n\nMorning coffee.\n\n"
+            "## Charles Bridge\n\nCross early.\n\n"
+            "A 3-day walk.\n"
+        ),
+        "syndication": {
+            "reddit": {
+                "subreddit": "travel",
+                "title": "Prague 첫 방문 때 실제로 도움이 됐던 동선",
+                "body": "프라하을 처음 가는 기준으로 관광지(Old Town)와 식사를 하루 동선으로 묶어 봤다.",
+            }
+        },
+    }
+    result = draft_reddit_post(guide)
+    assert result["posted"] is False
+    assert result["subreddit"] in {"travel", "solotravel", "Europe"}
+    markdown = result["markdown"]
+    assert "Old Town Square" in markdown
+    assert "Charles Bridge" in markdown
+    assert "첫 방문" not in markdown
+    assert not any("\uac00" <= char <= "\ud7a3" for char in markdown)
+
+
 def test_reddit_draft_is_stored_not_posted(isolated_db):
     result = draft_reddit_post(GUIDE)
     assert result["posted"] is False

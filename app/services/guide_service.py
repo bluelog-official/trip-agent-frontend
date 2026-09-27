@@ -153,12 +153,14 @@ def build_syndication(
     research: Optional[ResearchOutput] = None,
     guide_id: str = "",
     target_language: str = "ko",
+    article_markdown: str = "",
 ) -> SyndicationOutput:
     return run_syndication_agent(
         destination,
         research,
         guide_id or build_guide_id(destination),
         target_language=target_language,
+        article_markdown=article_markdown,
     )
 
 
@@ -176,7 +178,13 @@ def build_generate_response(
     return GenerateResponse(
         article_markdown=article_markdown,
         qa_result=qa_result,
-        syndication=build_syndication(destination, research, guide_id, target_language),
+        syndication=build_syndication(
+            destination,
+            research,
+            guide_id,
+            target_language,
+            article_markdown=article_markdown,
+        ),
         research_model=research_model,
         writer_model=writer_model,
     )
