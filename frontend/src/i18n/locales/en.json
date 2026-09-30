@@ -56,6 +56,39 @@
     "placeholder": "Try Paris, ramen, Bali…",
     "search": "Search"
   },
+  "globe": {
+    "kicker": "Published guides",
+    "title": "Where the guides are",
+    "copy": "Pins show cities with guides written in the selected period. Gold pins are the top five. A longer period draws smaller, quieter pins so the map stays readable.",
+    "hint": "Hover a pin for the city and guide count. Click a pin to open that city's guides. Click a rank to fly there.",
+    "loading": "Preparing the globe",
+    "empty": "Published city guides will show up on the globe.",
+    "emptyPeriod": "No guides were published in this period.",
+    "error": "City counts could not be loaded.",
+    "tooltip": "{{city}} · {{count}} published guides",
+    "openCity": "{{city}}, {{count}} published guides",
+    "top": "Top 5",
+    "published": "Published",
+    "lite": "A lighter city list is shown on this connection.",
+    "filterLabel": "Time range",
+    "rankTitle": "Why these five",
+    "rankHint": "Click a city to turn the globe there and zoom in.",
+    "guides": "{{count}} guides",
+    "quality": "QA {{score}}",
+    "trendNew": "New",
+    "trendFlat": "0%",
+    "trendNote": "vs prior period",
+    "trendNoteAll": "last 30 days",
+    "cityKicker": "City guides",
+    "cityText": "Published trip and food guides for {{city}}.",
+    "period": {
+      "1w": "1 Week",
+      "2w": "2 Weeks",
+      "1m": "1 Month",
+      "1y": "1 Year",
+      "all": "All Time"
+    }
+  },
   "categories": {
     "all": {
       "kicker": "Destinations",
@@ -242,7 +275,9 @@
     "contactDescription": "Contact BlueLog Trip at bluelog.official@gmail.com.",
     "notFoundTitle": "Page not found · BlueLog Trip",
     "notFoundDescription": "This page is not on BlueLog Trip. Return to the homepage.",
-    "articleTitle": "{{title}} · BlueLog Trip"
+    "articleTitle": "{{title}} · BlueLog Trip",
+    "cityTitle": "{{city}} guides · BlueLog Trip",
+    "cityDescription": "Published trip and food guides for {{city}}."
   },
   "ads": {
     "label": "Sponsored Content",

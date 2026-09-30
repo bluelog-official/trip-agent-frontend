@@ -15,7 +15,8 @@ import ArticleGrid from "./components/portal/ArticleGrid";
 import ArticleReader from "./components/portal/ArticleReader";
 import CommunityBoard from "./components/portal/CommunityBoard";
 import GlobalNav from "./components/portal/GlobalNav";
-import HeroSearch, { CategoryIntro } from "./components/portal/HeroSearch";
+import HeroSearch, { CategoryIntro, CityIntro } from "./components/portal/HeroSearch";
+import GlobeMap from "./components/portal/GlobeMap";
 import PortalSidebar from "./components/portal/PortalSidebar";
 import {
   API_BASE_URL,
@@ -36,6 +37,7 @@ import { setMetaDescription } from "./lib/articleDocument";
 import { applyPageHead } from "./lib/documentHead";
 import { appLanguage } from "./i18n/i18n";
 import { presentGuideCard } from "./lib/localeCopy";
+import { cityHeading, destinationSlug } from "./lib/globeCities";
 import { usePortalRoute } from "./lib/usePortalRoute";
 import "./App.css";
 
@@ -202,6 +204,11 @@ export default function App() {
       };
       title = titles[route.name] || t("meta.homeTitle");
       description = descriptions[route.name] || t("meta.siteDescription");
+      if (route.name === "city") {
+        const cityName = cityHeading(route.city, cards);
+        title = t("meta.cityTitle", { city: cityName });
+        description = t("meta.cityDescription", { city: cityName });
+      }
     }
     document.title = title;
     setMetaDescription(description);
@@ -226,6 +233,7 @@ export default function App() {
         return false;
       }
       if (route.name === "food" && !card.hasFood) return false;
+      if (route.name === "city" && destinationSlug(card.destination) !== route.city) return false;
       return matchesGuideQuery(card, query);
     });
   }, [localizedCards, route, query]);
@@ -239,6 +247,13 @@ export default function App() {
 
   const openGuide = (card) => {
     go(`/guide/${encodeURIComponent(card.id)}`);
+    window.scrollTo({ top: 0 });
+  };
+
+  const openCityGuides = (point) => {
+    if (!point?.slug) return;
+    setQuery("");
+    go(`/city/${encodeURIComponent(point.slug)}`);
     window.scrollTo({ top: 0 });
   };
 
@@ -324,8 +339,9 @@ export default function App() {
     }
   };
 
-  const showCatalog = route.name === "home" || route.name === "destinations" || route.name === "food";
+  const showCatalog = route.name === "home" || route.name === "destinations" || route.name === "food" || route.name === "city";
   const showSidebar = showCatalog || route.name === "article";
+  const cityLabel = route.name === "city" ? cityHeading(route.city, localizedCards) : "";
 
   return (
     <div className="portal">
@@ -346,6 +362,7 @@ export default function App() {
       {route.name === "home" ? (
         <>
           <HeroSearch query={query} onQueryChange={setQuery} onSearch={handleSearch} />
+          <GlobeMap onOpenCity={openCityGuides} />
           <div className="ad-band">
             <AdSenseUnit slotId="hero-below" format="auto" />
           </div>
@@ -381,6 +398,7 @@ export default function App() {
               {route.name === "destinations" || route.name === "food" ? (
                 <CategoryIntro category={route.category} />
               ) : null}
+              {route.name === "city" ? <CityIntro city={cityLabel} /> : null}
               {route.name === "article" ? (
                 <ArticleReader
                   guide={selectedGuide}

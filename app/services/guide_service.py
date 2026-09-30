@@ -230,6 +230,17 @@ def _guide_file_path(guide_id: str) -> Optional[Path]:
     return None
 
 
+def read_guide_markdown(guide_id: str) -> str:
+    """저장된 가이드 마크다운. 없으면 빈 문자열."""
+    path = _guide_file_path(guide_id)
+    if path is None:
+        return ""
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+
+
 def _iter_guide_files() -> List[Path]:
     seen = set()
     found: List[Path] = []

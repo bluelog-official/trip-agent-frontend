@@ -56,6 +56,39 @@
     "placeholder": "파리, 라멘, 발리를 검색해 보세요",
     "search": "검색"
   },
+  "globe": {
+    "kicker": "발행된 가이드",
+    "title": "가이드가 있는 도시",
+    "copy": "핀은 고른 기간에 작성된 가이드가 있는 도시입니다. 금색 핀은 상위 다섯 곳입니다. 기간이 길수록 핀은 작아지고 빛도 약해집니다.",
+    "hint": "핀에 올리면 도시와 발행 건수가 보입니다. 핀을 누르면 그 도시 가이드로 가고, 순위를 누르면 지구본이 그쪽으로 돌아갑니다.",
+    "loading": "지구본을 준비하는 중",
+    "empty": "발행된 도시 가이드가 지구본에 표시됩니다.",
+    "emptyPeriod": "이 기간에 발행된 가이드가 없습니다.",
+    "error": "도시별 발행 건수를 불러오지 못했습니다.",
+    "tooltip": "{{city}} · 발행 {{count}}건",
+    "openCity": "{{city}}, 발행 {{count}}건",
+    "top": "상위 5곳",
+    "published": "발행",
+    "lite": "이 연결에서는 가벼운 도시 목록을 보여 줍니다.",
+    "filterLabel": "기간",
+    "rankTitle": "상위 5곳 선정 근거",
+    "rankHint": "도시를 누르면 지구본이 그곳으로 다가갑니다.",
+    "guides": "가이드 {{count}}편",
+    "quality": "품질 {{score}}",
+    "trendNew": "신규",
+    "trendFlat": "0%",
+    "trendNote": "직전 기간 대비",
+    "trendNoteAll": "최근 30일 기준",
+    "cityKicker": "도시 가이드",
+    "cityText": "{{city}}에 발행된 여행·맛집 가이드입니다.",
+    "period": {
+      "1w": "1주",
+      "2w": "2주",
+      "1m": "1개월",
+      "1y": "1년",
+      "all": "전체"
+    }
+  },
   "categories": {
     "all": {
       "kicker": "여행지",
@@ -242,7 +275,9 @@
     "contactDescription": "BlueLog Trip 문의는 bluelog.official@gmail.com 입니다.",
     "notFoundTitle": "페이지를 찾을 수 없음 · BlueLog Trip",
     "notFoundDescription": "이 주소는 BlueLog Trip에 없습니다. 홈으로 돌아가세요.",
-    "articleTitle": "{{title}} · BlueLog Trip"
+    "articleTitle": "{{title}} · BlueLog Trip",
+    "cityTitle": "{{city}} 가이드 · BlueLog Trip",
+    "cityDescription": "{{city}}에 발행된 여행·맛집 가이드입니다."
   },
   "ads": {
     "label": "광고",

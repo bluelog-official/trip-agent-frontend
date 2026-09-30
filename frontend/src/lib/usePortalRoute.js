@@ -44,6 +44,18 @@ export function parseRoute(pathname) {
   if (path === "/dashboard") {
     return { name: "dashboard", category: "", guideId: "" };
   }
+  if (path.startsWith("/city/")) {
+    let slug = "";
+    try {
+      slug = decodeURIComponent(path.slice("/city/".length)).split("/")[0].trim().toLowerCase();
+    } catch {
+      slug = "";
+    }
+    if (!/^[a-z0-9_]+$/.test(slug)) {
+      return { name: "notFound", category: "", guideId: "" };
+    }
+    return { name: "city", category: "city", guideId: "", city: slug };
+  }
   if (path === "/local-food") {
     return { name: "food", category: "food", guideId: "" };
   }

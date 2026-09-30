@@ -43,3 +43,15 @@ export function CategoryIntro({ category }) {
     </section>
   );
 }
+
+export function CityIntro({ city }) {
+  const { t } = useTranslation();
+  if (!city) return null;
+  return (
+    <section className="category-intro">
+      <p className="hero-kicker">{t("globe.cityKicker")}</p>
+      <h1 className="category-title">{city}</h1>
+      <p className="category-copy">{t("globe.cityText", { city })}</p>
+    </section>
+  );
+}
