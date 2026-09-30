@@ -45,5 +45,5 @@ class RewardsOverview(BaseModel):
     publish_points: int
     top_rank_points: int
     top_rank_limit: int
-    auth_providers: List[str] = Field(default_factory=lambda: ["google", "apple"])
+    auth_providers: List[str] = Field(default_factory=lambda: ["google", "apple", "kakao"])
     partners: List[PartnerMerchantRecord] = Field(default_factory=list)

@@ -14,9 +14,11 @@ from fastapi.responses import Response
 
 from app.agents.marketing_agent import run_marketing_pipeline
 from app.routers.magazine_requests import router as magazine_router
+from app.routers.oauth import router as oauth_router
 from app.routers.rewards import router as rewards_router
 from app.routers.stats import router as stats_router
 from app.routers.votes import router as vote_router
+from app.routers.wallet import router as wallet_router
 from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
 from app.schemas.dashboard_schema import DashboardStats
 from app.schemas.globe_schema import GlobeMapResponse
@@ -92,6 +94,8 @@ app.include_router(stats_router)
 app.include_router(magazine_router)
 app.include_router(vote_router)
 app.include_router(rewards_router)
+app.include_router(oauth_router)
+app.include_router(wallet_router)
 
 app.add_middleware(
     CORSMiddleware,

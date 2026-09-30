@@ -22,6 +22,12 @@ export default function GlobalNav({
   onLogout,
   adminMode = false,
   dashboardActive = false,
+  userSession = null,
+  onOpenLogin,
+  onOpenWallet,
+  onUserLogout,
+  hotCountry = false,
+  onToggleHotCountry,
 }) {
   const { t } = useTranslation();
   const language = normalizeAppLanguage(i18n.language);
@@ -136,6 +142,14 @@ export default function GlobalNav({
           >
             {t("nav.events")}
           </button>
+          <button
+            type="button"
+            className={hotCountry ? "nav-link hot-country active" : "nav-link hot-country"}
+            aria-pressed={hotCountry}
+            onClick={onToggleHotCountry}
+          >
+            {`🔥 ${t("nav.hotCountry")}`}
+          </button>
         </nav>
 
         <div className="gnb-tools">
@@ -158,6 +172,20 @@ export default function GlobalNav({
             <option value="en">{t("language.en")}</option>
             <option value="ko">{t("language.ko")}</option>
           </select>
+          {userSession ? (
+            <>
+              <button type="button" className="dashboard-btn" onClick={onOpenWallet}>
+                {t("nav.wallet")}
+              </button>
+              <button type="button" className="logout-btn" onClick={onUserLogout}>
+                {t("nav.logout")}
+              </button>
+            </>
+          ) : (
+            <button type="button" className="dashboard-btn" onClick={onOpenLogin}>
+              {t("nav.signIn")}
+            </button>
+          )}
           {adminMode ? (
             <>
               <button

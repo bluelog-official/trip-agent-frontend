@@ -60,7 +60,11 @@ _ADDED_COLUMNS = {
     "fact_check_status": "TEXT NOT NULL DEFAULT 'PENDING'",
     "verification_note": "TEXT NOT NULL DEFAULT ''",
     "published_guide_id": "TEXT NOT NULL DEFAULT ''",
+    "user_id": "INTEGER NOT NULL DEFAULT 0",
+    "xrpl_tx_hash": "TEXT NOT NULL DEFAULT ''",
 }
+
+_WALLET_COLUMNS = _COLUMNS + ("user_id", "xrpl_tx_hash")
 
 
 def connect(path: Path) -> sqlite3.Connection:
@@ -176,6 +180,52 @@ def fetch_by_guide_id(conn: sqlite3.Connection, guide_id: str) -> Optional[Dict[
         (guide_id,),
     ).fetchone()
     return dict(row) if row else None
+
+
+def assign_owner(conn: sqlite3.Connection, email: str, user_id: int) -> int:
+    """게스트 이메일과 같은 제보의 소유자를 가입 사용자로 바꾼다."""
+    address = (email or "").strip().lower()
+    if not address:
+        return 0
+    count = conn.execute(
+        """
+        SELECT COUNT(*) AS n FROM magazine_requests
+        WHERE lower(email) = ? AND user_id != ?
+        """,
+        (address, int(user_id)),
+    ).fetchone()["n"]
+    conn.execute(
+        """
+        UPDATE magazine_requests
+        SET user_id = ?
+        WHERE lower(email) = ? AND user_id != ?
+        """,
+        (int(user_id), address, int(user_id)),
+    )
+    return int(count)
+
+
+def fetch_owned_requests(
+    conn: sqlite3.Connection,
+    user_id: int,
+    email: str,
+) -> List[Dict[str, Any]]:
+    rows = conn.execute(
+        """
+        SELECT {0} FROM magazine_requests
+        WHERE user_id = ? OR lower(email) = ?
+        ORDER BY id DESC
+        """.format(", ".join(_WALLET_COLUMNS)),
+        (int(user_id), (email or "").strip().lower()),
+    ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def set_xrpl_tx_hash(conn: sqlite3.Connection, request_id: int, tx_hash: str) -> None:
+    conn.execute(
+        "UPDATE magazine_requests SET xrpl_tx_hash = ? WHERE id = ?",
+        ((tx_hash or "").strip(), int(request_id)),
+    )
 
 
 def fetch_requests(conn: sqlite3.Connection) -> List[Dict[str, Any]]:

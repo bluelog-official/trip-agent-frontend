@@ -4,7 +4,7 @@ import os
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from app.models import rewards as reward_store
 from app.services.magazine_request_service import find_request_by_guide
@@ -47,7 +47,7 @@ def overview() -> Dict[str, object]:
         "publish_points": PUBLISH_POINTS,
         "top_rank_points": TOP_RANK_POINTS,
         "top_rank_limit": TOP_RANK_LIMIT,
-        "auth_providers": ["google", "apple"],
+        "auth_providers": ["google", "apple", "kakao"],
         "partners": partners,
     }
 
@@ -132,6 +132,123 @@ def award_published_guide(guide_id: str) -> Optional[Dict[str, object]]:
         REASON_PUBLISHED,
         article_id=guide_id,
     )
+
+
+def link_social_account(
+    email: str,
+    provider: str,
+    subject: str,
+    name: str = "",
+) -> Dict[str, object]:
+    """같은 이메일의 게스트 적립을 소셜 계정으로 합치고 잔액을 로그 합계로 맞춘다."""
+    address = str(email or "").strip().lower()
+    provider_name = str(provider or "").strip().lower()
+    subject_id = str(subject or "").strip()
+    display = str(name or "").strip()
+    if provider_name not in ("google", "apple", "kakao"):
+        raise ValueError("unsupported provider")
+    if not subject_id and not address:
+        raise ValueError("email or subject is required")
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            user = reward_store.fetch_user_by_email(conn, address) if address else None
+            if user is None and subject_id:
+                user = reward_store.fetch_user_by_subject(conn, provider_name, subject_id)
+            if user is None:
+                if not address:
+                    raise ValueError("email is required for a new account")
+                user_id = reward_store.insert_user(
+                    conn,
+                    address,
+                    provider_name,
+                    _stamp(),
+                    display,
+                    subject_id,
+                )
+            else:
+                user_id = int(user["id"])
+                if not address:
+                    address = str(user["email"]).strip().lower()
+                reward_store.update_user_identity(
+                    conn,
+                    user_id,
+                    provider_name,
+                    display or str(user.get("display_name") or ""),
+                    subject_id or str(user.get("provider_subject") or ""),
+                )
+            moved = reward_store.claim_point_logs(conn, user_id, address)
+            balance = reward_store.sync_balance(conn, user_id)
+            conn.execute("COMMIT")
+            stored = reward_store.fetch_user_by_id(conn, user_id)
+        except Exception:
+            conn.execute("ROLLBACK")
+            raise
+        finally:
+            conn.close()
+    if not stored:
+        raise ValueError("account was not stored")
+    return {
+        "id": int(stored["id"]),
+        "email": str(stored["email"]),
+        "auth_provider": str(stored["auth_provider"]),
+        "display_name": str(stored.get("display_name") or ""),
+        "provider_subject": str(stored.get("provider_subject") or ""),
+        "points_balance": balance,
+        "created_at": str(stored["created_at"]),
+        "migrated_point_logs": int(moved),
+    }
+
+
+def load_user(user_id: int) -> Optional[Dict[str, object]]:
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            return reward_store.fetch_user_by_id(conn, int(user_id))
+        finally:
+            conn.close()
+
+
+def point_history(user_id: int) -> List[Dict[str, object]]:
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            return reward_store.fetch_logs_for_user(conn, int(user_id))
+        finally:
+            conn.close()
+
+
+def saved_guide_ids(user_id: int) -> List[str]:
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            return reward_store.fetch_saved_guides(conn, int(user_id))
+        finally:
+            conn.close()
+
+
+def remember_guide(user_id: int, guide_id: str) -> List[str]:
+    guide = str(guide_id or "").strip()
+    if not guide:
+        raise ValueError("guide_id is required")
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            reward_store.insert_saved_guide(conn, int(user_id), guide, _stamp())
+            return reward_store.fetch_saved_guides(conn, int(user_id))
+        finally:
+            conn.close()
+
+
+def forget_guide(user_id: int, guide_id: str) -> List[str]:
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            reward_store.delete_saved_guide(conn, int(user_id), str(guide_id or "").strip())
+            return reward_store.fetch_saved_guides(conn, int(user_id))
+        finally:
+            conn.close()
 
 
 def award_top_rank(article_id: str) -> Optional[Dict[str, object]]:

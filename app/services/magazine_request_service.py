@@ -11,12 +11,15 @@ from typing import Dict, List, Optional, Tuple
 
 from app.models.magazine_requests import (
     FACT_VERIFIED,
+    assign_owner,
     connect,
     fetch_by_guide_id,
+    fetch_owned_requests,
     fetch_request,
     fetch_requests,
     insert_request,
     mark_published,
+    set_xrpl_tx_hash,
     update_fact_check,
 )
 
@@ -307,3 +310,34 @@ def publish_verified_request(request_id: int) -> Dict[str, object]:
     record["article_markdown"] = article
     record["guide_id"] = guide_id
     return record
+
+
+def assign_guest_requests(email: str, user_id: int) -> int:
+    """소셜 계정 이메일과 같은 게스트 제보를 users.id로 넘긴다."""
+    address = str(email or "").strip().lower()
+    if not address or not user_id:
+        return 0
+    with _LOCK:
+        conn = connect(db_path())
+        try:
+            return assign_owner(conn, address, int(user_id))
+        finally:
+            conn.close()
+
+
+def owned_requests(email: str, user_id: int) -> List[Dict[str, object]]:
+    with _LOCK:
+        conn = connect(db_path())
+        try:
+            return fetch_owned_requests(conn, int(user_id), str(email or ""))
+        finally:
+            conn.close()
+
+
+def store_xrpl_tx_hash(request_id: int, tx_hash: str) -> None:
+    with _LOCK:
+        conn = connect(db_path())
+        try:
+            set_xrpl_tx_hash(conn, int(request_id), tx_hash)
+        finally:
+            conn.close()

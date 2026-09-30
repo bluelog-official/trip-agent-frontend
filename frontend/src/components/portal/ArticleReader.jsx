@@ -14,6 +14,8 @@ export default function ArticleReader({
   onOpenCommunity,
   onNavigate,
   adminMode = false,
+  saved = false,
+  onSave,
 }) {
   const { t } = useTranslation();
 
@@ -75,6 +77,11 @@ export default function ArticleReader({
         <button type="button" className="text-link" onClick={onOpenCommunity}>
           {t("guide.openCommunity")}
         </button>
+        {onSave ? (
+          <button type="button" className="text-link" onClick={onSave}>
+            {saved ? t("guide.saved") : t("guide.save")}
+          </button>
+        ) : null}
       </div>
       {tab === "viral" ? (
         <ViralExport syndication={guide.syndication} />

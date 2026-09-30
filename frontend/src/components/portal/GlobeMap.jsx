@@ -9,8 +9,9 @@ import {
   trendValue,
 } from "../../lib/globeCities";
 import FlatWorldMap from "./FlatWorldMap";
+import KCultureBar from "./KCultureBar";
 
-export default function GlobeMap({ onOpenCity }) {
+export default function GlobeMap({ onOpenCity, hotCountry = false, kTheme = "all", onToggleHot, onTheme }) {
   const { t } = useTranslation();
   const language = appLanguage();
   const [period, setPeriod] = useState("all");
@@ -74,6 +75,12 @@ export default function GlobeMap({ onOpenCity }) {
 
   return (
     <section className="globe-band" aria-labelledby="globe-title" data-period={period}>
+      <KCultureBar
+        active={hotCountry}
+        theme={kTheme}
+        onToggle={onToggleHot}
+        onTheme={onTheme}
+      />
       <div className="globe-layout">
         <div className="globe-copy">
           <p className="hero-kicker">{t("globe.kicker")}</p>

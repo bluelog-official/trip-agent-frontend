@@ -84,6 +84,9 @@ export default function Footer({ onNavigate }) {
             <li>
               <button type="button" onClick={() => visit("/events")}>{t("footer.events")}</button>
             </li>
+            <li>
+              <button type="button" onClick={() => visit("/wallet")}>{t("footer.wallet")}</button>
+            </li>
           </ul>
         </nav>
 

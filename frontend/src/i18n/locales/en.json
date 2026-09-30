@@ -22,7 +22,10 @@
     "categories": "Categories",
     "dashboard": "Dashboard",
     "admin": "Admin / Generator",
-    "logout": "Logout"
+    "logout": "Logout",
+    "signIn": "Sign in",
+    "wallet": "Wallet",
+    "hotCountry": "Hot Spot: Korea"
   },
   "footer": {
     "brand": "Brand",
@@ -49,6 +52,7 @@
     "localFood": "Local Food",
     "community": "Community Log",
     "events": "Events & Rewards",
+    "wallet": "Wallet",
     "copyright": "Copyright ⓒ 2026 BlueLog Trip. All rights reserved."
   },
   "hero": {
@@ -183,6 +187,8 @@
     "articleTab": "Article",
     "viralTab": "Viral Export",
     "openCommunity": "Open Community & Viral Log",
+    "save": "Save magazine",
+    "saved": "Saved",
     "reviewPending": "Awaiting review",
     "reviewApproved": "QA Approved",
     "reviewPendingHelp": "This draft stays unpublished until it is approved.",
@@ -320,7 +326,9 @@
     "magazineTitle": "Magazine request · BlueLog Trip",
     "magazineDescription": "Share a place you visited so it can be reviewed for a magazine guide.",
     "eventsTitle": "Events & Rewards · BlueLog Trip",
-    "eventsDescription": "How guest reports earn points, and how partner shop discounts will work."
+    "eventsDescription": "How guest reports earn points, and how partner shop discounts will work.",
+    "walletTitle": "Wallet · BlueLog Trip",
+    "walletDescription": "Point balance, report status, and saved magazines for the signed-in account."
   },
   "ads": {
     "label": "Sponsored Content",
@@ -531,11 +539,63 @@
     "publishPoints": "100 points when your verified report is published as an official magazine.",
     "rankPoints": "50 extra points when that magazine enters the top ranks by votes.",
     "pointsNote": "The same guide does not earn the same bonus twice. Points stay on the email you leave with the report.",
-    "signInTitle": "Sign-in is coming",
-    "signInBody": "Google and Apple sign-in will attach these points to an account. Until then, the balance is stored against the reporter email.",
+    "signInTitle": "Sign in to keep your points",
+    "signInBody": "Google, Apple, and Kakao sign-in moves guest points and reports onto the account when the emails match.",
+    "checkPoints": "Check points",
+    "issueVoucher": "Open voucher",
     "partnersTitle": "Partner shop discounts",
     "partnersBody": "Offline partner shops will apply a discount when a signed-in guest shows their points. The shop list below is the live partner table. It stays empty until a shop is added.",
     "partnersEmpty": "No partner shops are connected yet.",
     "requestCta": "Send a place report"
+  },
+  "kculture": {
+    "label": "Korea culture spotlight",
+    "bannerTitle": "Hot Spot: Korea (K-Culture Guide)",
+    "bannerCopy": "Local shops, beauty routes, pop-culture stops, and neighborhood walks in Korea.",
+    "themesLabel": "Korea theme",
+    "themes": {
+      "all": "All themes",
+      "food": "K-Food",
+      "beauty": "K-Beauty",
+      "pop": "K-Pop & Culture",
+      "trend": "K-Trend"
+    }
+  },
+  "auth": {
+    "title": "Sign in",
+    "reportTitle": "Sign in to send a report",
+    "pointsTitle": "Sign in to see your points",
+    "voucherTitle": "Sign in to open a voucher",
+    "saveTitle": "Sign in to save a magazine",
+    "google": "Continue with Google",
+    "apple": "Continue with Apple",
+    "kakao": "Continue with Kakao",
+    "guest": "Continue as guest",
+    "close": "Close",
+    "unconfigured": "This sign-in provider is not connected yet.",
+    "failed": "Sign-in could not start."
+  },
+  "wallet": {
+    "kicker": "Point wallet",
+    "title": "Your points and reports",
+    "balanceLabel": "Point balance",
+    "provider": "Signed in with {{provider}}",
+    "history": "History",
+    "reports": "My reports",
+    "saved": "Saved magazines",
+    "emptyHistory": "No points have been added yet.",
+    "emptyReports": "No reports are linked to this account.",
+    "emptySaved": "No magazines are saved yet.",
+    "reasonPublished": "Magazine published",
+    "reasonRank": "Top rank bonus",
+    "statePending": "Pending",
+    "stateVerified": "Verified",
+    "statePublished": "Published",
+    "stateRejected": "Rejected",
+    "ledger": "View ledger transaction",
+    "ledgerPending": "Ledger link is not ready yet.",
+    "remove": "Remove",
+    "signInRequired": "Sign in to open the wallet.",
+    "loadError": "The wallet could not be loaded."
   }
 }

@@ -7,6 +7,7 @@ import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import MagazineRequestPage from "./pages/MagazineRequestPage";
 import EventsPage from "./pages/EventsPage";
+import WalletPage from "./pages/WalletPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -20,10 +21,13 @@ import CommunityBoard from "./components/portal/CommunityBoard";
 import GlobalNav from "./components/portal/GlobalNav";
 import HeroSearch, { CategoryIntro, CityIntro } from "./components/portal/HeroSearch";
 import GlobeMap from "./components/portal/GlobeMap";
+import KCultureBar from "./components/portal/KCultureBar";
 import MagazineRequestCta from "./components/portal/MagazineRequestCta";
+import SocialLoginModal from "./components/portal/SocialLoginModal";
 import PortalSidebar from "./components/portal/PortalSidebar";
 import {
   API_BASE_URL,
+  apiOrigin,
   fetchGuideCards,
   fetchGuideDetail,
   matchesGuideQuery,
@@ -42,7 +46,16 @@ import { applyPageHead } from "./lib/documentHead";
 import { appLanguage } from "./i18n/i18n";
 import { presentGuideCard } from "./lib/localeCopy";
 import { cityHeading, destinationSlug } from "./lib/globeCities";
+import { matchesKCulture } from "./lib/kculture";
 import { matchesMagazineMatrix } from "./lib/magazineMatrix";
+import {
+  captureSessionFromUrl,
+  clearUserSession,
+  consumeAuthReturn,
+  readUserSession,
+  startSocialSignIn,
+  authHeaders,
+} from "./lib/session";
 import { usePortalRoute } from "./lib/usePortalRoute";
 import "./App.css";
 
@@ -77,6 +90,13 @@ export default function App() {
   const [posts, setPosts] = useState(() => loadCommunityPosts());
   const [tripDuration, setTripDuration] = useState("all");
   const [dailyBudget, setDailyBudget] = useState("all");
+  const [hotKorea, setHotKorea] = useState(false);
+  const [kTheme, setKTheme] = useState("all");
+  const [session, setSession] = useState(() => readUserSession());
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authReason, setAuthReason] = useState("sign-in");
+  const [authDismissed, setAuthDismissed] = useState("");
+  const [savedIds, setSavedIds] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -160,6 +180,59 @@ export default function App() {
     setLoginOpen(false);
   };
 
+  const requestAuth = (reason) => {
+    setAuthReason(reason);
+    setAuthOpen(true);
+  };
+
+  const closeAuth = () => {
+    setAuthOpen(false);
+    setAuthDismissed(route.name);
+  };
+
+  const toggleHotKorea = () => {
+    setHotKorea((on) => {
+      if (on) setKTheme("all");
+      return !on;
+    });
+  };
+
+  const selectKTheme = (id) => {
+    setKTheme(id);
+    if (id !== "all") setHotKorea(true);
+  };
+
+  const handleUserLogout = () => {
+    clearUserSession();
+    setSession(null);
+    setSavedIds([]);
+    if (route.name === "wallet") go("/");
+  };
+
+  const openWallet = () => {
+    if (session) {
+      go("/wallet");
+      return;
+    }
+    setAuthDismissed("");
+    requestAuth("points");
+  };
+
+  const handleSaveGuide = async () => {
+    if (!session?.token || !route.guideId) {
+      requestAuth("save");
+      return;
+    }
+    const response = await fetch(`${apiOrigin()}/api/v1/wallet/saved`, {
+      method: "POST",
+      headers: authHeaders(session.token, { "Content-Type": "application/json" }),
+      body: JSON.stringify({ guide_id: route.guideId }),
+    });
+    if (!response.ok) return;
+    const saved = await response.json();
+    if (Array.isArray(saved)) setSavedIds(saved);
+  };
+
   const handleCloseLogin = () => {
     setLoginOpen(false);
     consumeAdminReturn();
@@ -179,6 +252,44 @@ export default function App() {
     setTripDuration("all");
     setDailyBudget("all");
   }, [route.city]);
+
+  useEffect(() => {
+    let cancelled = false;
+    captureSessionFromUrl().then((next) => {
+      if (cancelled || !next) return;
+      setSession(next);
+      const back = consumeAuthReturn();
+      if (back) go(back);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [go]);
+
+  useEffect(() => {
+    if (!session?.token) {
+      setSavedIds([]);
+      return undefined;
+    }
+    let cancelled = false;
+    fetch(`${apiOrigin()}/api/v1/wallet`, { headers: authHeaders(session.token) })
+      .then(async (response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data?.saved_guides)) setSavedIds(data.saved_guides);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.token]);
+
+  useEffect(() => {
+    if (session) return;
+    if (route.name !== "magazineRequest" && route.name !== "wallet") return;
+    if (authDismissed === route.name) return;
+    setAuthReason(route.name === "wallet" ? "points" : "report");
+    setAuthOpen(true);
+  }, [route.name, session, authDismissed]);
 
   useEffect(() => {
     const card = presentGuideCard(
@@ -208,6 +319,7 @@ export default function App() {
         contact: t("meta.contactTitle"),
         magazineRequest: t("meta.magazineTitle"),
         events: t("meta.eventsTitle"),
+        wallet: t("meta.walletTitle"),
         notFound: t("meta.notFoundTitle"),
       };
       const descriptions = {
@@ -217,6 +329,7 @@ export default function App() {
         contact: t("meta.contactDescription"),
         magazineRequest: t("meta.magazineDescription"),
         events: t("meta.eventsDescription"),
+        wallet: t("meta.walletDescription"),
         notFound: t("meta.notFoundDescription"),
       };
       title = titles[route.name] || t("meta.homeTitle");
@@ -252,9 +365,10 @@ export default function App() {
       if (route.name === "food" && !card.hasFood) return false;
       if (route.name === "city" && destinationSlug(card.destination) !== route.city) return false;
       if (route.name === "city" && !matchesMagazineMatrix(card, tripDuration, dailyBudget)) return false;
+      if (!matchesKCulture(card, kTheme, hotKorea)) return false;
       return matchesGuideQuery(card, query);
     });
-  }, [localizedCards, route, query, tripDuration, dailyBudget]);
+  }, [localizedCards, route, query, tripDuration, dailyBudget, hotKorea, kTheme]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -376,12 +490,24 @@ export default function App() {
         onLogout={handleLogout}
         adminMode={adminMode}
         dashboardActive={route.name === "dashboard"}
+        userSession={session}
+        onOpenLogin={() => requestAuth("sign-in")}
+        onOpenWallet={openWallet}
+        onUserLogout={handleUserLogout}
+        hotCountry={hotKorea}
+        onToggleHotCountry={toggleHotKorea}
       />
 
       {route.name === "home" ? (
         <>
           <HeroSearch query={query} onQueryChange={setQuery} onSearch={handleSearch} />
-          <GlobeMap onOpenCity={openCityGuides} />
+          <GlobeMap
+            onOpenCity={openCityGuides}
+            hotCountry={hotKorea}
+            kTheme={kTheme}
+            onToggleHot={toggleHotKorea}
+            onTheme={selectKTheme}
+          />
           <MagazineRequestCta onRequest={() => go("/magazine-request")} />
           <div className="ad-band">
             <AdSenseUnit slotId="hero-below" format="auto" />
@@ -413,7 +539,20 @@ export default function App() {
         ) : route.name === "magazineRequest" ? (
           <MagazineRequestPage onNavigate={go} />
         ) : route.name === "events" ? (
-          <EventsPage onNavigate={go} />
+          <EventsPage
+            onNavigate={go}
+            onCheckPoints={openWallet}
+            onIssueVoucher={() => {
+              if (session) go("/wallet");
+              else requestAuth("voucher");
+            }}
+          />
+        ) : route.name === "wallet" ? (
+          session ? (
+            <WalletPage session={session} onNavigate={go} />
+          ) : (
+            <p className="dash-note">{t("wallet.signInRequired")}</p>
+          )
         ) : route.name === "notFound" ? (
           <NotFound onNavigate={go} />
         ) : (
@@ -421,6 +560,14 @@ export default function App() {
             <div className="portal-stream">
               {route.name === "destinations" || route.name === "food" ? (
                 <CategoryIntro category={route.category} />
+              ) : null}
+              {hotKorea && route.name !== "home" ? (
+                <KCultureBar
+                  active={hotKorea}
+                  theme={kTheme}
+                  onToggle={toggleHotKorea}
+                  onTheme={selectKTheme}
+                />
               ) : null}
               {route.name === "city" ? <CityIntro city={cityLabel} /> : null}
               {route.name === "city" ? (
@@ -443,6 +590,8 @@ export default function App() {
                   onOpenCommunity={() => go("/community")}
                   onNavigate={go}
                   adminMode={adminMode}
+                  saved={savedIds.includes(route.guideId)}
+                  onSave={handleSaveGuide}
                 />
               ) : (
                 <ArticleGrid
@@ -488,6 +637,17 @@ export default function App() {
       ) : null}
       {!adminSession && (adminGate || loginOpen) ? (
         <AdminLogin onClose={handleCloseLogin} onSuccess={handleLoginSuccess} />
+      ) : null}
+      {authOpen ? (
+        <SocialLoginModal
+          reason={authReason}
+          onClose={closeAuth}
+          onGuest={closeAuth}
+          onSelect={(provider) => startSocialSignIn(
+            provider,
+            authReason === "report" ? "/magazine-request" : "/wallet",
+          )}
+        />
       ) : null}
     </div>
   );

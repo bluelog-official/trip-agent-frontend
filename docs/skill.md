@@ -180,7 +180,7 @@ class GenerateResponse(BaseModel):
 - 그 글의 추천 수가 상위 5개에 들어가면 `UGC_TOP_RANK_BONUS` 50포인트. 추천 API가 적립을 호출한다.
 - `GET /api/v1/rewards/overview`는 공개. `POST /api/v1/rewards/accrue`는 Bearer 필수.
 - DB 기본 경로는 `output/rewards.db`. 테스트는 `REWARDS_DB_PATH`로 바꾼다.
-- 구글·애플 로그인은 `auth_provider` 자리만 열어 둔다. 이벤트 페이지(`/events`)가 적립 규칙과 제휴 할인 안내를 보여 준다.
+- 구글·애플·카카오 로그인은 `auth_provider`에 기록한다. 이벤트 페이지(`/events`)가 적립 규칙, 포인트 조회, 바우처 진입을 보여 준다.
 
 ## 10. Article Votes
 
@@ -203,4 +203,26 @@ class GenerateResponse(BaseModel):
 - 프론트매터에 `duration`, `duration_key`, `budget`, `budget_key`를 둔다. 도시 목록은 이 값으로 기간·하루 예산 칩을 거른다.
 - `POST /api/v1/generate-guide`에 `duration`과 `budget`을 함께 넘기면 리서치·작성 프롬프트에 같은 표를 넣고, 저장 파일명도 이 규격을 따른다. 둘 중 하나만 오면 400.
 - 기본 생성 스크립트는 모델 없이 큐레이션 표로 마크다운을 쓴다. `--llm`은 에이전트 본문을 받은 뒤 같은 프론트매터를 붙인다.
+
+## 13. Social sign-in and point wallet
+
+- **Schema:** `app/schemas/oauth_schema.py` — `UserSession`, `WalletView`, `WalletReport`
+- **Service:** `app/services/oauth_service.py`, `app/services/wallet_service.py`
+- 프론트는 Vite다. NextAuth 경로를 FastAPI가 연다.
+  - `GET /api/auth/providers`
+  - `GET /api/auth/signin/{google|apple|kakao}`
+  - `GET|POST /api/auth/callback/{provider}`
+  - `GET /api/auth/session`
+- 제공자 키: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`. 리다이렉트 기준은 `OAUTH_PUBLIC_URL`, 로그인 후 이동은 `FRONTEND_URL`.
+- 키가 없으면 sign-in은 503이다. 콜백은 인가 코드를 프로필로 바꾼 뒤 사용자 세션 토큰을 `#session`으로 프론트 `/wallet`에 넘긴다.
+- 소셜 이메일이 제보 `email`(게스트 이메일)과 같으면 `magazine_requests.user_id`와 `point_logs.user_id`를 그 `users.id`로 옮기고, `points_balance`는 그 사용자의 로그 합계로 다시 맞춘다.
+- `GET /api/v1/wallet`는 잔액, 적립 내역, 제보의 `PENDING` / `VERIFIED` / `PUBLISHED` 상태, `xrpl_tx_hash`가 있을 때 `https://livenet.xrpl.org/transactions/{hash}` 링크를 돌려준다.
+- `POST /api/v1/wallet/saved`와 `DELETE /api/v1/wallet/saved/{guide_id}`는 저장한 매거진이다. 사용자 Bearer가 필요하다. 관리자 토큰으로는 열리지 않는다.
+
+## 14. K-Culture spotlight
+
+- 샘플: `guides/korea_3_days_kbeauty_kfood_guide.md`, `guides/seoul_1_day_kpop_trend_guide.md`, `guides/korea_1_week_heritage_luxury_guide.md`
+- 프론트매터 `hot_country: Korea`와 `k_themes`가 테마를 정한다. 파일명의 `kfood`, `kbeauty`, `kpop`, `trend`, `heritage`도 같은 태그에 매핑된다.
+- 태그: `K-Food`, `K-Beauty`, `K-Pop & Culture`, `K-Trend`
+- 헤더의 Hot Spot: Korea 토글과 지도 위 배너가 같은 필터를 켠다. 켜져 있으면 목록은 이 테마 가이드만 보여 준다.
 

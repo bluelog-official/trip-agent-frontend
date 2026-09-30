@@ -1,7 +1,7 @@
 # Progress
 
 ## Current
-Steps 1–4 are complete and ready to deploy from `main`.
+K-Culture spotlight, Google/Apple/Kakao sign-in, and the point wallet are on `main`.
 
 ## Completed
 1. Guest magazine request system
@@ -34,39 +34,51 @@ Steps 1–4 are complete and ready to deploy from `main`.
    - Only a `VERIFIED` request can be turned into a magazine draft with one click. The draft includes transport, discovery, and reference links.
    - `users`, `point_logs`, and `partner_merchants` tables back the reward ledger.
    - Publishing that draft awards 100 points (`MAGAZINE_PUBLISHED`). Entering the top five vote ranks awards 50 points once (`UGC_TOP_RANK_BONUS`).
-   - `/events` explains the point rules, upcoming Google and Apple sign-in, and partner-shop discounts. The nav and footer link to it.
+   - `/events` explains the point rules and partner-shop discounts. The nav and footer link to it.
+
+5. K-Culture spotlight
+   - Header control and the map banner: Hot Spot: Korea (K-Culture Guide).
+   - Theme chips: K-Food, K-Beauty, K-Pop & Culture, K-Trend.
+   - Samples: `korea_3_days_kbeauty_kfood_guide.md`, `seoul_1_day_kpop_trend_guide.md`, `korea_1_week_heritage_luxury_guide.md`.
+   - Turning the spotlight on hides guides that are not tagged `hot_country: Korea`.
+
+6. Social sign-in and point wallet
+   - FastAPI serves the NextAuth-style routes under `/api/auth` for Google, Apple, and Kakao. The Vite app is not a Next.js host.
+   - A configured provider redirects back to `/wallet#session=`. Missing client keys return 503 and the button stays disabled.
+   - When the social email matches a guest report email, `point_logs` and `magazine_requests` move to that `users.id` and the balance becomes the sum of the logs.
+   - `/wallet` and `/mypage` show the profile, point balance, history, report state (`PENDING`, `VERIFIED`, `PUBLISHED`), an XRPL explorer link when `xrpl_tx_hash` is set, and saved magazines.
+   - The sign-in modal opens for a report, point check, voucher, or save when there is no session. A report can continue as a guest.
 
 ## Deployment checklist
 - `app.main` imports without loading `litellm`. OpenRouter still imports it only when a fallback call runs.
 - Frontend `npm run build` and `npm test` pass.
-- Backend pytest for magazine requests, rewards, votes, and the app import pass.
-- Push `main` to `origin` so the host redeploys the flat map. The live 3D globe was the last deployed commit, three feature commits behind this branch.
+- Backend pytest for magazine requests, rewards, votes, oauth/wallet, and the app import pass.
+- Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, and `KAKAO_CLIENT_SECRET` on the API host before the live buttons can complete a redirect. `OAUTH_PUBLIC_URL` is the API origin. `FRONTEND_URL` is the site origin.
 - Do not commit `venv/`. Local site-packages were mutated outside the project requirements.
 
-## Files touched in step 4
-- `app/agents/utils.py`
-- `app/schemas/magazine_request_schema.py`
-- `app/schemas/rewards_schema.py`
-- `app/models/magazine_requests.py`
-- `app/models/rewards.py`
-- `app/services/magazine_request_service.py`
+## Files touched in this step
+- `app/schemas/oauth_schema.py`
+- `app/services/oauth_service.py`
+- `app/services/wallet_service.py`
 - `app/services/rewards_service.py`
-- `app/services/vote_service.py`
-- `app/services/scheduler_service.py`
-- `app/routers/magazine_requests.py`
-- `app/routers/rewards.py`
+- `app/services/magazine_request_service.py`
+- `app/models/rewards.py`
+- `app/models/magazine_requests.py`
+- `app/routers/oauth.py`
+- `app/routers/wallet.py`
 - `app/main.py`
-- `frontend/src/lib/flatMap.js`
-- `frontend/src/components/portal/FlatWorldMap.jsx`
-- `frontend/src/pages/MagazineRequestPage.jsx`
-- `frontend/src/pages/Dashboard.jsx`
-- `frontend/src/pages/EventsPage.jsx`
-- `frontend/src/components/portal/GlobalNav.jsx`
-- `frontend/src/App.jsx`
+- `frontend/src/lib/kculture.js`
+- `frontend/src/lib/session.js`
+- `frontend/src/pages/WalletPage.jsx`
+- `frontend/src/components/portal/KCultureBar.jsx`
+- `frontend/src/components/portal/SocialLoginModal.jsx`
+- `guides/korea_3_days_kbeauty_kfood_guide.md`
+- `guides/seoul_1_day_kpop_trend_guide.md`
+- `guides/korea_1_week_heritage_luxury_guide.md`
 - `docs/skill.md`
 
 ## Notes
-- Legacy `{city}_guide.md` files stay on the city page when both chips are All. A specific duration or budget hides them.
-- `$200/day` is its own chip because `tokyo_3_days_200usd_guide.md` uses that budget token.
-- Point balances attach to the reporter email until Google or Apple sign-in exists. `auth_provider` is stored on `users` for that later link.
-- Partner shops stay an empty table until a merchant row is inserted. The events page says so.
+- Legacy `{city}_guide.md` files stay on the city page when both duration and budget chips are All, and when the Korea spotlight is off.
+- Point balances now follow the signed-in user. Until someone signs in, accrual still keys off the reporter email.
+- Partner shops stay an empty table until a merchant row is inserted. The voucher button opens the wallet after sign-in.
+- An XRPL link appears only after `xrpl_tx_hash` is stored on the report. Empty hashes stay as “ledger link is not ready.”

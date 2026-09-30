@@ -50,6 +50,10 @@ const THEME_LABELS = {
     "$100/day": "하루 100달러",
     "$200/day": "하루 200달러",
     Luxury: "고품격",
+    "K-Food": "한식",
+    "K-Beauty": "뷰티",
+    "K-Pop & Culture": "대중문화",
+    "K-Trend": "감성 코스",
   },
 };
 const CHROME_TAGS = new Set([

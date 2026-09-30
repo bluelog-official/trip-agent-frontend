@@ -1,4 +1,5 @@
 import { stripFrontmatter } from "./articleDocument";
+import { readKCulture } from "./kculture";
 import {
   budgetFilterFor,
   budgetKeyFor,
@@ -18,12 +19,17 @@ function resolveApiBaseUrl() {
 
 const API_BASE_URL = resolveApiBaseUrl();
 
+export function apiOrigin() {
+  return API_BASE_URL.replace(/\/api\/v1$/, "");
+}
+
 const REGION_CITIES = {
   asia: [
     "tokyo",
     "kyoto",
     "osaka",
     "seoul",
+    "korea",
     "busan",
     "jeju",
     "bali",
@@ -180,6 +186,10 @@ export function toGuideCard(summary, detail) {
   const budgetLabel = budgetLabelFor(budgetKey);
   if (durationLabel && !tags.includes(durationLabel)) tags.push(durationLabel);
   if (budgetLabel && !tags.includes(budgetLabel)) tags.push(budgetLabel);
+  const culture = readKCulture(id, rawMarkdown);
+  culture.themeLabels.forEach((tag) => {
+    if (!tags.includes(tag)) tags.push(tag);
+  });
 
   return {
     id,
@@ -197,6 +207,8 @@ export function toGuideCard(summary, detail) {
     budgetKey,
     budgetLabel,
     budgetFilter: budgetFilterFor(budgetKey),
+    kThemes: culture.kThemes,
+    hotCountry: culture.hotCountry,
   };
 }
 

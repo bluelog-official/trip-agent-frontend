@@ -6,3 +6,5 @@ def test_app_imports_without_loading_litellm():
 
     assert main.app.title
     assert any(route.path == "/api/v1/rewards/overview" for route in main.app.routes)
+    assert any(route.path == "/api/auth/providers" for route in main.app.routes)
+    assert any(route.path == "/api/v1/wallet" for route in main.app.routes)

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../lib/guideCards";
 
-export default function EventsPage({ onNavigate }) {
+export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher }) {
   const { t } = useTranslation();
   const [partners, setPartners] = useState([]);
 
@@ -37,6 +37,14 @@ export default function EventsPage({ onNavigate }) {
 
       <h2>{t("events.signInTitle")}</h2>
       <p>{t("events.signInBody")}</p>
+      <div className="events-actions">
+        <button type="button" className="dashboard-btn" onClick={onCheckPoints}>
+          {t("events.checkPoints")}
+        </button>
+        <button type="button" className="dashboard-btn" onClick={onIssueVoucher}>
+          {t("events.issueVoucher")}
+        </button>
+      </div>
 
       <h2>{t("events.partnersTitle")}</h2>
       <p>{t("events.partnersBody")}</p>

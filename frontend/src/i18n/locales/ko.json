@@ -22,7 +22,10 @@
     "categories": "분류",
     "dashboard": "대시보드",
     "admin": "관리 / 생성기",
-    "logout": "로그아웃"
+    "logout": "로그아웃",
+    "signIn": "로그인",
+    "wallet": "지갑",
+    "hotCountry": "한국 인기 코스"
   },
   "footer": {
     "brand": "브랜드",
@@ -49,6 +52,7 @@
     "localFood": "현지 음식",
     "community": "커뮤니티 기록",
     "events": "이벤트 & 혜택",
+    "wallet": "지갑",
     "copyright": "저작권 ⓒ 2026 BlueLog Trip. 모든 권리를 보유합니다."
   },
   "hero": {
@@ -183,6 +187,8 @@
     "articleTab": "본문",
     "viralTab": "바이럴 내보내기",
     "openCommunity": "커뮤니티와 바이럴 기록 열기",
+    "save": "매거진 저장",
+    "saved": "저장됨",
     "reviewPending": "검수 대기",
     "reviewApproved": "검수 승인",
     "reviewPendingHelp": "이 초안은 승인되기 전까지 게시되지 않습니다.",
@@ -320,7 +326,9 @@
     "magazineTitle": "매거진 제보 · BlueLog Trip",
     "magazineDescription": "다녀온 장소와 맛집을 제보하는 페이지입니다.",
     "eventsTitle": "이벤트 & 혜택 · BlueLog Trip",
-    "eventsDescription": "제보 포인트 적립과 오프라인 제휴 할인 안내입니다."
+    "eventsDescription": "제보 포인트 적립과 오프라인 제휴 할인 안내입니다.",
+    "walletTitle": "지갑 · BlueLog Trip",
+    "walletDescription": "로그인한 계정의 포인트 잔액, 제보 상태, 저장한 매거진입니다."
   },
   "ads": {
     "label": "광고",
@@ -531,11 +539,63 @@
     "publishPoints": "검증된 제보가 정식 매거진으로 발행되면 100포인트.",
     "rankPoints": "그 매거진이 추천 수 기준 상위 순위에 들어가면 50포인트.",
     "pointsNote": "같은 글의 같은 보너스는 한 번만 적립됩니다. 잔액은 제보에 남긴 이메일에 붙습니다.",
-    "signInTitle": "소셜 로그인은 준비 중입니다",
-    "signInBody": "구글과 애플 로그인으로 포인트를 계정에 연결할 예정입니다. 그 전까지는 제보 이메일에 잔액을 보관합니다.",
+    "signInTitle": "로그인하면 포인트가 계정에 남습니다",
+    "signInBody": "구글, 애플, 카카오 계정의 이메일이 제보 이메일과 같으면 게스트 포인트와 제보가 그 계정으로 옮겨집니다.",
+    "checkPoints": "포인트 조회",
+    "issueVoucher": "바우처 열기",
     "partnersTitle": "오프라인 제휴 상점 할인",
     "partnersBody": "로그인한 손님이 포인트를 보여 주면 제휴 상점에서 할인을 적용하는 구조입니다. 아래 목록은 제휴 상점 표이며, 상점이 등록되기 전에는 비어 있습니다.",
     "partnersEmpty": "연결된 제휴 상점이 아직 없습니다.",
     "requestCta": "장소 제보하기"
+  },
+  "kculture": {
+    "label": "한국 문화 특집",
+    "bannerTitle": "한국 인기 코스 (문화 가이드)",
+    "bannerCopy": "노포와 길거리 음식, 뷰티 동선, 대중문화 장소, 골목 감성 코스를 고릅니다.",
+    "themesLabel": "한국 테마",
+    "themes": {
+      "all": "전체 테마",
+      "food": "한식",
+      "beauty": "뷰티",
+      "pop": "대중문화",
+      "trend": "감성 코스"
+    }
+  },
+  "auth": {
+    "title": "로그인",
+    "reportTitle": "제보하려면 로그인하세요",
+    "pointsTitle": "포인트를 보려면 로그인하세요",
+    "voucherTitle": "바우처를 열려면 로그인하세요",
+    "saveTitle": "매거진을 저장하려면 로그인하세요",
+    "google": "구글로 계속",
+    "apple": "애플로 계속",
+    "kakao": "카카오로 계속",
+    "guest": "손님으로 계속",
+    "close": "닫기",
+    "unconfigured": "이 로그인 수단은 아직 연결되지 않았습니다.",
+    "failed": "로그인을 시작하지 못했습니다."
+  },
+  "wallet": {
+    "kicker": "포인트 지갑",
+    "title": "내 포인트와 제보",
+    "balanceLabel": "보유 포인트",
+    "provider": "{{provider}} 계정으로 로그인됨",
+    "history": "내역",
+    "reports": "내 제보",
+    "saved": "저장한 매거진",
+    "emptyHistory": "아직 적립된 포인트가 없습니다.",
+    "emptyReports": "이 계정에 연결된 제보가 없습니다.",
+    "emptySaved": "저장한 매거진이 없습니다.",
+    "reasonPublished": "매거진 발행",
+    "reasonRank": "상위 순위 보너스",
+    "statePending": "검토 중",
+    "stateVerified": "검증됨",
+    "statePublished": "발행됨",
+    "stateRejected": "거절됨",
+    "ledger": "원장 거래 보기",
+    "ledgerPending": "원장 링크가 아직 없습니다.",
+    "remove": "삭제",
+    "signInRequired": "지갑을 보려면 로그인하세요.",
+    "loadError": "지갑을 불러오지 못했습니다."
   }
 }
