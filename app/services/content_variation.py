@@ -925,6 +925,18 @@ def _rebuild_itinerary(markdown: str, variation: Variation) -> str:
     return "\n".join(blocks).rstrip() + "\n"
 
 
+def fresh_title(city: str, duration_key: str, language: str, salt: int, reserved: Reserved) -> Tuple[str, str]:
+    """이미 예약된 제목 형식을 피한 제목과 형식 아이디."""
+    spec = _pick_template(city, duration_key, language, salt, reserved)
+    return _render_title(spec, city, duration_key, language), spec["id"]
+
+
+def retitle_markdown(markdown: str, title: str, template_id: str) -> str:
+    """제목과 제목 형식만 바꾼다. 일정 소제목과 해시태그는 그대로 둔다."""
+    updated = _replace_title_heading(markdown or "", title)
+    return _upsert_frontmatter(updated, {"title": title, "title_form": template_id})
+
+
 def apply_variation(markdown: str, variation: Variation) -> str:
     """제목, 일정 소제목, 해시태그를 variation 에 맞게 덮어쓴다. 이미 처리된 파일은 유지한다."""
     if _frontmatter_value(markdown or "", "duration_key"):

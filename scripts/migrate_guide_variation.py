@@ -14,6 +14,8 @@ if str(ROOT) not in sys.path:
 from app.services.content_variation import (  # noqa: E402
     Reserved,
     audit_varied_guide,
+    fresh_title,
+    retitle_markdown,
     vary_markdown,
 )
 
@@ -38,27 +40,104 @@ def guide_paths(root: Path):
     return paths
 
 
+def _already_varied(markdown: str) -> bool:
+    return bool(re.search(r"^duration_key:\s*", markdown, re.MULTILINE))
+
+
+def _release(reserved: Reserved, template_id: str, title: str) -> None:
+    count = reserved.template_count(template_id)
+    if count <= 1:
+        reserved.templates.pop(template_id, None)
+    else:
+        reserved.templates[template_id] = count - 1
+    reserved.titles.discard(title)
+
+
+def _retitle_duplicates(rows, reserved: Reserved):
+    """같은 제목 형식이 겹치면, 이번에 새로 고친 파일을 비어 있는 형식으로 옮긴다."""
+    grouped = {}
+    for row in rows:
+        grouped.setdefault(row["form"], []).append(row)
+    for form, group in grouped.items():
+        if len(group) < 2:
+            continue
+        keeper = group[-1]
+        for row in group:
+            if row is keeper:
+                continue
+            _release(reserved, row["form"], row["title"])
+            language = "ko" if row["form"].startswith("ko_") else "en"
+            title, template_id = fresh_title(row["city"], row["duration_key"], language, row["salt"], reserved)
+            text = row["path"].read_text(encoding="utf-8")
+            updated = retitle_markdown(text, title, template_id)
+            row["path"].write_text(updated, encoding="utf-8")
+            row["state"] = "updated"
+            row["form"] = template_id
+            row["title"] = title
+            reserved.templates[template_id] = reserved.template_count(template_id) + 1
+            reserved.titles.add(title)
+
+
 def main() -> int:
     reserved = Reserved()
     failures = []
     rows = []
+    pending = []
     for index, path in enumerate(guide_paths(ROOT)):
         original = path.read_text(encoding="utf-8")
         city = _city_name(path, original)
+        if _already_varied(original):
+            updated, variation = vary_markdown(original, city, reserved, salt=index)
+            rows.append(
+                {
+                    "state": "unchanged" if updated == original else "updated",
+                    "path": path,
+                    "rel": path.relative_to(ROOT),
+                    "duration_key": variation.duration_key,
+                    "form": variation.template_id,
+                    "title": variation.title,
+                    "tags": " ".join(variation.hashtags),
+                    "city": city,
+                    "salt": index,
+                }
+            )
+            if updated != original:
+                path.write_text(updated, encoding="utf-8")
+        else:
+            pending.append((index, path, original, city))
+
+    for index, path, original, city in pending:
         updated, variation = vary_markdown(original, city, reserved, salt=index)
-        issues = audit_varied_guide(updated)
-        if issues:
-            failures.append("{0}: {1}".format(path.name, ", ".join(issues)))
         if updated != original:
             path.write_text(updated, encoding="utf-8")
             state = "updated"
         else:
             state = "unchanged"
-        rows.append((state, path.relative_to(ROOT), variation.duration_key, variation.template_id, variation.title, " ".join(variation.hashtags)))
+        rows.append(
+            {
+                "state": state,
+                "path": path,
+                "rel": path.relative_to(ROOT),
+                "duration_key": variation.duration_key,
+                "form": variation.template_id,
+                "title": variation.title,
+                "tags": " ".join(variation.hashtags),
+                "city": city,
+                "salt": index,
+            }
+        )
 
-    titles = [row[4] for row in rows]
-    forms = [row[3] for row in rows]
-    tags = [row[5] for row in rows]
+    _retitle_duplicates(rows, reserved)
+    rows.sort(key=lambda row: str(row["rel"]))
+
+    for row in rows:
+        issues = audit_varied_guide(row["path"].read_text(encoding="utf-8"))
+        if issues:
+            failures.append("{0}: {1}".format(row["rel"].name, ", ".join(issues)))
+
+    titles = [row["title"] for row in rows]
+    forms = [row["form"] for row in rows]
+    tags = [row["tags"] for row in rows]
     if len(titles) != len(set(titles)):
         failures.append("duplicate titles")
     if len(forms) != len(set(forms)):
@@ -69,9 +148,9 @@ def main() -> int:
     if rows and local_food == len(rows):
         failures.append("LocalFood on every guide")
 
-    for state, rel, duration_key, form, title, tag_line in rows:
-        print("{0}\t{1}\t{2}\t{3}\t{4}".format(state, rel, duration_key, form, title))
-        print("  {0}".format(tag_line))
+    for row in rows:
+        print("{0}\t{1}\t{2}\t{3}\t{4}".format(row["state"], row["rel"], row["duration_key"], row["form"], row["title"]))
+        print("  {0}".format(row["tags"]))
 
     if failures:
         print("Migration audit failed:", file=sys.stderr)
