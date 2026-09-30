@@ -1,0 +1,84 @@
+{
+  "language": { "label": "言語" },
+  "nav": {
+    "home": "ホーム",
+    "destinations": "目的地",
+    "allRegions": "すべての地域",
+    "asia": "アジア",
+    "europe": "ヨーロッパ",
+    "americas": "アメリカ",
+    "oceania": "オセアニア",
+    "localFood": "地元の食事",
+    "community": "コミュニティ",
+    "events": "イベントと特典",
+    "searchPlaceholder": "検索",
+    "searchGuides": "ガイドを検索",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "categories": "カテゴリ",
+    "dashboard": "ダッシュボード",
+    "admin": "管理",
+    "logout": "ログアウト",
+    "signIn": "ログイン",
+    "wallet": "ウォレット",
+    "hotCountry": "韓国の注目コース",
+    "promoteStore": "店舗を宣伝する"
+  },
+  "hero": {
+    "kicker": "旅のデスク",
+    "title": "地元の旅と食事ガイド",
+    "copy": "公開前に確認した都市ルートと食事のガイドです。",
+    "placeholder": "パリ、ラーメン、バリ",
+    "search": "検索",
+    "promote": "店舗を宣伝する"
+  },
+  "footer": { "promote": "店舗を宣伝する" },
+  "magazineRequest": {
+    "writingLanguage": "執筆言語",
+    "writingHint": "書かれた文章から英語と韓国語の標準記事を作ります。"
+  },
+  "events": {
+    "claim": "ポイントで引換",
+    "pointsCost": "{{points}}ポイント",
+    "claimDone": "バウチャーをウォレットに入れました。",
+    "claimFailed": "バウチャーを受け取れませんでした。",
+    "partnersTitle": "提携店"
+  },
+  "wallet": {
+    "vouchers": "マイバウチャー",
+    "emptyVouchers": "バウチャーはまだありません。",
+    "showCode": "コードを表示",
+    "qrTitle": "店頭でこの画面を見せてください",
+    "qrClose": "閉じる",
+    "coupon": "クーポン番号",
+    "reasonVoucher": "バウチャー交換",
+    "anchor": "英語版の指紋"
+  },
+  "promote": {
+    "pageTitle": "店舗を宣伝する",
+    "pageLead": "店舗、宿、体験を教えてください。承認後に提携記事を公開します。",
+    "storeName": "店舗名",
+    "category": "分類",
+    "address": "住所",
+    "email": "連絡メール",
+    "phone": "電話",
+    "description": "店舗紹介",
+    "images": "写真のURL",
+    "imagesHint": "1行に1つのリンク",
+    "photoFile": "写真を追加",
+    "benefit": "来店特典",
+    "benefitHint": "10%引き、ドリンク1杯",
+    "submit": "申請する",
+    "submitting": "送信中",
+    "success": "申請を受け付けました。承認後に記事になります。",
+    "failed": "申請を送れませんでした。",
+    "home": "ホームへ",
+    "categories": {
+      "food": "韓国料理",
+      "beauty": "ビューティー",
+      "stay": "宿",
+      "experience": "体験",
+      "tour": "ツアー"
+    }
+  }
+}

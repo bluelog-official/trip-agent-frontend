@@ -18,10 +18,11 @@ from app.models.magazine_requests import (
     fetch_request,
     fetch_requests,
     insert_request,
-    mark_published,
+    mark_published_editions,
     set_xrpl_tx_hash,
     update_fact_check,
 )
+from app.services.magazine_translation import content_sha256, render_korean_magazine, to_english
 
 
 _ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -83,6 +84,7 @@ def build_guide_source(row: Dict[str, object]) -> Dict[str, object]:
         "transport_info": str(row.get("transport_info") or ""),
         "discovery_story": str(row.get("discovery_story") or ""),
         "reference_urls": str(row.get("reference_urls") or ""),
+        "submit_language": str(row.get("submit_language") or "en"),
         "fact_check_status": fact_status,
         "ready_for_one_click": fact_status == FACT_VERIFIED and not published_id,
     }
@@ -98,6 +100,10 @@ def guest_guide_id(row: Dict[str, object]) -> str:
     return "{0}_guest_{1}_guide.md".format(city, int(row["id"]))
 
 
+def korean_guest_guide_id(row: Dict[str, object]) -> str:
+    return guest_guide_id(row).replace("_guide.md", "_ko_guide.md")
+
+
 def _plain(value: object) -> str:
     return str(value).replace("{", "{{").replace("}", "}}")
 
@@ -109,8 +115,9 @@ def render_guest_magazine(row: Dict[str, object]) -> str:
     place = source["keyword"] or "Place"
     country = source["country"]
     title = "{0} in {1}".format(place, city)
-    transport = source["transport_info"] or "The guest did not add a transit note."
-    discovery = source["discovery_story"] or "The guest did not add how they found this place."
+    transport = to_english(source["transport_info"]) or "The guest did not add a transit note."
+    discovery = to_english(source["discovery_story"]) or "The guest did not add how they found this place."
+    review = to_english(source["review"]) or "The guest did not add a review."
     urls = [line for line in str(source["reference_urls"] or "").splitlines() if line.strip()]
     if urls:
         sources = "\n".join("- [{0}]({0})".format(url) for url in urls)
@@ -122,6 +129,9 @@ def render_guest_magazine(row: Dict[str, object]) -> str:
 title: "{title}"
 city: "{city}"
 country: "{country}"
+language: "en"
+edition: "standard"
+submit_language: "{submit_language}"
 status: "Guest source"
 fact_check: "{fact}"
 ---
@@ -154,12 +164,13 @@ fact_check: "{fact}"
         title=_plain(title.replace('"', "'")),
         city=_plain(city.replace('"', "'")),
         country=_plain(country.replace('"', "'")),
+        submit_language=_plain(source.get("submit_language") or "en"),
         fact=_plain(source["fact_check_status"]),
         author=_plain(source["author_label"]),
         place=_plain(place),
         destination=_plain(source["destination"]),
         photo=_plain(photo_line),
-        review=_plain(source["review"]),
+        review=_plain(review),
         transport=_plain(transport),
         discovery=_plain(discovery),
         sources=_plain(sources),
@@ -190,6 +201,12 @@ def _decode_photo(photo_data: str) -> Tuple[bytes, str]:
     if not blob or len(blob) > _MAX_PHOTO_BYTES:
         raise ValueError("photo is too large")
     return blob, _EXT[mime]
+
+
+def store_upload(photo_data: str) -> str:
+    """데이터 URL 사진을 저장하고 공개 경로를 돌려준다."""
+    url, _path = _store_photo(photo_data)
+    return url
 
 
 def _store_photo(photo_data: str) -> Tuple[str, Path]:
@@ -234,6 +251,7 @@ def create_magazine_request(payload: Dict[str, str]) -> Dict[str, object]:
                 discovery_story=str(payload.get("discovery_story") or ""),
                 reference_urls=str(payload.get("reference_urls") or ""),
                 created_at=_stamp(),
+                submit_language=str(payload.get("submit_language") or "en"),
             )
             row = fetch_request(conn, request_id)
         except Exception:
@@ -295,12 +313,17 @@ def publish_verified_request(request_id: int) -> Dict[str, object]:
             if str(row.get("published_guide_id") or "").strip():
                 raise ValueError("this request already has a magazine draft")
             guide_id = guest_guide_id(row)
+            korean_id = korean_guest_guide_id(row)
             article = render_guest_magazine(row)
+            korean = render_korean_magazine(row)
             folder = guide_dir()
             folder.mkdir(parents=True, exist_ok=True)
             path = folder / guide_id
+            korean_path = folder / korean_id
             path.write_text(article, encoding="utf-8")
-            mark_published(conn, request_id, guide_id)
+            korean_path.write_text(korean, encoding="utf-8")
+            digest = content_sha256(path.read_text(encoding="utf-8"))
+            mark_published_editions(conn, request_id, guide_id, korean_id, digest)
             stored = fetch_request(conn, request_id)
         except Exception:
             raise

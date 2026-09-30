@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import GuideArticle from "./GuideArticle";
+import PartnerOffers from "./PartnerOffers";
 import ViralExport from "../ViralExport";
 import { readGuideApproved } from "../adSlotPlan";
 
@@ -16,6 +17,7 @@ export default function ArticleReader({
   adminMode = false,
   saved = false,
   onSave,
+  onClaimVoucher,
 }) {
   const { t } = useTranslation();
 
@@ -31,11 +33,14 @@ export default function ArticleReader({
         ← {t("guide.back")}
       </button>
       {tab === "article" ? (
-        <GuideArticle
-          guide={guide}
-          fileName={fileName}
-          onNavigate={onNavigate}
-        />
+        <>
+          <GuideArticle
+            guide={guide}
+            fileName={fileName}
+            onNavigate={onNavigate}
+          />
+          <PartnerOffers onClaim={onClaimVoucher} />
+        </>
       ) : null}
       {adminMode ? (
         <div className="review-bar">

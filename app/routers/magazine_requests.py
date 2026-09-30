@@ -79,4 +79,6 @@ def post_publish_verified(request_id: int) -> GuestPublishResult:
         guide_id=str(record["guide_id"]),
         fact_check_status=record["fact_check_status"],
         article_markdown=str(record["article_markdown"]),
+        korean_guide_id=str(record.get("korean_guide_id") or ""),
+        english_sha256=str(record.get("english_sha256") or ""),
     )

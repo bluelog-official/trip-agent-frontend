@@ -51,11 +51,18 @@ function visibleCopy(text) {
 }
 
 describe("app language storage", () => {
-  it("normalizes only en and ko", () => {
+  it("normalizes the supported site languages", () => {
     expect(normalizeAppLanguage("ko")).toBe("ko");
     expect(normalizeAppLanguage("ko-KR")).toBe("ko");
     expect(normalizeAppLanguage("en")).toBe("en");
     expect(normalizeAppLanguage("english")).toBe("en");
+    expect(normalizeAppLanguage("ja")).toBe("ja");
+    expect(normalizeAppLanguage("zh-CN")).toBe("zh-CN");
+    expect(normalizeAppLanguage("zh-TW")).toBe("zh-TW");
+    expect(normalizeAppLanguage("vi")).toBe("vi");
+    expect(normalizeAppLanguage("th")).toBe("th");
+    expect(normalizeAppLanguage("es")).toBe("es");
+    expect(normalizeAppLanguage("fr")).toBe("fr");
     expect(normalizeAppLanguage("")).toBe("en");
   });
 
@@ -134,19 +141,27 @@ describe("language switcher", () => {
       </div>,
     );
 
-    expect(screen.getByRole("option", { name: "English" }).selected).toBe(true);
     expect(screen.getByRole("heading", { name: "Privacy Policy" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Terms of Service" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "About BlueLog Trip" })).toBeTruthy();
     expect(screen.getByText("Verified Guide")).toBeTruthy();
     expect(HANGUL.test(view.container.textContent)).toBe(false);
 
-    fireEvent.change(screen.getByLabelText("Language"), { target: { value: "ko" } });
+    fireEvent.click(screen.getByRole("button", { name: "Language" }));
+    expect(screen.getByRole("option", { name: "English", selected: true })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "日本語" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "简体中文" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "繁體中文" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "Tiếng Việt" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "ไทย" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "Español" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "Français" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("option", { name: "한국어" }));
     await i18n.changeLanguage("ko");
 
     expect(localStorage.getItem(APP_LANG_KEY)).toBe("ko");
     expect(document.documentElement.lang).toBe("ko");
-    expect(screen.getByRole("option", { name: "한국어" }).selected).toBe(true);
+    expect(screen.getAllByRole("button", { name: "제휴 입점 문의" }).length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "개인정보 처리방침" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "이용약관" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "BlueLog Trip 소개" })).toBeTruthy();
@@ -160,7 +175,8 @@ describe("language switcher", () => {
     const leftovers = visibleCopy(chrome.textContent).match(/[A-Za-z]{4,}/g) || [];
     expect(leftovers).toEqual([]);
 
-    fireEvent.change(screen.getByLabelText("언어"), { target: { value: "en" } });
+    fireEvent.click(screen.getByRole("button", { name: "언어" }));
+    fireEvent.click(screen.getByRole("option", { name: "English" }));
     await i18n.changeLanguage("en");
     expect(localStorage.getItem(APP_LANG_KEY)).toBe("en");
     expect(document.documentElement.lang).toBe("en");

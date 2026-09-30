@@ -3010,3 +3010,96 @@
 .events-actions {
   margin: 8px 0 18px;
 }
+
+.lang-menu {
+  position: relative;
+}
+
+.lang-globe {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid #d6cfc3;
+  background: #fff;
+  color: #1c1917;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.lang-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 40;
+  min-width: 180px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #d6cfc3;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.08);
+}
+
+.lang-panel button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.lang-panel button[aria-selected="true"] {
+  background: #f3efe6;
+  font-weight: 700;
+}
+
+.hero-promote,
+.magazine-cta-actions {
+  margin-top: 12px;
+}
+
+.magazine-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.magazine-cta-button.secondary,
+.hero-promote {
+  background: transparent;
+  color: #134e4a;
+  border: 1px solid #134e4a;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.voucher-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: rgba(28, 25, 23, 0.45);
+}
+
+.voucher-card {
+  width: min(360px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.voucher-qr svg {
+  width: 220px;
+  height: 220px;
+}
+
+.partner-list button {
+  margin-left: 8px;
+}

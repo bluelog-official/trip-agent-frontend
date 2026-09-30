@@ -68,6 +68,9 @@ export function parseRoute(pathname) {
   if (path === "/events") {
     return { name: "events", category: "", guideId: "" };
   }
+  if (path === "/promote-store" || path === "/partner-apply") {
+    return { name: "promoteStore", category: "", guideId: "" };
+  }
   if (path === "/wallet" || path === "/mypage") {
     return { name: "wallet", category: "", guideId: "" };
   }

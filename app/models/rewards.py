@@ -30,7 +30,29 @@ CREATE TABLE IF NOT EXISTS partner_merchants (
     name TEXT NOT NULL,
     city TEXT NOT NULL,
     discount_rate REAL NOT NULL DEFAULT 0,
-    status TEXT NOT NULL DEFAULT 'PLANNED'
+    status TEXT NOT NULL DEFAULT 'PLANNED',
+    category TEXT NOT NULL DEFAULT '',
+    address TEXT NOT NULL DEFAULT '',
+    contact_email TEXT NOT NULL DEFAULT '',
+    phone TEXT NOT NULL DEFAULT '',
+    store_description TEXT NOT NULL DEFAULT '',
+    catalog_images TEXT NOT NULL DEFAULT '',
+    offered_benefit TEXT NOT NULL DEFAULT '',
+    is_active INTEGER NOT NULL DEFAULT 0,
+    voucher_points INTEGER NOT NULL DEFAULT 50,
+    guide_id TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS vouchers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    merchant_id INTEGER NOT NULL,
+    voucher_code TEXT NOT NULL UNIQUE,
+    qr_token TEXT NOT NULL,
+    points_cost INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'ISSUED',
+    created_at TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS saved_guides (
@@ -47,6 +69,26 @@ _USER_COLUMNS = {
     "provider_subject": "TEXT NOT NULL DEFAULT ''",
 }
 
+_PARTNER_COLUMNS = {
+    "category": "TEXT NOT NULL DEFAULT ''",
+    "address": "TEXT NOT NULL DEFAULT ''",
+    "contact_email": "TEXT NOT NULL DEFAULT ''",
+    "phone": "TEXT NOT NULL DEFAULT ''",
+    "store_description": "TEXT NOT NULL DEFAULT ''",
+    "catalog_images": "TEXT NOT NULL DEFAULT ''",
+    "offered_benefit": "TEXT NOT NULL DEFAULT ''",
+    "is_active": "INTEGER NOT NULL DEFAULT 0",
+    "voucher_points": "INTEGER NOT NULL DEFAULT 50",
+    "guide_id": "TEXT NOT NULL DEFAULT ''",
+    "created_at": "TEXT NOT NULL DEFAULT ''",
+}
+
+_PARTNER_SELECT = """
+id, name, city, discount_rate, status, category, address, contact_email, phone,
+store_description, catalog_images, offered_benefit, is_active, voucher_points,
+guide_id, created_at
+"""
+
 _USER_SELECT = (
     "id, email, auth_provider, points_balance, created_at, display_name, provider_subject"
 )
@@ -58,7 +100,17 @@ def connect(path: Path) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.executescript(_SCHEMA)
     _ensure_user_columns(conn)
+    _ensure_partner_columns(conn)
     return conn
+
+
+def _ensure_partner_columns(conn: sqlite3.Connection) -> None:
+    existing = {row[1] for row in conn.execute("PRAGMA table_info(partner_merchants)")}
+    for name, column_type in _PARTNER_COLUMNS.items():
+        if name not in existing:
+            conn.execute(
+                "ALTER TABLE partner_merchants ADD COLUMN {0} {1}".format(name, column_type)
+            )
 
 
 def _ensure_user_columns(conn: sqlite3.Connection) -> None:
@@ -264,12 +316,107 @@ def fetch_saved_guides(conn: sqlite3.Connection, user_id: int) -> List[str]:
     return [str(row["guide_id"]) for row in rows]
 
 
-def fetch_partners(conn: sqlite3.Connection) -> List[Dict[str, Any]]:
+def fetch_partners(conn: sqlite3.Connection, active_only: bool = False) -> List[Dict[str, Any]]:
+    sql = "SELECT {0} FROM partner_merchants".format(_PARTNER_SELECT)
+    if active_only:
+        sql += " WHERE is_active = 1 AND status = 'APPROVED'"
+    sql += " ORDER BY id"
+    rows = conn.execute(sql).fetchall()
+    return [dict(row) for row in rows]
+
+
+def fetch_partner(conn: sqlite3.Connection, partner_id: int) -> Optional[Dict[str, Any]]:
+    row = conn.execute(
+        "SELECT {0} FROM partner_merchants WHERE id = ?".format(_PARTNER_SELECT),
+        (int(partner_id),),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def insert_partner(conn: sqlite3.Connection, fields: Dict[str, Any]) -> int:
+    cursor = conn.execute(
+        """
+        INSERT INTO partner_merchants (
+            name, city, discount_rate, status, category, address, contact_email, phone,
+            store_description, catalog_images, offered_benefit, is_active, voucher_points,
+            guide_id, created_at
+        ) VALUES (?, ?, ?, 'PENDING_APPROVAL', ?, ?, ?, ?, ?, ?, ?, 0, ?, '', ?)
+        """,
+        (
+            fields["name"],
+            fields["city"],
+            float(fields.get("discount_rate") or 0),
+            fields.get("category") or "",
+            fields.get("address") or "",
+            fields.get("contact_email") or "",
+            fields.get("phone") or "",
+            fields.get("store_description") or "",
+            fields.get("catalog_images") or "",
+            fields.get("offered_benefit") or "",
+            int(fields.get("voucher_points") or 50),
+            fields.get("created_at") or "",
+        ),
+    )
+    return int(cursor.lastrowid)
+
+
+def activate_partner(conn: sqlite3.Connection, partner_id: int, guide_id: str) -> None:
+    conn.execute(
+        """
+        UPDATE partner_merchants
+        SET status = 'APPROVED', is_active = 1, guide_id = ?
+        WHERE id = ?
+        """,
+        (guide_id, int(partner_id)),
+    )
+
+
+def insert_voucher(
+    conn: sqlite3.Connection,
+    user_id: int,
+    merchant_id: int,
+    voucher_code: str,
+    qr_token: str,
+    points_cost: int,
+    created_at: str,
+) -> int:
+    cursor = conn.execute(
+        """
+        INSERT INTO vouchers (
+            user_id, merchant_id, voucher_code, qr_token, points_cost, status, created_at
+        ) VALUES (?, ?, ?, ?, ?, 'ISSUED', ?)
+        """,
+        (int(user_id), int(merchant_id), voucher_code, qr_token, int(points_cost), created_at),
+    )
+    return int(cursor.lastrowid)
+
+
+def fetch_voucher_by_code(conn: sqlite3.Connection, voucher_code: str) -> Optional[Dict[str, Any]]:
+    row = conn.execute(
+        """
+        SELECT id, user_id, merchant_id, voucher_code, qr_token, points_cost, status, created_at
+        FROM vouchers WHERE voucher_code = ?
+        """,
+        (voucher_code,),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def fetch_vouchers_for_user(conn: sqlite3.Connection, user_id: int) -> List[Dict[str, Any]]:
     rows = conn.execute(
         """
-        SELECT id, name, city, discount_rate, status
-        FROM partner_merchants
-        ORDER BY id
-        """
+        SELECT id, user_id, merchant_id, voucher_code, qr_token, points_cost, status, created_at
+        FROM vouchers
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (int(user_id),),
     ).fetchall()
     return [dict(row) for row in rows]
+
+
+def mark_voucher_redeemed(conn: sqlite3.Connection, voucher_id: int) -> None:
+    conn.execute(
+        "UPDATE vouchers SET status = 'REDEEMED' WHERE id = ? AND status = 'ISSUED'",
+        (int(voucher_id),),
+    )

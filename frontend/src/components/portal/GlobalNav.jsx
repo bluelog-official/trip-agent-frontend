@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Compass, Menu, Search, X } from "lucide-react";
+import { ChevronDown, Compass, Globe, Menu, Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import i18n, { normalizeAppLanguage } from "../../i18n/i18n";
+import i18n, { APP_LANGUAGES, normalizeAppLanguage } from "../../i18n/i18n";
 
 const DESTINATION_PATHS = [
   { id: "all", labelKey: "nav.allRegions", path: "/destinations" },
@@ -32,18 +32,24 @@ export default function GlobalNav({
   const { t } = useTranslation();
   const language = normalizeAppLanguage(i18n.language);
   const [destOpen, setDestOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const destRef = useRef(null);
+  const langRef = useRef(null);
 
   useEffect(() => {
     const onPointer = (event) => {
       if (destRef.current && !destRef.current.contains(event.target)) {
         setDestOpen(false);
       }
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setLangOpen(false);
+      }
     };
     const onKey = (event) => {
       if (event.key === "Escape") {
         setDestOpen(false);
+        setLangOpen(false);
         setMobileOpen(false);
       }
     };
@@ -61,9 +67,10 @@ export default function GlobalNav({
     onNavigate(path);
   };
 
-  const changeLanguage = (event) => {
-    const next = event.target.value === "ko" ? "ko" : "en";
-    i18n.changeLanguage(next);
+  const changeLanguage = (code) => {
+    setLangOpen(false);
+    setMobileOpen(false);
+    i18n.changeLanguage(normalizeAppLanguage(code));
   };
 
   return (
@@ -163,15 +170,36 @@ export default function GlobalNav({
               aria-label={t("nav.searchGuides")}
             />
           </form>
-          <select
-            className="lang-select"
-            value={language}
-            aria-label={t("language.label")}
-            onChange={changeLanguage}
-          >
-            <option value="en">{t("language.en")}</option>
-            <option value="ko">{t("language.ko")}</option>
-          </select>
+          <button type="button" className="dashboard-btn" onClick={() => visit("/promote-store")}>
+            {t("nav.promoteStore")}
+          </button>
+          <div className="lang-menu" ref={langRef}>
+            <button
+              type="button"
+              className="lang-globe"
+              aria-label={t("language.label")}
+              aria-haspopup="listbox"
+              aria-expanded={langOpen}
+              onClick={() => setLangOpen((open) => !open)}
+            >
+              <Globe size={18} aria-hidden="true" />
+            </button>
+            {langOpen ? (
+              <div className="lang-panel" role="listbox" aria-label={t("language.label")}>
+                {APP_LANGUAGES.map((item) => (
+                  <button
+                    key={item.code}
+                    type="button"
+                    role="option"
+                    aria-selected={language === item.code}
+                    onClick={() => changeLanguage(item.code)}
+                  >
+                    {item.native}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
           {userSession ? (
             <>
               <button type="button" className="dashboard-btn" onClick={onOpenWallet}>

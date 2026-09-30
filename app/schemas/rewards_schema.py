@@ -39,6 +39,10 @@ class PartnerMerchantRecord(BaseModel):
     city: str
     discount_rate: float
     status: str
+    category: str = ""
+    address: str = ""
+    offered_benefit: str = ""
+    voucher_points: int = 50
 
 
 class RewardsOverview(BaseModel):

@@ -1,0 +1,84 @@
+{
+  "language": { "label": "语言" },
+  "nav": {
+    "home": "首页",
+    "destinations": "目的地",
+    "allRegions": "全部地区",
+    "asia": "亚洲",
+    "europe": "欧洲",
+    "americas": "美洲",
+    "oceania": "大洋洲",
+    "localFood": "当地美食",
+    "community": "社区",
+    "events": "活动与奖励",
+    "searchPlaceholder": "搜索",
+    "searchGuides": "搜索指南",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "categories": "分类",
+    "dashboard": "仪表板",
+    "admin": "管理",
+    "logout": "退出",
+    "signIn": "登录",
+    "wallet": "钱包",
+    "hotCountry": "韩国热点",
+    "promoteStore": "推广我的店"
+  },
+  "hero": {
+    "kicker": "旅行台",
+    "title": "查找当地行程与美食指南",
+    "copy": "城市路线和邻里美食，发布前已经核对。",
+    "placeholder": "试试巴黎、拉面、巴厘岛",
+    "search": "搜索",
+    "promote": "推广我的店"
+  },
+  "footer": { "promote": "推广我的店" },
+  "magazineRequest": {
+    "writingLanguage": "撰写语言",
+    "writingHint": "我们会把投稿做成英文和韩文两份标准杂志。"
+  },
+  "events": {
+    "claim": "用积分兑换",
+    "pointsCost": "{{points}} 积分",
+    "claimDone": "优惠券已放入钱包。",
+    "claimFailed": "无法领取优惠券。",
+    "partnersTitle": "合作店铺"
+  },
+  "wallet": {
+    "vouchers": "我的优惠券",
+    "emptyVouchers": "还没有优惠券。",
+    "showCode": "显示代码",
+    "qrTitle": "请在店里出示这个画面",
+    "qrClose": "关闭",
+    "coupon": "优惠码",
+    "reasonVoucher": "兑换优惠券",
+    "anchor": "英文标准文档指纹"
+  },
+  "promote": {
+    "pageTitle": "推广我的店",
+    "pageLead": "介绍店铺、住宿或体验。审核通过后会发布合作杂志。",
+    "storeName": "店铺名称",
+    "category": "类别",
+    "address": "地址",
+    "email": "联系邮箱",
+    "phone": "电话",
+    "description": "店铺介绍",
+    "images": "图片链接",
+    "imagesHint": "每行一个链接",
+    "photoFile": "上传图片",
+    "benefit": "顾客优惠",
+    "benefitHint": "九折，或赠一杯饮品",
+    "submit": "提交申请",
+    "submitting": "发送中",
+    "success": "申请已收到。审核通过后会发布杂志。",
+    "failed": "申请未能发送。",
+    "home": "返回首页",
+    "categories": {
+      "food": "韩国美食",
+      "beauty": "美妆",
+      "stay": "住宿",
+      "experience": "体验",
+      "tour": "游览"
+    }
+  }
+}

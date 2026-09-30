@@ -1,0 +1,84 @@
+{
+  "language": { "label": "Idioma" },
+  "nav": {
+    "home": "Inicio",
+    "destinations": "Destinos",
+    "allRegions": "Todas las regiones",
+    "asia": "Asia",
+    "europe": "Europa",
+    "americas": "América",
+    "oceania": "Oceanía",
+    "localFood": "Comida local",
+    "community": "Comunidad",
+    "events": "Eventos y puntos",
+    "searchPlaceholder": "Buscar",
+    "searchGuides": "Buscar guías",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "categories": "Categorías",
+    "dashboard": "Panel",
+    "admin": "Administración",
+    "logout": "Salir",
+    "signIn": "Entrar",
+    "wallet": "Cartera",
+    "hotCountry": "Foco: Corea",
+    "promoteStore": "Promocionar mi local"
+  },
+  "hero": {
+    "kicker": "Mesa de viajes",
+    "title": "Guías locales de viaje y comida",
+    "copy": "Rutas de ciudad y comida de barrio, revisadas antes de publicarse.",
+    "placeholder": "París, ramen, Bali",
+    "search": "Buscar",
+    "promote": "Promocionar mi local"
+  },
+  "footer": { "promote": "Promocionar mi local" },
+  "magazineRequest": {
+    "writingLanguage": "Idioma del texto",
+    "writingHint": "Publicamos una edición en inglés y otra en coreano a partir de tu texto."
+  },
+  "events": {
+    "claim": "Canjear con puntos",
+    "pointsCost": "{{points}} puntos",
+    "claimDone": "El vale está en tu cartera.",
+    "claimFailed": "No se pudo canjear el vale.",
+    "partnersTitle": "Locales asociados"
+  },
+  "wallet": {
+    "vouchers": "Mis vales",
+    "emptyVouchers": "Aún no hay vales.",
+    "showCode": "Ver código",
+    "qrTitle": "Muestra esta pantalla en el local",
+    "qrClose": "Cerrar",
+    "coupon": "Número de cupón",
+    "reasonVoucher": "Vale canjeado",
+    "anchor": "Huella de la edición en inglés"
+  },
+  "promote": {
+    "pageTitle": "Promocionar mi local",
+    "pageLead": "Cuéntanos un local, un alojamiento o una experiencia. Tras la aprobación publicamos una revista de socio.",
+    "storeName": "Nombre del local",
+    "category": "Categoría",
+    "address": "Dirección",
+    "email": "Correo de contacto",
+    "phone": "Teléfono",
+    "description": "Descripción",
+    "images": "Enlaces de fotos",
+    "imagesHint": "Un enlace por línea",
+    "photoFile": "Subir una foto",
+    "benefit": "Beneficio para el viajero",
+    "benefitHint": "10% de descuento o una bebida",
+    "submit": "Enviar solicitud",
+    "submitting": "Enviando...",
+    "success": "Solicitud recibida. La revista se publica tras la aprobación.",
+    "failed": "No se pudo enviar la solicitud.",
+    "home": "Volver al inicio",
+    "categories": {
+      "food": "Comida coreana",
+      "beauty": "Belleza",
+      "stay": "Alojamiento",
+      "experience": "Experiencia",
+      "tour": "Tour"
+    }
+  }
+}

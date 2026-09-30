@@ -1,7 +1,7 @@
 # Progress
 
 ## Current
-K-Culture spotlight, Google/Apple/Kakao sign-in, and the point wallet are on `main`.
+Globe language picker, Promote My Store applications, and point vouchers are on `main`.
 
 ## Completed
 1. Guest magazine request system
@@ -49,6 +49,13 @@ K-Culture spotlight, Google/Apple/Kakao sign-in, and the point wallet are on `ma
    - `/wallet` and `/mypage` show the profile, point balance, history, report state (`PENDING`, `VERIFIED`, `PUBLISHED`), an XRPL explorer link when `xrpl_tx_hash` is set, and saved magazines.
    - The sign-in modal opens for a report, point check, voucher, or save when there is no session. A report can continue as a guest.
 
+7. Globe picker, partner applications, and O2O vouchers
+   - The header globe opens English, Korean, Japanese, Simplified Chinese, Traditional Chinese, Vietnamese, Thai, Spanish, and French. The choice is stored as `app_lang` and the visible chrome switches immediately.
+   - `/magazine-request` sends `submit_language`. A verified report publishes `{city}_guest_{id}_guide.md` in English and `{city}_guest_{id}_ko_guide.md` in Korean. `english_sha256` is the SHA-256 of the English file and is the hash to anchor on XRPL.
+   - Set `MAGAZINE_TRANSLATE_LLM=1` when the translation agent should call Gemini before the offline standard text. Without that flag, publish stays offline.
+   - Header, home banner, and footer link to `/promote-store`. `POST /api/partners` stores `PENDING_APPROVAL`. Admin approval writes a Partner Verified Magazine and sets `is_active`.
+   - `/events` and the guide footer list active shops. `POST /api/vouchers/claim` spends points for an 8-character code and a signed QR. `/wallet` shows it. `POST /api/vouchers/verify` checks or redeems the code.
+
 ## Deployment checklist
 - `app.main` imports without loading `litellm`. OpenRouter still imports it only when a fallback call runs.
 - Frontend `npm run build` and `npm test` pass.
@@ -57,28 +64,22 @@ K-Culture spotlight, Google/Apple/Kakao sign-in, and the point wallet are on `ma
 - Do not commit `venv/`. Local site-packages were mutated outside the project requirements.
 
 ## Files touched in this step
-- `app/schemas/oauth_schema.py`
-- `app/services/oauth_service.py`
-- `app/services/wallet_service.py`
-- `app/services/rewards_service.py`
-- `app/services/magazine_request_service.py`
-- `app/models/rewards.py`
-- `app/models/magazine_requests.py`
-- `app/routers/oauth.py`
-- `app/routers/wallet.py`
-- `app/main.py`
-- `frontend/src/lib/kculture.js`
-- `frontend/src/lib/session.js`
+- `app/services/magazine_translation.py`
+- `app/agents/translation_agent.py`
+- `app/services/partner_service.py`
+- `app/services/voucher_service.py`
+- `app/services/qr_svg.py`
+- `app/routers/partners.py`
+- `app/routers/vouchers.py`
+- `frontend/src/i18n/i18n.js`
+- `frontend/src/components/portal/GlobalNav.jsx`
+- `frontend/src/pages/PromoteStorePage.jsx`
 - `frontend/src/pages/WalletPage.jsx`
-- `frontend/src/components/portal/KCultureBar.jsx`
-- `frontend/src/components/portal/SocialLoginModal.jsx`
-- `guides/korea_3_days_kbeauty_kfood_guide.md`
-- `guides/seoul_1_day_kpop_trend_guide.md`
-- `guides/korea_1_week_heritage_luxury_guide.md`
 - `docs/skill.md`
 
 ## Notes
 - Legacy `{city}_guide.md` files stay on the city page when both duration and budget chips are All, and when the Korea spotlight is off.
 - Point balances now follow the signed-in user. Until someone signs in, accrual still keys off the reporter email.
-- Partner shops stay an empty table until a merchant row is inserted. The voucher button opens the wallet after sign-in.
-- An XRPL link appears only after `xrpl_tx_hash` is stored on the report. Empty hashes stay as “ledger link is not ready.”
+- Partner shops appear on `/events` after an admin approves the application. Until then the public list stays empty.
+- An XRPL link appears only after `xrpl_tx_hash` is stored on the report. The English magazine SHA-256 is stored separately as `english_sha256`.
+- `VOUCHER_SECRET` signs voucher QR payloads. It falls back to `OAUTH_TOKEN_SECRET`.

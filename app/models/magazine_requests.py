@@ -28,6 +28,9 @@ _COLUMNS = (
     "fact_check_status",
     "verification_note",
     "published_guide_id",
+    "submit_language",
+    "english_sha256",
+    "korean_guide_id",
     "created_at",
 )
 
@@ -49,6 +52,9 @@ CREATE TABLE IF NOT EXISTS magazine_requests (
     fact_check_status TEXT NOT NULL DEFAULT 'PENDING',
     verification_note TEXT NOT NULL DEFAULT '',
     published_guide_id TEXT NOT NULL DEFAULT '',
+    submit_language TEXT NOT NULL DEFAULT 'en',
+    english_sha256 TEXT NOT NULL DEFAULT '',
+    korean_guide_id TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL
 );
 """
@@ -60,6 +66,9 @@ _ADDED_COLUMNS = {
     "fact_check_status": "TEXT NOT NULL DEFAULT 'PENDING'",
     "verification_note": "TEXT NOT NULL DEFAULT ''",
     "published_guide_id": "TEXT NOT NULL DEFAULT ''",
+    "submit_language": "TEXT NOT NULL DEFAULT 'en'",
+    "english_sha256": "TEXT NOT NULL DEFAULT ''",
+    "korean_guide_id": "TEXT NOT NULL DEFAULT ''",
     "user_id": "INTEGER NOT NULL DEFAULT 0",
     "xrpl_tx_hash": "TEXT NOT NULL DEFAULT ''",
 }
@@ -103,6 +112,7 @@ def insert_request(
     discovery_story: str,
     reference_urls: str,
     created_at: str,
+    submit_language: str = "en",
 ) -> int:
     conn.execute("BEGIN IMMEDIATE")
     try:
@@ -111,8 +121,8 @@ def insert_request(
             INSERT INTO magazine_requests (
                 author_type, nickname, email, country, city, place, review, photo_url,
                 transport_info, discovery_story, reference_urls,
-                status, fact_check_status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                status, fact_check_status, submit_language, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 author_type,
@@ -128,6 +138,7 @@ def insert_request(
                 reference_urls,
                 PENDING_REVIEW,
                 FACT_PENDING,
+                submit_language or "en",
                 created_at,
             ),
         )
@@ -152,6 +163,23 @@ def update_fact_check(
         WHERE id = ?
         """,
         (fact_check_status, verification_note, int(request_id)),
+    )
+
+
+def mark_published_editions(
+    conn: sqlite3.Connection,
+    request_id: int,
+    guide_id: str,
+    korean_guide_id: str,
+    english_sha256: str,
+) -> None:
+    conn.execute(
+        """
+        UPDATE magazine_requests
+        SET status = ?, published_guide_id = ?, korean_guide_id = ?, english_sha256 = ?
+        WHERE id = ?
+        """,
+        (PUBLISHED, guide_id, korean_guide_id, english_sha256, int(request_id)),
     )
 
 

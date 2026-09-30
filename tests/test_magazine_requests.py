@@ -1,6 +1,8 @@
 """게스트 매거진 제보. 가이드 생성 LLM은 호출하지 않는다."""
 
 import base64
+import hashlib
+import re
 
 import pytest
 from fastapi import FastAPI
@@ -92,6 +94,7 @@ def test_anonymous_request_is_pending_review(client):
     assert body["guide_source"]["keyword"] == "Yanaka Ginza"
     assert body["guide_source"]["author_label"] == "Anonymous"
     assert body["guide_source"]["ready_for_one_click"] is False
+    assert body["submit_language"] == "en"
 
 
 def test_public_name_requires_nickname_and_review_length(client):
@@ -152,10 +155,12 @@ def test_reliability_fields_and_verified_one_click_draft(client, tmp_path):
             transport_info="Buy a subway day pass and walk the last stop.",
             discovery_story="A coworker insisted after their own visit.",
             reference_urls="https://example.com/blog https://youtu.be/yanaka",
+            submit_language="ko",
         ),
     )
     assert created.status_code == 200
     body = created.json()
+    assert body["submit_language"] == "ko"
     assert "subway day pass" in body["transport_info"]
     assert body["reference_urls"] == "https://example.com/blog\nhttps://youtu.be/yanaka"
     request_id = body["id"]
@@ -189,7 +194,16 @@ def test_reliability_fields_and_verified_one_click_draft(client, tmp_path):
     assert "subway day pass" in article
     assert "coworker insisted" in article
     assert "https://youtu.be/yanaka" in article
+    assert "language: \"en\"" in article
+    assert not re.search(r"[\uac00-\ud7a3]", article)
     assert published.json()["article_markdown"] == article
+    korean_id = published.json()["korean_guide_id"]
+    korean = (tmp_path / "guides" / korean_id).read_text(encoding="utf-8")
+    assert "가는 길" in korean
+    assert "지하철" in korean
+    digest = published.json()["english_sha256"]
+    assert digest == hashlib.sha256(article.encode("utf-8")).hexdigest()
+    assert len(digest) == 64
 
     again = client.post(
         "/api/v1/admin/magazine-requests/{0}/publish".format(request_id),

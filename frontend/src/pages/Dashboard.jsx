@@ -238,6 +238,86 @@ export function applyGuideApproval(stats, filename) {
   };
 }
 
+function PartnerApprovals({ onUnauthorized }) {
+  const { t } = useTranslation();
+  const [rows, setRows] = useState([]);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [busy, setBusy] = useState(0);
+
+  const load = () => {
+    fetch(`${API_BASE_URL}/admin/partners`, { headers: adminAuthHeaders() })
+      .then(async (res) => {
+        if (res.status === 401) {
+          onUnauthorized();
+          throw new Error("Unauthorized");
+        }
+        if (!res.ok) throw new Error(t("dashboard.partnerFailed"));
+        return res.json();
+      })
+      .then((data) => setRows(Array.isArray(data?.partners) ? data.partners : []))
+      .catch((err) => {
+        if (err.message !== "Unauthorized") setError(err.message || t("dashboard.partnerFailed"));
+      });
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const approve = async (id) => {
+    setBusy(id);
+    setNotice("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/partners/${id}/approve`, {
+        method: "POST",
+        headers: adminAuthHeaders(),
+      });
+      if (res.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      if (!res.ok) throw new Error(t("dashboard.partnerFailed"));
+      setNotice(t("dashboard.partnerDone"));
+      load();
+    } catch (err) {
+      setNotice(err.message || t("dashboard.partnerFailed"));
+    } finally {
+      setBusy(0);
+    }
+  };
+
+  return (
+    <section className="guest-requests" aria-label={t("dashboard.tabPartners")}>
+      <h2>{t("dashboard.tabPartners")}</h2>
+      <p>{t("dashboard.partnerLead")}</p>
+      {error ? <p className="dash-banner error">{error}</p> : null}
+      {notice ? <p className="dash-banner">{notice}</p> : null}
+      {rows.length ? (
+        <ul className="wallet-list">
+          {rows.map((row) => (
+            <li key={row.id}>
+              <span>
+                <strong>{row.store_name}</strong>
+                <small>{`${row.category} · ${row.status} · ${row.offered_benefit}`}</small>
+              </span>
+              {row.is_active ? (
+                <small>{row.guide_id}</small>
+              ) : (
+                <button type="button" disabled={busy === row.id} onClick={() => approve(row.id)}>
+                  {t("dashboard.partnerApprove")}
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>{t("dashboard.partnerEmpty")}</p>
+      )}
+    </section>
+  );
+}
+
 export default function Dashboard({ onUnauthorized }) {
   const { t } = useTranslation();
   const [stats, setStats] = useState(EMPTY_STATS);
@@ -480,10 +560,21 @@ export default function Dashboard({ onUnauthorized }) {
         >
           {t("dashboard.tabGuests")}
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={panel === "partners"}
+          className={panel === "partners" ? "is-active" : ""}
+          onClick={() => setPanel("partners")}
+        >
+          {t("dashboard.tabPartners")}
+        </button>
       </div>
 
       {panel === "guests" ? (
         <GuestRequests onUnauthorized={onUnauthorized} />
+      ) : panel === "partners" ? (
+        <PartnerApprovals onUnauthorized={onUnauthorized} />
       ) : (
         <>
       <div className="dash-metrics" aria-label={t("dashboard.metricsLabel")}>

@@ -1,0 +1,84 @@
+{
+  "language": { "label": "語言" },
+  "nav": {
+    "home": "首頁",
+    "destinations": "目的地",
+    "allRegions": "全部地區",
+    "asia": "亞洲",
+    "europe": "歐洲",
+    "americas": "美洲",
+    "oceania": "大洋洲",
+    "localFood": "在地美食",
+    "community": "社群",
+    "events": "活動與回饋",
+    "searchPlaceholder": "搜尋",
+    "searchGuides": "搜尋指南",
+    "openMenu": "開啟選單",
+    "closeMenu": "關閉選單",
+    "categories": "分類",
+    "dashboard": "儀表板",
+    "admin": "管理",
+    "logout": "登出",
+    "signIn": "登入",
+    "wallet": "錢包",
+    "hotCountry": "韓國熱點",
+    "promoteStore": "推廣我的店"
+  },
+  "hero": {
+    "kicker": "旅行桌",
+    "title": "查找在地行程與美食指南",
+    "copy": "城市路線和鄰里美食，發布前已經核對。",
+    "placeholder": "試試巴黎、拉麵、峇里島",
+    "search": "搜尋",
+    "promote": "推廣我的店"
+  },
+  "footer": { "promote": "推廣我的店" },
+  "magazineRequest": {
+    "writingLanguage": "撰寫語言",
+    "writingHint": "我們會把投稿做成英文和韓文兩份標準雜誌。"
+  },
+  "events": {
+    "claim": "用點數兌換",
+    "pointsCost": "{{points}} 點",
+    "claimDone": "優惠券已放入錢包。",
+    "claimFailed": "無法領取優惠券。",
+    "partnersTitle": "合作店家"
+  },
+  "wallet": {
+    "vouchers": "我的優惠券",
+    "emptyVouchers": "還沒有優惠券。",
+    "showCode": "顯示代碼",
+    "qrTitle": "請在店裡出示這個畫面",
+    "qrClose": "關閉",
+    "coupon": "優惠碼",
+    "reasonVoucher": "兌換優惠券",
+    "anchor": "英文標準文件指紋"
+  },
+  "promote": {
+    "pageTitle": "推廣我的店",
+    "pageLead": "介紹店家、住宿或體驗。審核通過後會發布合作雜誌。",
+    "storeName": "店家名稱",
+    "category": "類別",
+    "address": "地址",
+    "email": "聯絡信箱",
+    "phone": "電話",
+    "description": "店家介紹",
+    "images": "圖片連結",
+    "imagesHint": "每行一個連結",
+    "photoFile": "上傳圖片",
+    "benefit": "顧客優惠",
+    "benefitHint": "九折，或贈一杯飲品",
+    "submit": "送出申請",
+    "submitting": "傳送中",
+    "success": "已收到申請。審核通過後會發布雜誌。",
+    "failed": "申請未能送出。",
+    "home": "回到首頁",
+    "categories": {
+      "food": "韓國美食",
+      "beauty": "美妝",
+      "stay": "住宿",
+      "experience": "體驗",
+      "tour": "遊覽"
+    }
+  }
+}

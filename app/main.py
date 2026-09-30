@@ -15,7 +15,9 @@ from fastapi.responses import Response
 from app.agents.marketing_agent import run_marketing_pipeline
 from app.routers.magazine_requests import router as magazine_router
 from app.routers.oauth import router as oauth_router
+from app.routers.partners import router as partners_router
 from app.routers.rewards import router as rewards_router
+from app.routers.vouchers import router as vouchers_router
 from app.routers.stats import router as stats_router
 from app.routers.votes import router as vote_router
 from app.routers.wallet import router as wallet_router
@@ -96,6 +98,8 @@ app.include_router(vote_router)
 app.include_router(rewards_router)
 app.include_router(oauth_router)
 app.include_router(wallet_router)
+app.include_router(partners_router)
+app.include_router(vouchers_router)
 
 app.add_middleware(
     CORSMiddleware,

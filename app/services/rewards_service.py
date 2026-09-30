@@ -36,11 +36,27 @@ def _stamp() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def _public_partner(row: Dict[str, object]) -> Dict[str, object]:
+    return {
+        "id": int(row["id"]),
+        "name": str(row.get("name") or ""),
+        "city": str(row.get("city") or ""),
+        "discount_rate": float(row.get("discount_rate") or 0),
+        "status": str(row.get("status") or ""),
+        "category": str(row.get("category") or ""),
+        "address": str(row.get("address") or ""),
+        "offered_benefit": str(row.get("offered_benefit") or ""),
+        "voucher_points": int(row.get("voucher_points") or 50),
+    }
+
+
 def overview() -> Dict[str, object]:
     with _LOCK:
         conn = reward_store.connect(db_path())
         try:
-            partners = reward_store.fetch_partners(conn)
+            partners = [
+                _public_partner(row) for row in reward_store.fetch_partners(conn, active_only=True)
+            ]
         finally:
             conn.close()
     return {

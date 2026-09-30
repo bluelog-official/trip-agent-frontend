@@ -2,7 +2,14 @@
   "language": {
     "label": "Language",
     "en": "English",
-    "ko": "Korean"
+    "ko": "Korean",
+    "ja": "Japanese",
+    "zhCN": "Simplified Chinese",
+    "zhTW": "Traditional Chinese",
+    "vi": "Vietnamese",
+    "th": "Thai",
+    "es": "Spanish",
+    "fr": "French"
   },
   "nav": {
     "home": "Home",
@@ -25,7 +32,8 @@
     "logout": "Logout",
     "signIn": "Sign in",
     "wallet": "Wallet",
-    "hotCountry": "Hot Spot: Korea"
+    "hotCountry": "Hot Spot: Korea",
+    "promoteStore": "Promote My Store"
   },
   "footer": {
     "brand": "Brand",
@@ -53,6 +61,7 @@
     "community": "Community Log",
     "events": "Events & Rewards",
     "wallet": "Wallet",
+    "promote": "Promote My Store",
     "copyright": "Copyright ⓒ 2026 BlueLog Trip. All rights reserved."
   },
   "hero": {
@@ -60,7 +69,8 @@
     "title": "Find Local Trip & Food Guides",
     "copy": "City routes, neighborhood meals, and guides that passed QA before they go live.",
     "placeholder": "Try Paris, ramen, Bali…",
-    "search": "Search"
+    "search": "Search",
+    "promote": "Promote My Store"
   },
   "globe": {
     "kicker": "Published guides",
@@ -438,6 +448,8 @@
     "optional": "(optional)",
     "photoUrl": "Photo URL",
     "photoFile": "Upload a photo",
+    "writingLanguage": "Writing language",
+    "writingHint": "We publish an English edition and a Korean edition from the language you write in.",
     "submit": "Send request",
     "submitting": "Sending...",
     "success": "Request received. We will review it before publishing.",
@@ -473,6 +485,13 @@
     "publishDraft": "Create magazine draft",
     "publishDone": "Draft saved as {{guide}}",
     "publishFailed": "The magazine draft could not be created.",
+    "tabPartners": "Partner stores",
+    "partnerLead": "Approving a store publishes a Partner Verified Magazine and turns the shop on.",
+    "partnerEmpty": "No store applications are waiting.",
+    "partnerApprove": "Approve and publish",
+    "partnerDone": "The partner magazine was published.",
+    "partnerFailed": "The store could not be approved.",
+    "partnerPending": "Waiting for approval",
     "fact": {
       "PENDING": "Fact check pending",
       "VERIFIED": "Verified",
@@ -544,8 +563,12 @@
     "checkPoints": "Check points",
     "issueVoucher": "Open voucher",
     "partnersTitle": "Partner shop discounts",
-    "partnersBody": "Offline partner shops will apply a discount when a signed-in guest shows their points. The shop list below is the live partner table. It stays empty until a shop is added.",
+    "partnersBody": "Approved partner shops are listed here. Spend points to claim a discount voucher and show the code in the shop.",
     "partnersEmpty": "No partner shops are connected yet.",
+    "claim": "Claim with points",
+    "pointsCost": "{{points}} points",
+    "claimDone": "The voucher is in your wallet.",
+    "claimFailed": "The voucher could not be claimed.",
     "requestCta": "Send a place report"
   },
   "kculture": {
@@ -583,6 +606,14 @@
     "history": "History",
     "reports": "My reports",
     "saved": "Saved magazines",
+    "vouchers": "My vouchers",
+    "emptyVouchers": "No vouchers yet.",
+    "showCode": "Show code",
+    "qrTitle": "Show this screen at the shop",
+    "qrClose": "Close",
+    "coupon": "Coupon number",
+    "reasonVoucher": "Voucher claimed",
+    "anchor": "English edition fingerprint",
     "emptyHistory": "No points have been added yet.",
     "emptyReports": "No reports are linked to this account.",
     "emptySaved": "No magazines are saved yet.",
@@ -597,5 +628,32 @@
     "remove": "Remove",
     "signInRequired": "Sign in to open the wallet.",
     "loadError": "The wallet could not be loaded."
+  },
+  "promote": {
+    "pageTitle": "Promote My Store",
+    "pageLead": "Tell us about a shop, stay, or experience. After approval we publish a partner magazine and list the guest benefit.",
+    "storeName": "Store name",
+    "category": "Category",
+    "address": "Address",
+    "email": "Contact email",
+    "phone": "Phone",
+    "description": "Store description",
+    "images": "Photo URLs",
+    "imagesHint": "One http or https link per line",
+    "photoFile": "Upload a photo",
+    "benefit": "Guest benefit",
+    "benefitHint": "10% off, or a free drink",
+    "submit": "Send application",
+    "submitting": "Sending...",
+    "success": "Application received. A partner magazine is published after approval.",
+    "failed": "The application could not be sent.",
+    "home": "Back to home",
+    "categories": {
+      "food": "K-Food",
+      "beauty": "K-Beauty",
+      "stay": "Stay",
+      "experience": "Experience",
+      "tour": "Tour"
+    }
   }
 }

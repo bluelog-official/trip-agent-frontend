@@ -165,7 +165,9 @@ class GenerateResponse(BaseModel):
 - `guide_source`는 `destination`(도시, 국가), `keyword`(추천 장소), 후기, 사진 주소, `transport_info`, `discovery_story`, `reference_urls`를 담는다.
 - 신규 행의 `fact_check_status`는 `PENDING`이다. `VERIFIED`이고 아직 초안이 없을 때만 `ready_for_one_click`이 true다.
 - `PATCH /api/v1/admin/magazine-requests/{id}/fact-check`는 `PENDING`, `VERIFIED`, `REJECTED`와 검증 노트를 저장한다. Bearer 필수.
-- `POST /api/v1/admin/magazine-requests/{id}/publish`는 `VERIFIED` 제보만 `{city}_guest_{id}_guide.md` 초안으로 쓴다. 본문에 교통, 발굴 계기, 참고 URL이 들어간다.
+- `POST /api/v1/admin/magazine-requests/{id}/publish`는 `VERIFIED` 제보만 영어 표준 `{city}_guest_{id}_guide.md`와 한국어 표준 `{city}_guest_{id}_ko_guide.md`를 쓴다. 본문에 교통, 발굴 계기, 참고 URL이 들어간다.
+- 접수 본문의 `submit_language`는 `en`, `ko`, `ja`, `zh-CN`, `zh-TW`, `vi`, `th`, `es`, `fr` 중 하나다. 비어 있으면 `en`.
+- 영문 파일의 SHA-256은 `english_sha256`에 남는다. 이 값이 XRPL에 앵커링할 표준 해시이다. `MAGAZINE_TRANSLATE_LLM=1`이면 번역 에이전트가 본문을 먼저 옮기고, 실패하면 규칙 기반 표준 문서로 떨어진다.
 - DB 기본 경로는 `output/magazine_requests.db`. 테스트는 `MAGAZINE_REQUESTS_DB_PATH`, `MAGAZINE_UPLOAD_DIR`, `MAGAZINE_GUIDE_DIR`로 바꾼다.
 
 ## 12. Points and partner shops
@@ -181,6 +183,9 @@ class GenerateResponse(BaseModel):
 - `GET /api/v1/rewards/overview`는 공개. `POST /api/v1/rewards/accrue`는 Bearer 필수.
 - DB 기본 경로는 `output/rewards.db`. 테스트는 `REWARDS_DB_PATH`로 바꾼다.
 - 구글·애플·카카오 로그인은 `auth_provider`에 기록한다. 이벤트 페이지(`/events`)가 적립 규칙, 포인트 조회, 바우처 진입을 보여 준다.
+- 제휴 입점 `POST /api/partners`는 `partner_merchants.status = PENDING_APPROVAL`로 저장한다. 필드는 상점 이름, 분류, 주소, 연락 메일, 전화, 소개, 사진 주소, 손님 혜택이다.
+- `POST /api/v1/admin/partners/{id}/approve`는 Bearer 필수. 승인하면 `APPROVED`, `is_active = 1`이 되고 `{slug}_partner_{id}_guide.md` Partner Verified Magazine이 생긴다.
+- 공개 `GET /api/v1/rewards/overview`의 `partners`는 활성화된 상점만 돌려준다. 연락 메일은 넣지 않는다.
 
 ## 10. Article Votes
 
@@ -225,4 +230,15 @@ class GenerateResponse(BaseModel):
 - 프론트매터 `hot_country: Korea`와 `k_themes`가 테마를 정한다. 파일명의 `kfood`, `kbeauty`, `kpop`, `trend`, `heritage`도 같은 태그에 매핑된다.
 - 태그: `K-Food`, `K-Beauty`, `K-Pop & Culture`, `K-Trend`
 - 헤더의 Hot Spot: Korea 토글과 지도 위 배너가 같은 필터를 켠다. 켜져 있으면 목록은 이 테마 가이드만 보여 준다.
+
+## 15. Language picker
+
+- 헤더 지구본은 `en`, `ko`, `ja`, `zh-CN`, `zh-TW`, `vi`, `th`, `es`, `fr`를 고른다. 선택은 `app_lang`에 남고 화면 문구가 바로 바뀐다.
+- 제보 양식은 고른 `submit_language`를 `POST /api/magazine-requests`에 같이 보낸다.
+
+## 16. Point vouchers
+
+- `POST /api/vouchers/claim`은 사용자 Bearer가 필요하다. 승인된 상점의 `voucher_points`(기본 50)를 빼고 8자 `voucher_code`와 서명 `qr_token`, SVG QR을 만든다.
+- `POST /api/vouchers/verify`는 코드와 선택적 `qr_token`을 확인한다. `consume: true`면 `REDEEMED`로 바꾼다.
+- 지갑 `/wallet`과 `/mypage`의 내 바우처 탭이 QR을 연다. 서명 비밀은 `VOUCHER_SECRET`이고, 없으면 `OAUTH_TOKEN_SECRET`을 쓴다.
 

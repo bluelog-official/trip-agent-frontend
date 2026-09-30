@@ -6,6 +6,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import MagazineRequestPage from "./pages/MagazineRequestPage";
+import PromoteStorePage from "./pages/PromoteStorePage";
 import EventsPage from "./pages/EventsPage";
 import WalletPage from "./pages/WalletPage";
 import NotFound from "./pages/NotFound";
@@ -216,6 +217,26 @@ export default function App() {
     }
     setAuthDismissed("");
     requestAuth("points");
+  };
+
+  const claimVoucher = async (partner) => {
+    if (!session?.token) {
+      setAuthDismissed("");
+      requestAuth("voucher");
+      return { ok: false, reason: "auth" };
+    }
+    const response = await fetch(`${apiOrigin()}/api/vouchers/claim`, {
+      method: "POST",
+      headers: authHeaders(session.token, { "Content-Type": "application/json" }),
+      body: JSON.stringify({ merchant_id: partner.id }),
+    });
+    if (response.status === 401) {
+      requestAuth("voucher");
+      return { ok: false, reason: "auth" };
+    }
+    if (!response.ok) return { ok: false, reason: "failed" };
+    go("/wallet");
+    return { ok: true };
   };
 
   const handleSaveGuide = async () => {
@@ -500,7 +521,12 @@ export default function App() {
 
       {route.name === "home" ? (
         <>
-          <HeroSearch query={query} onQueryChange={setQuery} onSearch={handleSearch} />
+          <HeroSearch
+            query={query}
+            onQueryChange={setQuery}
+            onSearch={handleSearch}
+            onPromote={() => go("/promote-store")}
+          />
           <GlobeMap
             onOpenCity={openCityGuides}
             hotCountry={hotKorea}
@@ -508,7 +534,10 @@ export default function App() {
             onToggleHot={toggleHotKorea}
             onTheme={selectKTheme}
           />
-          <MagazineRequestCta onRequest={() => go("/magazine-request")} />
+          <MagazineRequestCta
+            onRequest={() => go("/magazine-request")}
+            onPromote={() => go("/promote-store")}
+          />
           <div className="ad-band">
             <AdSenseUnit slotId="hero-below" format="auto" />
           </div>
@@ -538,10 +567,13 @@ export default function App() {
           <Contact />
         ) : route.name === "magazineRequest" ? (
           <MagazineRequestPage onNavigate={go} />
+        ) : route.name === "promoteStore" ? (
+          <PromoteStorePage onNavigate={go} />
         ) : route.name === "events" ? (
           <EventsPage
             onNavigate={go}
             onCheckPoints={openWallet}
+            onClaimVoucher={claimVoucher}
             onIssueVoucher={() => {
               if (session) go("/wallet");
               else requestAuth("voucher");
@@ -592,6 +624,7 @@ export default function App() {
                   adminMode={adminMode}
                   saved={savedIds.includes(route.guideId)}
                   onSave={handleSaveGuide}
+                  onClaimVoucher={claimVoucher}
                 />
               ) : (
                 <ArticleGrid

@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-export default function HeroSearch({ query, onQueryChange, onSearch }) {
+export default function HeroSearch({ query, onQueryChange, onSearch, onPromote }) {
   const { t } = useTranslation();
   return (
     <section className="hero">
@@ -19,6 +19,9 @@ export default function HeroSearch({ query, onQueryChange, onSearch }) {
         />
         <button type="submit">{t("hero.search")}</button>
       </form>
+      <button type="button" className="hero-promote" onClick={onPromote}>
+        {t("hero.promote")}
+      </button>
     </section>
   );
 }

@@ -13,6 +13,38 @@ _URL_SPLIT = re.compile(r"[\s,]+")
 FactCheckStatus = Literal["PENDING", "VERIFIED", "REJECTED"]
 RequestStatus = Literal["PENDING_REVIEW", "PUBLISHED"]
 
+_SUBMIT_LANGUAGES = {
+    "en": "en",
+    "english": "en",
+    "ko": "ko",
+    "kr": "ko",
+    "korean": "ko",
+    "ja": "ja",
+    "jp": "ja",
+    "japanese": "ja",
+    "zh-cn": "zh-CN",
+    "zh-hans": "zh-CN",
+    "zh": "zh-CN",
+    "zh-tw": "zh-TW",
+    "zh-hant": "zh-TW",
+    "vi": "vi",
+    "vietnamese": "vi",
+    "th": "th",
+    "thai": "th",
+    "es": "es",
+    "spanish": "es",
+    "fr": "fr",
+    "french": "fr",
+}
+
+
+def normalize_submit_language(value: str) -> str:
+    raw = (value or "").strip()
+    mapped = _SUBMIT_LANGUAGES.get(raw.lower())
+    if mapped:
+        return mapped
+    return "en"
+
 
 def normalize_reference_urls(value: str) -> str:
     """공백·쉼표로 나뉜 http(s) 주소를 줄바꿈으로 맞춘다."""
@@ -36,6 +68,12 @@ class MagazineRequestCreate(BaseModel):
     transport_info: str = ""
     discovery_story: str = ""
     reference_urls: str = ""
+    submit_language: str = "en"
+
+    @field_validator("submit_language", mode="before")
+    @classmethod
+    def _language(cls, value: object) -> str:
+        return normalize_submit_language("" if value is None else str(value))
 
     @field_validator(
         "nickname",
@@ -87,6 +125,7 @@ class GuideSource(BaseModel):
     transport_info: str = ""
     discovery_story: str = ""
     reference_urls: str = ""
+    submit_language: str = "en"
     fact_check_status: FactCheckStatus = "PENDING"
     ready_for_one_click: bool = False
 
@@ -108,6 +147,9 @@ class MagazineRequestRecord(BaseModel):
     fact_check_status: FactCheckStatus = "PENDING"
     verification_note: str = ""
     published_guide_id: str = ""
+    submit_language: str = "en"
+    english_sha256: str = ""
+    korean_guide_id: str = ""
     created_at: str
     guide_source: GuideSource
 
@@ -133,3 +175,5 @@ class GuestPublishResult(BaseModel):
     guide_id: str
     fact_check_status: FactCheckStatus
     article_markdown: str
+    korean_guide_id: str = ""
+    english_sha256: str = ""

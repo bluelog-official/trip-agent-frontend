@@ -60,6 +60,7 @@ describe("MagazineRequestPage", () => {
       discovery_story: "A coworker recommended it.",
       reference_urls: "https://example.com/notes",
       photo_url: "https://example.com/a.jpg",
+      submit_language: "en",
     });
     expect((await screen.findByRole("status")).textContent).toMatch(/Request received/);
   });

@@ -1,0 +1,84 @@
+{
+  "language": { "label": "Ngôn ngữ" },
+  "nav": {
+    "home": "Trang chủ",
+    "destinations": "Điểm đến",
+    "allRegions": "Mọi khu vực",
+    "asia": "Châu Á",
+    "europe": "Châu Âu",
+    "americas": "Châu Mỹ",
+    "oceania": "Châu Đại Dương",
+    "localFood": "Món địa phương",
+    "community": "Cộng đồng",
+    "events": "Sự kiện và điểm",
+    "searchPlaceholder": "Tìm",
+    "searchGuides": "Tìm hướng dẫn",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu",
+    "categories": "Nhóm",
+    "dashboard": "Bảng điều khiển",
+    "admin": "Quản trị",
+    "logout": "Đăng xuất",
+    "signIn": "Đăng nhập",
+    "wallet": "Ví",
+    "hotCountry": "Điểm nóng Hàn Quốc",
+    "promoteStore": "Quảng bá cửa hàng"
+  },
+  "hero": {
+    "kicker": "Bàn du lịch",
+    "title": "Tìm hướng dẫn đi lại và món ăn",
+    "copy": "Lộ trình thành phố và món ăn đã được kiểm trước khi đăng.",
+    "placeholder": "Paris, mì ramen, Bali",
+    "search": "Tìm",
+    "promote": "Quảng bá cửa hàng"
+  },
+  "footer": { "promote": "Quảng bá cửa hàng" },
+  "magazineRequest": {
+    "writingLanguage": "Ngôn ngữ bài viết",
+    "writingHint": "Bài gửi sẽ được xuất thành tạp chí tiếng Anh và tiếng Hàn."
+  },
+  "events": {
+    "claim": "Đổi bằng điểm",
+    "pointsCost": "{{points}} điểm",
+    "claimDone": "Phiếu đã vào ví.",
+    "claimFailed": "Không nhận được phiếu.",
+    "partnersTitle": "Cửa hàng đối tác"
+  },
+  "wallet": {
+    "vouchers": "Phiếu của tôi",
+    "emptyVouchers": "Chưa có phiếu.",
+    "showCode": "Xem mã",
+    "qrTitle": "Đưa màn hình này cho cửa hàng",
+    "qrClose": "Đóng",
+    "coupon": "Mã phiếu",
+    "reasonVoucher": "Đổi phiếu",
+    "anchor": "Dấu vân của bản tiếng Anh"
+  },
+  "promote": {
+    "pageTitle": "Quảng bá cửa hàng",
+    "pageLead": "Giới thiệu cửa hàng, chỗ ở hoặc trải nghiệm. Sau khi duyệt chúng tôi đăng tạp chí đối tác.",
+    "storeName": "Tên cửa hàng",
+    "category": "Nhóm",
+    "address": "Địa chỉ",
+    "email": "Email liên hệ",
+    "phone": "Điện thoại",
+    "description": "Giới thiệu cửa hàng",
+    "images": "Liên kết ảnh",
+    "imagesHint": "Mỗi dòng một liên kết",
+    "photoFile": "Tải ảnh",
+    "benefit": "Ưu đãi cho khách",
+    "benefitHint": "Giảm 10%, hoặc một ly nước",
+    "submit": "Gửi đơn",
+    "submitting": "Đang gửi",
+    "success": "Đã nhận đơn. Tạp chí được đăng sau khi duyệt.",
+    "failed": "Không gửi được đơn.",
+    "home": "Về trang chủ",
+    "categories": {
+      "food": "Ẩm thực Hàn",
+      "beauty": "Làm đẹp",
+      "stay": "Lưu trú",
+      "experience": "Trải nghiệm",
+      "tour": "Tham quan"
+    }
+  }
+}

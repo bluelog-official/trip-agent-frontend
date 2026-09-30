@@ -1,26 +1,8 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { API_BASE_URL } from "../lib/guideCards";
+import PartnerOffers from "../components/portal/PartnerOffers";
 
-export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher }) {
+export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher, onClaimVoucher }) {
   const { t } = useTranslation();
-  const [partners, setPartners] = useState([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${API_BASE_URL}/rewards/overview`)
-      .then(async (res) => {
-        if (!res.ok) return null;
-        return res.json();
-      })
-      .then((data) => {
-        if (!cancelled && Array.isArray(data?.partners)) setPartners(data.partners);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   return (
     <article className="policy-page events-page">
@@ -46,20 +28,7 @@ export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher }
         </button>
       </div>
 
-      <h2>{t("events.partnersTitle")}</h2>
-      <p>{t("events.partnersBody")}</p>
-      {partners.length ? (
-        <ul className="partner-list">
-          {partners.map((partner) => (
-            <li key={partner.id}>
-              <strong>{partner.name}</strong>
-              {` · ${partner.city} · ${partner.discount_rate}% · ${partner.status}`}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>{t("events.partnersEmpty")}</p>
-      )}
+      <PartnerOffers onClaim={onClaimVoucher || (() => onIssueVoucher?.())} />
 
       <button type="button" className="text-link" onClick={() => onNavigate?.("/magazine-request")}>
         {t("events.requestCta")}

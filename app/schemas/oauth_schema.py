@@ -4,6 +4,8 @@ from typing import List, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.schemas.voucher_schema import VoucherCard
+
 
 SocialProvider = Literal["google", "apple", "kakao"]
 PublishState = Literal["PENDING", "VERIFIED", "PUBLISHED", "REJECTED"]
@@ -53,6 +55,7 @@ class WalletReport(BaseModel):
     published_guide_id: str = ""
     xrpl_tx_hash: str = ""
     xrpl_url: str = ""
+    content_sha256: str = ""
 
 
 class WalletView(BaseModel):
@@ -64,6 +67,7 @@ class WalletView(BaseModel):
     logs: List[WalletLog] = Field(default_factory=list)
     reports: List[WalletReport] = Field(default_factory=list)
     saved_guides: List[str] = Field(default_factory=list)
+    vouchers: List[VoucherCard] = Field(default_factory=list)
 
 
 class SavedGuideRequest(BaseModel):

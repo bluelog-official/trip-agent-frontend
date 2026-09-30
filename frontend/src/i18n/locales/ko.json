@@ -2,7 +2,14 @@
   "language": {
     "label": "언어",
     "en": "영어",
-    "ko": "한국어"
+    "ko": "한국어",
+    "ja": "일본어",
+    "zhCN": "중국어 간체",
+    "zhTW": "중국어 번체",
+    "vi": "베트남어",
+    "th": "태국어",
+    "es": "스페인어",
+    "fr": "프랑스어"
   },
   "nav": {
     "home": "홈",
@@ -25,7 +32,8 @@
     "logout": "로그아웃",
     "signIn": "로그인",
     "wallet": "지갑",
-    "hotCountry": "한국 인기 코스"
+    "hotCountry": "한국 인기 코스",
+    "promoteStore": "제휴 입점 문의"
   },
   "footer": {
     "brand": "브랜드",
@@ -53,6 +61,7 @@
     "community": "커뮤니티 기록",
     "events": "이벤트 & 혜택",
     "wallet": "지갑",
+    "promote": "제휴 입점",
     "copyright": "저작권 ⓒ 2026 BlueLog Trip. 모든 권리를 보유합니다."
   },
   "hero": {
@@ -60,7 +69,8 @@
     "title": "현지 여행과 음식 가이드 찾기",
     "copy": "도시 동선, 동네 식사, 공개 전에 품질 검사를 통과한 가이드를 모았습니다.",
     "placeholder": "파리, 라멘, 발리를 검색해 보세요",
-    "search": "검색"
+    "search": "검색",
+    "promote": "제휴 입점 문의"
   },
   "globe": {
     "kicker": "발행된 가이드",
@@ -438,6 +448,8 @@
     "optional": "(선택)",
     "photoUrl": "사진 주소",
     "photoFile": "사진 올리기",
+    "writingLanguage": "작성 언어",
+    "writingHint": "적은 글을 영어와 한국어 표준 문서로 옮겨 발행합니다.",
     "submit": "제보 보내기",
     "submitting": "보내는 중",
     "success": "제보가 접수되었습니다. 검토 후 매거진 발행을 준비합니다.",
@@ -473,6 +485,13 @@
     "publishDraft": "매거진 초안 만들기",
     "publishDone": "{{guide}} 초안을 저장했습니다.",
     "publishFailed": "매거진 초안을 만들지 못했습니다.",
+    "tabPartners": "제휴 상점",
+    "partnerLead": "승인하면 제휴 매거진이 발행되고 상점이 활성화됩니다.",
+    "partnerEmpty": "대기 중인 입점 신청이 없습니다.",
+    "partnerApprove": "승인하고 발행",
+    "partnerDone": "제휴 매거진을 발행했습니다.",
+    "partnerFailed": "승인하지 못했습니다.",
+    "partnerPending": "승인 대기",
     "fact": {
       "PENDING": "팩트체크 대기",
       "VERIFIED": "검증됨",
@@ -544,8 +563,12 @@
     "checkPoints": "포인트 조회",
     "issueVoucher": "바우처 열기",
     "partnersTitle": "오프라인 제휴 상점 할인",
-    "partnersBody": "로그인한 손님이 포인트를 보여 주면 제휴 상점에서 할인을 적용하는 구조입니다. 아래 목록은 제휴 상점 표이며, 상점이 등록되기 전에는 비어 있습니다.",
+    "partnersBody": "승인된 제휴 상점이 여기에 나옵니다. 포인트로 할인 바우처를 받아 매장에서 코드를 보여 주세요.",
     "partnersEmpty": "연결된 제휴 상점이 아직 없습니다.",
+    "claim": "포인트로 바우처 받기",
+    "pointsCost": "{{points}}포인트",
+    "claimDone": "바우처를 지갑에 넣었습니다.",
+    "claimFailed": "바우처를 받지 못했습니다.",
     "requestCta": "장소 제보하기"
   },
   "kculture": {
@@ -583,6 +606,14 @@
     "history": "내역",
     "reports": "내 제보",
     "saved": "저장한 매거진",
+    "vouchers": "내 바우처",
+    "emptyVouchers": "아직 바우처가 없습니다.",
+    "showCode": "코드 보기",
+    "qrTitle": "매장에 이 화면을 보여 주세요",
+    "qrClose": "닫기",
+    "coupon": "쿠폰 번호",
+    "reasonVoucher": "바우처 교환",
+    "anchor": "영문 표준 문서 지문",
     "emptyHistory": "아직 적립된 포인트가 없습니다.",
     "emptyReports": "이 계정에 연결된 제보가 없습니다.",
     "emptySaved": "저장한 매거진이 없습니다.",
@@ -597,5 +628,32 @@
     "remove": "삭제",
     "signInRequired": "지갑을 보려면 로그인하세요.",
     "loadError": "지갑을 불러오지 못했습니다."
+  },
+  "promote": {
+    "pageTitle": "제휴 입점 문의",
+    "pageLead": "상점, 숙소, 체험을 알리고 싶으면 아래 내용을 남겨 주세요. 확인 후 제휴 매거진으로 발행합니다.",
+    "storeName": "상점 이름",
+    "category": "분류",
+    "address": "주소",
+    "email": "연락 메일",
+    "phone": "전화",
+    "description": "매장 소개",
+    "images": "사진 주소",
+    "imagesHint": "한 줄에 주소 하나",
+    "photoFile": "사진 올리기",
+    "benefit": "손님 혜택",
+    "benefitHint": "한 그릇 할인, 음료 한 잔",
+    "submit": "입점 신청",
+    "submitting": "보내는 중",
+    "success": "신청이 접수되었습니다. 승인 후 매거진으로 이어집니다.",
+    "failed": "신청을 보내지 못했습니다.",
+    "home": "홈으로",
+    "categories": {
+      "food": "한식",
+      "beauty": "뷰티",
+      "stay": "숙소",
+      "experience": "체험",
+      "tour": "관광"
+    }
   }
 }

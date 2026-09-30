@@ -5,6 +5,7 @@ from typing import Dict, List
 
 from app.services.magazine_request_service import owned_requests
 from app.services.rewards_service import forget_guide, point_history, remember_guide, saved_guide_ids
+from app.services.voucher_service import list_vouchers
 
 
 _GUIDE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,180}$")
@@ -43,6 +44,7 @@ def _report(row: Dict[str, object]) -> Dict[str, object]:
         "published_guide_id": str(row.get("published_guide_id") or ""),
         "xrpl_tx_hash": tx_hash,
         "xrpl_url": xrpl_explorer_url(tx_hash),
+        "content_sha256": str(row.get("english_sha256") or ""),
     }
 
 
@@ -69,6 +71,7 @@ def wallet_for_user(user: Dict[str, object]) -> Dict[str, object]:
         "logs": logs,
         "reports": reports,
         "saved_guides": saved_guide_ids(user_id),
+        "vouchers": list_vouchers(user_id),
     }
 
 

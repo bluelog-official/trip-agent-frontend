@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import { apiOrigin } from "../lib/guideCards";
 import { authHeaders } from "../lib/session";
 
-const TABS = ["history", "reports", "saved"];
+const TABS = ["history", "reports", "saved", "vouchers"];
 
 function reasonLabel(reason, t) {
   if (reason === "MAGAZINE_PUBLISHED") return t("wallet.reasonPublished");
   if (reason === "UGC_TOP_RANK_BONUS") return t("wallet.reasonRank");
+  if (reason === "VOUCHER_CLAIM") return t("wallet.reasonVoucher");
   return reason;
 }
 
@@ -26,6 +27,7 @@ export default function WalletPage({ session, onNavigate }) {
   const [tab, setTab] = useState("history");
   const [wallet, setWallet] = useState(null);
   const [error, setError] = useState("");
+  const [openVoucher, setOpenVoucher] = useState(null);
 
   const load = () => {
     if (!session?.token) return undefined;
@@ -69,7 +71,9 @@ export default function WalletPage({ session, onNavigate }) {
     logs: [],
     reports: [],
     saved_guides: [],
+    vouchers: [],
   };
+  const vouchers = profile.vouchers || [];
 
   return (
     <article className="policy-page wallet-page">
@@ -131,6 +135,7 @@ export default function WalletPage({ session, onNavigate }) {
                 ) : (
                   <small>{t("wallet.ledgerPending")}</small>
                 )}
+                {row.content_sha256 ? <small>{`${t("wallet.anchor")} ${row.content_sha256}`}</small> : null}
               </li>
             ))}
           </ul>
@@ -155,6 +160,49 @@ export default function WalletPage({ session, onNavigate }) {
         ) : (
           <p>{t("wallet.emptySaved")}</p>
         )
+      ) : null}
+      {tab === "vouchers" ? (
+        vouchers.length ? (
+          <ul className="wallet-list">
+            {vouchers.map((row) => (
+              <li key={row.id}>
+                <span>
+                  {row.merchant_name || row.voucher_code}
+                  <small>{row.offered_benefit}</small>
+                </span>
+                <button type="button" onClick={() => setOpenVoucher(row)}>
+                  {t("wallet.showCode")}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>{t("wallet.emptyVouchers")}</p>
+        )
+      ) : null}
+      {openVoucher ? (
+        <div className="voucher-modal" role="presentation" onClick={() => setOpenVoucher(null)}>
+          <div
+            className="voucher-card"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("wallet.qrTitle")}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2>{t("wallet.qrTitle")}</h2>
+            <p>{openVoucher.merchant_name}</p>
+            {String(openVoucher.qr_svg || "").startsWith("<svg") ? (
+              <div className="voucher-qr" dangerouslySetInnerHTML={{ __html: openVoucher.qr_svg }} />
+            ) : null}
+            <p>
+              {t("wallet.coupon")}
+              <strong>{` ${openVoucher.voucher_code}`}</strong>
+            </p>
+            <button type="button" className="contact-submit" onClick={() => setOpenVoucher(null)}>
+              {t("wallet.qrClose")}
+            </button>
+          </div>
+        </div>
       ) : null}
     </article>
   );

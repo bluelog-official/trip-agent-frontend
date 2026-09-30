@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import i18n, { APP_LANGUAGES, normalizeAppLanguage } from "../i18n/i18n";
 import { magazineRequestEndpoint, REVIEW_MIN } from "../lib/magazineRequests";
 
 function readPhoto(file) {
@@ -23,6 +24,7 @@ export default function MagazineRequestPage({ onNavigate }) {
   const [transportInfo, setTransportInfo] = useState("");
   const [discoveryStory, setDiscoveryStory] = useState("");
   const [referenceUrls, setReferenceUrls] = useState("");
+  const [submitLanguage, setSubmitLanguage] = useState(normalizeAppLanguage(i18n.language));
   const [photoUrl, setPhotoUrl] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [error, setError] = useState("");
@@ -63,6 +65,7 @@ export default function MagazineRequestPage({ onNavigate }) {
           reference_urls: referenceUrls.trim(),
           photo_url: photoUrl.trim(),
           photo_data: photoData,
+          submit_language: submitLanguage,
         }),
       });
       if (!response.ok) {
@@ -138,6 +141,23 @@ export default function MagazineRequestPage({ onNavigate }) {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
+
+        <label className="contact-label" htmlFor="magazine-language">
+          {t("magazineRequest.writingLanguage")}
+        </label>
+        <select
+          id="magazine-language"
+          className="contact-input"
+          value={submitLanguage}
+          onChange={(event) => setSubmitLanguage(event.target.value)}
+        >
+          {APP_LANGUAGES.map((item) => (
+            <option key={item.code} value={item.code}>
+              {item.native}
+            </option>
+          ))}
+        </select>
+        <p className="review-count">{t("magazineRequest.writingHint")}</p>
 
         <label className="contact-label" htmlFor="magazine-country">
           {t("magazineRequest.country")}

@@ -1,0 +1,84 @@
+{
+  "language": { "label": "Langue" },
+  "nav": {
+    "home": "Accueil",
+    "destinations": "Destinations",
+    "allRegions": "Toutes les régions",
+    "asia": "Asie",
+    "europe": "Europe",
+    "americas": "Amériques",
+    "oceania": "Océanie",
+    "localFood": "Cuisine locale",
+    "community": "Communauté",
+    "events": "Événements et points",
+    "searchPlaceholder": "Rechercher",
+    "searchGuides": "Rechercher un guide",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "categories": "Catégories",
+    "dashboard": "Tableau",
+    "admin": "Administration",
+    "logout": "Déconnexion",
+    "signIn": "Connexion",
+    "wallet": "Portefeuille",
+    "hotCountry": "Focus : Corée",
+    "promoteStore": "Promouvoir mon lieu"
+  },
+  "hero": {
+    "kicker": "Bureau de voyage",
+    "title": "Guides locaux de voyage et de cuisine",
+    "copy": "Itinéraires et repas de quartier, vérifiés avant publication.",
+    "placeholder": "Paris, ramen, Bali",
+    "search": "Rechercher",
+    "promote": "Promouvoir mon lieu"
+  },
+  "footer": { "promote": "Promouvoir mon lieu" },
+  "magazineRequest": {
+    "writingLanguage": "Langue du texte",
+    "writingHint": "Nous publions une édition anglaise et une édition coréenne à partir de votre texte."
+  },
+  "events": {
+    "claim": "Échanger avec des points",
+    "pointsCost": "{{points}} points",
+    "claimDone": "Le bon est dans votre portefeuille.",
+    "claimFailed": "Le bon n'a pas pu être émis.",
+    "partnersTitle": "Lieux partenaires"
+  },
+  "wallet": {
+    "vouchers": "Mes bons",
+    "emptyVouchers": "Aucun bon pour le moment.",
+    "showCode": "Voir le code",
+    "qrTitle": "Montrez cet écran au commerçant",
+    "qrClose": "Fermer",
+    "coupon": "Numéro du coupon",
+    "reasonVoucher": "Bon échangé",
+    "anchor": "Empreinte de l'édition anglaise"
+  },
+  "promote": {
+    "pageTitle": "Promouvoir mon lieu",
+    "pageLead": "Présentez une boutique, un hébergement ou une expérience. Après validation, nous publions un magazine partenaire.",
+    "storeName": "Nom du lieu",
+    "category": "Catégorie",
+    "address": "Adresse",
+    "email": "E-mail de contact",
+    "phone": "Téléphone",
+    "description": "Présentation",
+    "images": "Liens des photos",
+    "imagesHint": "Un lien par ligne",
+    "photoFile": "Ajouter une photo",
+    "benefit": "Avantage pour le voyageur",
+    "benefitHint": "10 % de réduction ou une boisson",
+    "submit": "Envoyer la demande",
+    "submitting": "Envoi...",
+    "success": "Demande reçue. Le magazine est publié après validation.",
+    "failed": "La demande n'a pas pu être envoyée.",
+    "home": "Retour à l'accueil",
+    "categories": {
+      "food": "Cuisine coréenne",
+      "beauty": "Beauté",
+      "stay": "Hébergement",
+      "experience": "Expérience",
+      "tour": "Circuit"
+    }
+  }
+}
