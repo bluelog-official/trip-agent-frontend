@@ -164,3 +164,13 @@ class GenerateResponse(BaseModel):
 - **Router:** `POST /api/magazine-requests` 공개 접수. `GET /api/v1/admin/magazine-requests`는 Bearer 필수.
 - `guide_source`는 `destination`(도시, 국가), `keyword`(추천 장소), 후기, 사진 주소를 담아 1-click 가이드 생성 입력으로 쓴다.
 - DB 기본 경로는 `output/magazine_requests.db`. 테스트는 `MAGAZINE_REQUESTS_DB_PATH`와 `MAGAZINE_UPLOAD_DIR`로 바꾼다.
+
+## 10. Article Votes
+
+- **Schema:** `app/schemas/vote_schema.py` — `VoteCreate`, `VoteResult`, `VoteStatus`
+- **Table:** `app/models/votes.py` — `votes(id, article_id, ip_address, created_at)`. `(article_id, ip_address)`는 한 행만 허용한다.
+- **Service:** `app/services/vote_service.py` — `cast_vote()`, `vote_statuses()`, `counts_for_period()`.
+- **Router:** `POST /api/votes`는 요청 IP(우선 `X-Forwarded-For`)로 글마다 한 표만 저장한다. 중복이면 409. `GET /api/votes?article_ids=`는 그 IP의 투표 여부와 글별 추천 수를 돌려준다.
+- DB 기본 경로는 `output/votes.db`. 테스트는 `VOTES_DB_PATH`로 바꾼다.
+- 평면 지도 `GET /api/v1/globe/cities`의 도시 순위는 선택 기간(1주, 1개월, 전체 등)의 IP 추천 수를 먼저 보고, 이어서 발행 건수와 품질 점수 합을 본다.
+

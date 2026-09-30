@@ -74,6 +74,11 @@ export function normalizeGlobeCity(raw) {
     keywords: Array.isArray(raw.keywords) ? raw.keywords.map((item) => String(item || "").trim()).filter(Boolean) : [],
     latest_at: String(raw.latest_at || ""),
     recency: Number.isFinite(Number(raw.recency)) ? Number(raw.recency) : 1,
+    vote_count: Number(raw.vote_count) || 0,
+    article_id: String(raw.article_id || ""),
+    country: String(raw.country || ""),
+    flag: String(raw.flag || ""),
+    thumbnail: String(raw.thumbnail || ""),
   };
 }
 

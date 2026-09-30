@@ -122,6 +122,7 @@ describe("language switcher", () => {
           loading={false}
           error=""
           onOpen={() => {}}
+          loadVotes={false}
         />
         <About />
         <PrivacyPolicy />

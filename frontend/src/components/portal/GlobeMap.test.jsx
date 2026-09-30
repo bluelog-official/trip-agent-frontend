@@ -3,23 +3,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import GlobeMap from "./GlobeMap";
 import i18n from "../../i18n/i18n";
 
-const flyTo = vi.fn();
-
-vi.mock("./GlobeScene", () => ({
-  default: function MockGlobeScene({ cities, onOpenCity, onReady }) {
-    onReady?.({ flyTo });
-    return (
-      <div data-testid="globe-scene">
-        {cities.map((city) => (
-          <button key={city.slug} type="button" onClick={() => onOpenCity(city)}>
-            pin-{city.slug}
-          </button>
-        ))}
-      </div>
-    );
-  },
-}));
-
 const PARIS = {
   city: "Paris",
   city_ko: "파리",
@@ -35,6 +18,11 @@ const PARIS = {
   keywords: ["Gastronomy", "Nightlife"],
   latest_at: "2026-09-28",
   recency: 1,
+  vote_count: 4,
+  article_id: "paris_guide.md",
+  country: "France",
+  flag: "🇫🇷",
+  thumbnail: "https://example.com/paris.jpg",
 };
 
 const ROME = {
@@ -51,23 +39,38 @@ const ROME = {
   trending_new: true,
   keywords: ["Museums"],
   recency: 0.4,
+  vote_count: 1,
+  article_id: "",
+  flag: "🇮🇹",
+  thumbnail: "",
 };
 
-function jsonResponse(body) {
-  return { ok: true, status: 200, json: async () => body };
+function jsonResponse(body, status = 200) {
+  return { ok: status < 400, status, json: async () => body };
 }
 
 describe("GlobeMap", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
-    flyTo.mockReset();
   });
 
-  it("filters by period, shows rank metrics, flies to a city, and opens a pin", async () => {
+  it("shows a flat map preview, votes, and opens the city from a pin", async () => {
     await i18n.changeLanguage("en");
-    const fetchMock = vi.fn(async (url) => {
-      const period = new URL(url, "http://localhost").searchParams.get("period");
+    const fetchMock = vi.fn(async (url, options) => {
+      const href = String(url);
+      if (href.includes("/api/votes")) {
+        if (options?.method === "POST") {
+          return jsonResponse({
+            article_id: "paris_guide.md",
+            vote_count: 5,
+            voted: true,
+            created: true,
+          }, 201);
+        }
+        return jsonResponse({ votes: [{ article_id: "paris_guide.md", vote_count: 4, voted: false }] });
+      }
+      const period = new URL(href, "http://localhost").searchParams.get("period");
       if (period === "1w") return jsonResponse({ period: "1w", cities: [ROME] });
       return jsonResponse({ period: "all", cities: [PARIS, ROME] });
     });
@@ -75,23 +78,34 @@ describe("GlobeMap", () => {
     const onOpenCity = vi.fn();
     render(<GlobeMap onOpenCity={onOpenCity} />);
 
-    expect(await screen.findByTestId("globe-scene")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: /Paris/ }));
+    expect(await screen.findByTestId("flat-map")).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Flat world map" })).toBeTruthy();
+    expect(screen.getAllByText("4 votes").length).toBeGreaterThan(0);
     expect(screen.getByText("2 guides")).toBeTruthy();
     expect(screen.getByText("QA 85")).toBeTruthy();
     expect(screen.getByText("+15%")).toBeTruthy();
     expect(screen.getByText("#Gastronomy #Nightlife")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: /Paris/ }));
-    await waitFor(() => expect(flyTo).toHaveBeenCalledWith(expect.objectContaining({ slug: "paris", lat: 48.8566 })));
+    const pin = screen.getByRole("button", { name: "Paris, 2 published guides" });
+    fireEvent.mouseEnter(pin.parentElement);
+    const preview = screen.getByRole("tooltip", { name: "Paris" });
+    expect(preview.textContent).toContain("#Gastronomy");
+    expect(preview.textContent).toContain("#Nightlife");
+    expect(preview.querySelector("img")?.getAttribute("src")).toBe("https://example.com/paris.jpg");
+    expect(pin.parentElement.classList.contains("is-open")).toBe(true);
+
+    fireEvent.click(screen.getByRole("button", { name: "Vote" }));
     expect(onOpenCity).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Voted" })).toBeTruthy());
+
+    fireEvent.click(pin);
+    expect(onOpenCity).toHaveBeenCalledWith(expect.objectContaining({ slug: "paris" }));
 
     fireEvent.click(screen.getByRole("radio", { name: "1 Week" }));
     await waitFor(() => expect(screen.queryByText("2 guides")).toBeNull());
     expect(await screen.findByText("1 guides")).toBeTruthy();
     expect(screen.getByText("New")).toBeTruthy();
-
-    fireEvent.click(screen.getByRole("button", { name: "pin-rome" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rome, 1 published guides" }));
     expect(onOpenCity).toHaveBeenCalledWith(expect.objectContaining({ slug: "rome" }));
   });
 });

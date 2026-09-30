@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { appLanguage } from "../../i18n/i18n";
 import {
@@ -8,122 +8,16 @@ import {
   pinScale,
   trendValue,
 } from "../../lib/globeCities";
-
-const GlobeScene = lazy(() => import("./GlobeScene"));
-
-function mediaMatches(query) {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return false;
-  return window.matchMedia(query).matches;
-}
-
-function readGlobeMode() {
-  const reducedMotion = mediaMatches("(prefers-reduced-motion: reduce)");
-  const narrow = mediaMatches("(max-width: 720px)");
-  const cores = typeof navigator === "undefined" ? 8 : navigator.hardwareConcurrency || 8;
-  const saveData = typeof navigator !== "undefined" && navigator.connection?.saveData === true;
-  return {
-    reducedMotion,
-    lowPower: Boolean(saveData || narrow || cores <= 4),
-    skipWebgl: Boolean(saveData),
-  };
-}
-
-class GlobeErrorBoundary extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { failed: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
-  render() {
-    if (this.state.failed) return this.props.fallback;
-    return this.props.children;
-  }
-}
-
-function placeTip(band, point, event) {
-  if (!band || !point) return null;
-  const rect = band.getBoundingClientRect();
-  const target = event?.currentTarget?.getBoundingClientRect?.();
-  const x = Number.isFinite(event?.clientX) && event.clientX !== 0
-    ? event.clientX
-    : target
-      ? target.left + target.width / 2
-      : rect.left + 24;
-  const y = Number.isFinite(event?.clientY) && event.clientY !== 0
-    ? event.clientY
-    : target
-      ? target.top
-      : rect.top + 24;
-  return { point, x: x - rect.left, y: y - rect.top };
-}
+import FlatWorldMap from "./FlatWorldMap";
 
 export default function GlobeMap({ onOpenCity }) {
   const { t } = useTranslation();
   const language = appLanguage();
-  const bandRef = useRef(null);
-  const sceneRef = useRef(null);
-  const pendingFly = useRef(null);
-  const handleReady = useCallback((api) => {
-    sceneRef.current = api;
-    if (pendingFly.current && api?.flyTo) {
-      api.flyTo(pendingFly.current);
-      pendingFly.current = null;
-    }
-  }, []);
   const [period, setPeriod] = useState("all");
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [mode, setMode] = useState(readGlobeMode);
   const [activeSlug, setActiveSlug] = useState("");
-  const [tip, setTip] = useState(null);
-
-  useEffect(() => {
-    const node = bandRef.current;
-    if (!node) {
-      setVisible(true);
-      return undefined;
-    }
-    const reveal = () => {
-      const rect = node.getBoundingClientRect();
-      const near = rect.top < window.innerHeight + 240 && rect.bottom > -240;
-      if (near) setVisible(true);
-      return near;
-    };
-    if (reveal() || typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return undefined;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "240px 0px" },
-    );
-    observer.observe(node);
-    window.addEventListener("scroll", reveal, { passive: true });
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", reveal);
-    };
-  }, []);
-
-  useEffect(() => {
-    const queries = ["(prefers-reduced-motion: reduce)", "(max-width: 720px)"];
-    if (typeof window.matchMedia !== "function") return undefined;
-    const lists = queries.map((query) => window.matchMedia(query));
-    const sync = () => setMode(readGlobeMode());
-    lists.forEach((list) => list.addEventListener?.("change", sync));
-    return () => lists.forEach((list) => list.removeEventListener?.("change", sync));
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,7 +29,7 @@ export default function GlobeMap({ onOpenCity }) {
         setError("");
       })
       .catch((err) => {
-        console.error("지구본 도시 로드 실패:", err);
+        console.error("지도 도시 로드 실패:", err);
         if (!cancelled) {
           setCities([]);
           setError("failed");
@@ -171,30 +65,15 @@ export default function GlobeMap({ onOpenCity }) {
   );
 
   const topCities = markers.filter((city) => city.is_top).slice(0, 5);
-  const showScene = visible && !mode.skipWebgl && markers.length > 0;
   const trendCaption = period === "all" ? t("globe.trendNoteAll") : t("globe.trendNote");
 
-  const hoverCity = (point, event) => {
-    setTip(placeTip(bandRef.current, point, event));
-  };
-
-  const focusCity = (city) => {
+  const openCity = (city) => {
     setActiveSlug(city.slug);
-    if (mode.skipWebgl) {
-      onOpenCity(city);
-      return;
-    }
-    if (sceneRef.current?.flyTo) {
-      sceneRef.current.flyTo(city);
-      return;
-    }
-    pendingFly.current = city;
+    onOpenCity?.(city);
   };
-
-  const tipLabel = tip ? globeCityLabel(tip.point, language) : "";
 
   return (
-    <section className="globe-band" ref={bandRef} aria-labelledby="globe-title" data-period={period}>
+    <section className="globe-band" aria-labelledby="globe-title" data-period={period}>
       <div className="globe-layout">
         <div className="globe-copy">
           <p className="hero-kicker">{t("globe.kicker")}</p>
@@ -215,12 +94,7 @@ export default function GlobeMap({ onOpenCity }) {
               </button>
             ))}
           </div>
-          <p className="globe-hint" role="status">
-            {tip
-              ? t("globe.tooltip", { city: tipLabel, count: tip.point.published_count })
-              : t("globe.hint")}
-          </p>
-          {mode.skipWebgl ? <p className="globe-lite">{t("globe.lite")}</p> : null}
+          <p className="globe-hint" role="status">{t("globe.hint")}</p>
           <div className="globe-rank-card">
             <h3>{t("globe.rankTitle")}</h3>
             <p>{t("globe.rankHint")}</p>
@@ -240,11 +114,7 @@ export default function GlobeMap({ onOpenCity }) {
                         type="button"
                         className={city.slug === activeSlug ? "is-active" : ""}
                         data-slug={city.slug}
-                        onClick={() => focusCity(city)}
-                        onPointerEnter={(event) => hoverCity(city, event)}
-                        onPointerLeave={() => setTip(null)}
-                        onFocus={(event) => hoverCity(city, event)}
-                        onBlur={() => setTip(null)}
+                        onClick={() => openCity(city)}
                       >
                         <span className="globe-rank-badge">#{city.rank}</span>
                         <span className="globe-rank-body">
@@ -255,6 +125,7 @@ export default function GlobeMap({ onOpenCity }) {
                             </span>
                           ) : null}
                           <span className="globe-rank-metrics">
+                            <span>{t("globe.votes", { count: city.vote_count || 0 })}</span>
                             <span>{t("globe.guides", { count: city.published_count })}</span>
                             <span>{t("globe.quality", { score: city.quality_score })}</span>
                             <span>
@@ -272,41 +143,18 @@ export default function GlobeMap({ onOpenCity }) {
           </div>
         </div>
         <div className="globe-stage" aria-busy={loading}>
-          {showScene ? (
-            <GlobeErrorBoundary fallback={<p className="globe-note globe-stage-note">{t("globe.lite")}</p>}>
-              <Suspense fallback={<p className="globe-note globe-stage-note">{t("globe.loading")}</p>}>
-                <GlobeScene
-                  cities={markers}
-                  period={period}
-                  reducedMotion={mode.reducedMotion}
-                  lowPower={mode.lowPower}
-                  onOpenCity={onOpenCity}
-                  onHover={hoverCity}
-                  onReady={handleReady}
-                />
-              </Suspense>
-            </GlobeErrorBoundary>
-          ) : (
-            <p className="globe-note globe-stage-note">
-              {!visible || loading
-                ? t("globe.loading")
-                : error
-                  ? t("globe.error")
-                  : t("globe.emptyPeriod")}
-            </p>
-          )}
+          <FlatWorldMap cities={markers} onOpenCity={openCity} />
+          {loading && cities.length === 0 ? <p className="globe-note">{t("globe.loading")}</p> : null}
+          {error ? <p className="globe-note">{t("globe.error")}</p> : null}
+          {!loading && !error && cities.length === 0 ? (
+            <p className="globe-note">{t("globe.emptyPeriod")}</p>
+          ) : null}
           <ul className="globe-legend">
             <li><span className="swatch published" />{t("globe.published")}</li>
             <li><span className="swatch top" />{t("globe.top")}</li>
           </ul>
         </div>
       </div>
-      {tip ? (
-        <div className="globe-tooltip" style={{ left: tip.x, top: tip.y }} role="tooltip">
-          <strong>{tipLabel}</strong>
-          <span>{t("globe.tooltip", { city: tipLabel, count: tip.point.published_count })}</span>
-        </div>
-      ) : null}
     </section>
   );
 }

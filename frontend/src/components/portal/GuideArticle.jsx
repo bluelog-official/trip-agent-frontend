@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import ArticleView from "../ArticleView";
+import VoteButton from "./VoteButton";
 import AdSenseUnit from "../AdSenseUnit";
 import { prepareArticle, buildGuideJsonLd } from "../../lib/articleDocument";
 import { toGuideCard } from "../../lib/guideCards";
@@ -197,6 +198,9 @@ export default function GuideArticle({ guide, fileName, onNavigate }) {
         </div>
 
         <AdSenseUnit slotId="article-bottom" format="auto" />
+        <footer className="guide-vote">
+          <VoteButton articleId={card.id} />
+        </footer>
       </div>
     </article>
   );

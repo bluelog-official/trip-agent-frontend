@@ -59,10 +59,10 @@
   "globe": {
     "kicker": "Published guides",
     "title": "Where the guides are",
-    "copy": "Pins show cities with guides written in the selected period. Gold pins are the top five. A longer period draws smaller, quieter pins so the map stays readable.",
-    "hint": "Hover a pin for the city and guide count. Click a pin to open that city's guides. Click a rank to fly there.",
-    "loading": "Preparing the globe",
-    "empty": "Published city guides will show up on the globe.",
+    "copy": "A flat world map shows every city with a guide from the selected period. Gold pins are the top five, ranked first by votes.",
+    "hint": "Hover a pin for a short preview. Click a pin to open that city's guides.",
+    "loading": "Preparing the map",
+    "empty": "Published city guides will show up on the map.",
     "emptyPeriod": "No guides were published in this period.",
     "error": "City counts could not be loaded.",
     "tooltip": "{{city}} · {{count}} published guides",
@@ -71,8 +71,10 @@
     "published": "Published",
     "lite": "A lighter city list is shown on this connection.",
     "filterLabel": "Time range",
-    "rankTitle": "Why these five",
-    "rankHint": "Click a city to turn the globe there and zoom in.",
+    "rankTitle": "Top ranks",
+    "rankHint": "Cities are ordered by votes in this period, then by published guides.",
+    "votes": "{{count}} votes",
+    "mapLabel": "Flat world map",
     "guides": "{{count}} guides",
     "quality": "QA {{score}}",
     "trendNew": "New",
@@ -122,6 +124,13 @@
     "loadError": "Guides could not be loaded. Check that the API is running.",
     "verified": "Verified Guide",
     "checked": "Verified Travel Guide"
+  },
+  "vote": {
+    "action": "Vote",
+    "voted": "Voted",
+    "count": "{{count}}",
+    "duplicate": "You already voted on this guide.",
+    "failed": "The vote could not be saved."
   },
   "sidebar": {
     "highlights": "Highlights",

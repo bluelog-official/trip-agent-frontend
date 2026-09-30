@@ -15,6 +15,7 @@ from fastapi.responses import Response
 from app.agents.marketing_agent import run_marketing_pipeline
 from app.routers.magazine_requests import router as magazine_router
 from app.routers.stats import router as stats_router
+from app.routers.votes import router as vote_router
 from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
 from app.schemas.dashboard_schema import DashboardStats
 from app.schemas.globe_schema import GlobeMapResponse
@@ -22,6 +23,7 @@ from app.schemas.guide_schema import GenerateRequest, GenerateResponse
 from app.services.auth_service import admin_password, authenticate_admin, authorization_is_valid
 from app.services.dashboard_service import build_dashboard_stats
 from app.services.globe_service import build_globe_map
+from app.services.vote_service import counts_for_period
 from app.services.marketing_service import dismiss_marketing_alert
 from app.services.guide_service import get_guide, list_guides
 from app.services.scheduler_service import (
@@ -87,6 +89,7 @@ app = FastAPI(title="BlueLog AdSense Engine - AI Agents", lifespan=lifespan)
 
 app.include_router(stats_router)
 app.include_router(magazine_router)
+app.include_router(vote_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -197,9 +200,9 @@ async def get_sitemap(request: Request) -> Response:
 
 @app.get("/api/v1/globe/cities", response_model=GlobeMapResponse)
 async def get_globe_cities(period: str = Query(default="all")) -> GlobeMapResponse:
-    """기간 안에 작성된 가이드의 도시 좌표, 건수, 순위, 키워드."""
+    """기간 안에 작성된 가이드의 도시 좌표, 건수, 순위, 키워드. 순위는 IP 추천 수가 먼저다."""
     try:
-        payload = build_globe_map(period)
+        payload = build_globe_map(period, vote_counts=counts_for_period(period))
     except ValueError:
         raise HTTPException(status_code=400, detail="Unknown globe period")
     return GlobeMapResponse.model_validate(payload)

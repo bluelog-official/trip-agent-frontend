@@ -3,7 +3,7 @@
 import re
 from collections import Counter
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from app.services.content_variation import display_city, normalize_city, slugify_city
@@ -122,8 +122,54 @@ _KO_CITY_NAMES = {
     "vienna": "빈",
 }
 
+# 도시 키 -> (영문 국가명, ISO 3166-1 alpha-2). 깃발은 코드로 만든다.
+CITY_PLACES = {
+    "amsterdam": ("Netherlands", "NL"),
+    "bali": ("Indonesia", "ID"),
+    "bangkok": ("Thailand", "TH"),
+    "barcelona": ("Spain", "ES"),
+    "beijing": ("China", "CN"),
+    "berlin": ("Germany", "DE"),
+    "buenos aires": ("Argentina", "AR"),
+    "busan": ("South Korea", "KR"),
+    "chicago": ("United States", "US"),
+    "danang": ("Vietnam", "VN"),
+    "florence": ("Italy", "IT"),
+    "hanoi": ("Vietnam", "VN"),
+    "hong kong": ("Hong Kong", "HK"),
+    "jakarta": ("Indonesia", "ID"),
+    "jeju": ("South Korea", "KR"),
+    "kyoto": ("Japan", "JP"),
+    "lisbon": ("Portugal", "PT"),
+    "london": ("United Kingdom", "GB"),
+    "los angeles": ("United States", "US"),
+    "madrid": ("Spain", "ES"),
+    "mexico": ("Mexico", "MX"),
+    "mexico city": ("Mexico", "MX"),
+    "miami": ("United States", "US"),
+    "milan": ("Italy", "IT"),
+    "new york": ("United States", "US"),
+    "osaka": ("Japan", "JP"),
+    "paris": ("France", "FR"),
+    "prague": ("Czechia", "CZ"),
+    "rio": ("Brazil", "BR"),
+    "rome": ("Italy", "IT"),
+    "san francisco": ("United States", "US"),
+    "sao paulo": ("Brazil", "BR"),
+    "seoul": ("South Korea", "KR"),
+    "shanghai": ("China", "CN"),
+    "singapore": ("Singapore", "SG"),
+    "sydney": ("Australia", "AU"),
+    "taipei": ("Taiwan", "TW"),
+    "tokyo": ("Japan", "JP"),
+    "toronto": ("Canada", "CA"),
+    "vancouver": ("Canada", "CA"),
+    "vienna": ("Austria", "AT"),
+}
+
 _FRONTMATTER = re.compile(r"^---\r?\n([\s\S]*?)\r?\n---", re.M)
 _HASH_LINE = re.compile(r"^(?:#[A-Za-z][A-Za-z0-9]*)(?:\s+#[A-Za-z][A-Za-z0-9]*)+\s*$")
+_IMAGE = re.compile(r"!\[[^\]]*\]\((https?:[^)\s]+)\)")
 
 
 def _seoul_timezone():
@@ -239,6 +285,35 @@ def _score(value: Any) -> int:
         return 0
 
 
+def flag_emoji(code: str) -> str:
+    """ISO 국가 코드를 지역 표시 문자 깃발로 바꾼다."""
+    letters = str(code or "").strip().upper()
+    if len(letters) != 2 or not letters.isalpha():
+        return ""
+    return "".join(chr(0x1F1E6 + ord(char) - ord("A")) for char in letters)
+
+
+def _article_id(record: Dict[str, Any]) -> str:
+    return str(record.get("filename") or record.get("id") or "").strip()
+
+
+def _first_image(markdown: str) -> str:
+    match = _IMAGE.search(markdown or "")
+    return match.group(1) if match else ""
+
+
+def _thumbnail_for_record(record: Dict[str, Any]) -> str:
+    explicit = str(record.get("thumbnail") or record.get("image") or "").strip()
+    if explicit:
+        return explicit
+    if record.get("hashtags"):
+        return ""
+    filename = _article_id(record)
+    if not filename:
+        return ""
+    return _first_image(read_guide_markdown(filename))
+
+
 def _ko_name(key: str) -> str:
     if key in _KO_CITY_NAMES:
         return _KO_CITY_NAMES[key]
@@ -276,12 +351,24 @@ def build_globe_map(
     period: str = "all",
     records: Optional[Sequence[Dict[str, Any]]] = None,
     now: Optional[datetime] = None,
+    vote_counts: Optional[Mapping[str, int]] = None,
 ) -> Dict[str, Any]:
-    """기간 안의 발행 가이드를 도시별로 모아 좌표, 순위, 키워드, 추세를 붙인다.
+    """기간 안의 발행 가이드를 도시별로 모아 좌표, 순위, 키워드, 추세, 추천 수를 붙인다.
 
-    발행 건수는 그 기간에 작성된 가이드 수다. 순위는 건수, 품질 점수 평균, 도시명 순이다.
+    발행 건수는 그 기간에 작성된 가이드 수다.
+    순위는 기간 내 IP 추천 수, 발행 건수, 품질 점수 합, 도시명 순이다.
+    vote_counts는 이미 그 기간으로 걸러진 글별 추천 수다.
     추세는 같은 길이의 직전 기간과 비교한 증감률이다. 전체 기간은 최근 30일을 직전 30일과 비교한다.
     """
+    counts: Dict[str, int] = {}
+    for article_key, raw_count in (vote_counts or {}).items():
+        article_key = str(article_key or "").strip()
+        if not article_key:
+            continue
+        try:
+            counts[article_key] = max(0, int(raw_count or 0))
+        except (TypeError, ValueError):
+            continue
     key = normalize_period(period)
     days = PERIOD_DAYS[key]
     trend_days = 30 if days is None else days
@@ -299,6 +386,8 @@ def build_globe_map(
                 "moment": _publication_moment(record),
                 "score": _score(record.get("qa_score")),
                 "tags": _tags_for_record(record),
+                "article_id": _article_id(record),
+                "thumbnail": _thumbnail_for_record(record),
             }
         )
 
@@ -323,6 +412,19 @@ def build_globe_map(
             1 for moment in moments if _in_window(moment, previous_start, trend_start)
         )
         published_count = len(selected)
+        vote_count = sum(counts.get(item["article_id"], 0) for item in items if item["article_id"])
+        ordered = sorted(
+            selected,
+            key=lambda item: item["moment"].timestamp() if item["moment"] else 0,
+        )
+        article_id = ""
+        thumbnail = ""
+        for item in ordered:
+            if item["thumbnail"]:
+                thumbnail = item["thumbnail"]
+            if item["article_id"]:
+                article_id = item["article_id"]
+        country, country_code = CITY_PLACES.get(city_key, ("", ""))
         if days is None:
             trend_current = sum(1 for moment in moments if _in_window(moment, trend_start, trend_end))
         else:
@@ -345,10 +447,17 @@ def build_globe_map(
                 "keywords": _keywords([item["tags"] for item in selected]),
                 "latest_at": latest.date().isoformat() if latest else "",
                 "latest_ts": latest.timestamp() if latest else 0,
+                "vote_count": vote_count,
+                "article_id": article_id,
+                "country": country,
+                "flag": flag_emoji(country_code),
+                "thumbnail": thumbnail,
             }
         )
 
-    drafts.sort(key=lambda item: (-item["published_count"], -item["score_sum"], item["city_key"]))
+    drafts.sort(
+        key=lambda item: (-item["vote_count"], -item["published_count"], -item["score_sum"], item["city_key"])
+    )
     stamps = [item["latest_ts"] for item in drafts if item["latest_ts"]]
     oldest = min(stamps) if stamps else 0
     newest = max(stamps) if stamps else 0
@@ -375,6 +484,11 @@ def build_globe_map(
                 "keywords": item["keywords"],
                 "latest_at": item["latest_at"],
                 "recency": recency,
+                "vote_count": item["vote_count"],
+                "article_id": item["article_id"],
+                "country": item["country"],
+                "flag": item["flag"],
+                "thumbnail": item["thumbnail"],
             }
         )
     return {"period": key, "cities": cities}
