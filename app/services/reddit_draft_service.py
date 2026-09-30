@@ -102,6 +102,11 @@ _STYLES = ("experience", "question", "tips")
 
 def destination_from_guide_id(guide_id: str) -> str:
     """`osaka_guide.md` 같은 파일명에서 도시 표시 이름을 복원한다."""
+    from app.services.magazine_matrix import parse_matrix_guide_id
+
+    parsed = parse_matrix_guide_id(guide_id)
+    if parsed is not None:
+        return parsed.city
     stem = (guide_id or "").strip()
     if stem.endswith("_guide.md"):
         stem = stem[: -len("_guide.md")]

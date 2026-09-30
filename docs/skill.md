@@ -174,3 +174,16 @@ class GenerateResponse(BaseModel):
 - DB 기본 경로는 `output/votes.db`. 테스트는 `VOTES_DB_PATH`로 바꾼다.
 - 평면 지도 `GET /api/v1/globe/cities`의 도시 순위는 선택 기간(1주, 1개월, 전체 등)의 IP 추천 수를 먼저 보고, 이어서 발행 건수와 품질 점수 합을 본다.
 
+## 11. Duration × Budget Magazines
+
+- **Schema:** `app/schemas/magazine_matrix.py` — `MagazineMatrix`
+- **Service:** `app/services/magazine_matrix.py` — `resolve_matrix()`, `parse_matrix_guide_id()`, `matrix_prompt_block()`, `render_offline_guide()`
+- **Script:** `scripts/magazine_matrix_generator.py`
+- 파일명: `{city}_{duration}_{budget}_guide.md`
+  - 기간 키: `1_days`, `3_days`, `1_week`
+  - 예산 키: `50usd` (Under $50/day), `100usd`, `200usd`, `budget` (Under $50/day와 같은 필터), `luxury`
+  - 예: `tokyo_1_days_50usd_guide.md`, `tokyo_3_days_200usd_guide.md`, `tokyo_1_week_budget_guide.md`
+- 프론트매터에 `duration`, `duration_key`, `budget`, `budget_key`를 둔다. 도시 목록은 이 값으로 기간·하루 예산 칩을 거른다.
+- `POST /api/v1/generate-guide`에 `duration`과 `budget`을 함께 넘기면 리서치·작성 프롬프트에 같은 표를 넣고, 저장 파일명도 이 규격을 따른다. 둘 중 하나만 오면 400.
+- 기본 생성 스크립트는 모델 없이 큐레이션 표로 마크다운을 쓴다. `--llm`은 에이전트 본문을 받은 뒤 같은 프론트매터를 붙인다.
+

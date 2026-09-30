@@ -125,6 +125,23 @@
     "verified": "검증된 가이드",
     "checked": "검증된 여행 가이드"
   },
+  "matrix": {
+    "durationLabel": "기간",
+    "budgetLabel": "하루 예산",
+    "all": "전체",
+    "empty": "이 기간과 예산에 맞는 매거진이 없습니다.",
+    "duration": {
+      "oneDay": "1일",
+      "threeDays": "3일",
+      "oneWeek": "1주"
+    },
+    "budget": {
+      "under50": "하루 50달러 이하",
+      "per100": "하루 100달러",
+      "per200": "하루 200달러",
+      "luxury": "고품격"
+    }
+  },
   "vote": {
     "action": "추천",
     "voted": "추천함",

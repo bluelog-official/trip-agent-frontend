@@ -9,6 +9,8 @@ class GenerateRequest(BaseModel):
     destination: str = Field(description="가이드를 생성할 여행 목적지")
     keyword: str = Field(default="", description="선택적 집중 키워드")
     target_language: str = Field(default="ko", description="작성 언어. en 또는 English면 영문 신디케이션")
+    duration: str = Field(default="", description="체류 기간. 1_days, 3_days, 1_week. budget과 함께 쓸 때만 적용")
+    budget: str = Field(default="", description="하루 예산. 50usd, 100usd, 200usd, budget, luxury")
 
 
 class CityKeywordProfile(BaseModel):

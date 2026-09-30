@@ -32,6 +32,7 @@ from app.services.guide_service import (
     save_guide,
 )
 from app.services.keyword_map import resolve_city_keywords
+from app.services.magazine_matrix import attach_matrix_frontmatter, resolve_matrix
 from app.services.pexels_service import build_image_queries, fetch_guide_images
 
 TARGET_CITIES = [
@@ -122,14 +123,24 @@ async def generate_city_guide(
     destination: str,
     keyword: str = "",
     target_language: str = "ko",
+    duration: str = "",
+    budget: str = "",
 ) -> GenerateResponse:
+    matrix = resolve_matrix(destination, duration, budget)
     profile = resolve_city_keywords(destination, keyword)
     focus_keyword = profile.primary_keyword if profile else keyword
+    duration_key = matrix.duration_key if matrix is not None else ""
+    budget_key = matrix.budget_key if matrix is not None else ""
     research_data, research_model = await run_research_agent(
-        destination, focus_keyword, profile
+        destination, focus_keyword, profile, duration_key, budget_key
     )
     article_markdown, writer_model = await run_writer_agent(
-        destination, research_data, profile, target_language=target_language
+        destination,
+        research_data,
+        profile,
+        target_language=target_language,
+        duration=duration_key,
+        budget=budget_key,
     )
     section_count = sum(
         1
@@ -145,7 +156,11 @@ async def generate_city_guide(
     )
     images = await fetch_guide_images(destination, queries=queries)
     article_markdown = inject_guide_images(article_markdown, images)
-    guide_id = build_guide_id(destination)
+    if matrix is not None:
+        article_markdown = attach_matrix_frontmatter(article_markdown, matrix)
+        guide_id = matrix.filename
+    else:
+        guide_id = build_guide_id(destination)
     response = build_generate_response(
         destination=destination,
         article_markdown=article_markdown,

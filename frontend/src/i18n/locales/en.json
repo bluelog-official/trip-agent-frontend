@@ -125,6 +125,23 @@
     "verified": "Verified Guide",
     "checked": "Verified Travel Guide"
   },
+  "matrix": {
+    "durationLabel": "Duration",
+    "budgetLabel": "Daily budget",
+    "all": "All",
+    "empty": "No magazines match this duration and budget.",
+    "duration": {
+      "oneDay": "1 Day",
+      "threeDays": "3 Days",
+      "oneWeek": "1 Week"
+    },
+    "budget": {
+      "under50": "Under $50/day",
+      "per100": "$100/day",
+      "per200": "$200/day",
+      "luxury": "Luxury"
+    }
+  },
   "vote": {
     "action": "Vote",
     "voted": "Voted",

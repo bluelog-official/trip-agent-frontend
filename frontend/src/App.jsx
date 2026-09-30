@@ -13,6 +13,7 @@ import AdSenseUnit from "./components/AdSenseUnit";
 import AdminDrawer from "./components/portal/AdminDrawer";
 import AdminLogin from "./components/portal/AdminLogin";
 import ArticleGrid from "./components/portal/ArticleGrid";
+import MagazineFilters from "./components/portal/MagazineFilters";
 import ArticleReader from "./components/portal/ArticleReader";
 import CommunityBoard from "./components/portal/CommunityBoard";
 import GlobalNav from "./components/portal/GlobalNav";
@@ -40,6 +41,7 @@ import { applyPageHead } from "./lib/documentHead";
 import { appLanguage } from "./i18n/i18n";
 import { presentGuideCard } from "./lib/localeCopy";
 import { cityHeading, destinationSlug } from "./lib/globeCities";
+import { matchesMagazineMatrix } from "./lib/magazineMatrix";
 import { usePortalRoute } from "./lib/usePortalRoute";
 import "./App.css";
 
@@ -71,6 +73,8 @@ export default function App() {
   const [publishing, setPublishing] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [posts, setPosts] = useState(() => loadCommunityPosts());
+  const [tripDuration, setTripDuration] = useState("all");
+  const [dailyBudget, setDailyBudget] = useState("all");
 
   useEffect(() => {
     let cancelled = false;
@@ -170,6 +174,11 @@ export default function App() {
   }, [language]);
 
   useEffect(() => {
+    setTripDuration("all");
+    setDailyBudget("all");
+  }, [route.city]);
+
+  useEffect(() => {
     const card = presentGuideCard(
       cards.find((item) => item.id === route.guideId),
       language,
@@ -238,9 +247,10 @@ export default function App() {
       }
       if (route.name === "food" && !card.hasFood) return false;
       if (route.name === "city" && destinationSlug(card.destination) !== route.city) return false;
+      if (route.name === "city" && !matchesMagazineMatrix(card, tripDuration, dailyBudget)) return false;
       return matchesGuideQuery(card, query);
     });
-  }, [localizedCards, route, query]);
+  }, [localizedCards, route, query, tripDuration, dailyBudget]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -346,6 +356,7 @@ export default function App() {
   const showCatalog = route.name === "home" || route.name === "destinations" || route.name === "food" || route.name === "city";
   const showSidebar = showCatalog || route.name === "article";
   const cityLabel = route.name === "city" ? cityHeading(route.city, localizedCards) : "";
+  const matrixActive = route.name === "city" && (tripDuration !== "all" || dailyBudget !== "all");
 
   return (
     <div className="portal">
@@ -406,6 +417,14 @@ export default function App() {
                 <CategoryIntro category={route.category} />
               ) : null}
               {route.name === "city" ? <CityIntro city={cityLabel} /> : null}
+              {route.name === "city" ? (
+                <MagazineFilters
+                  duration={tripDuration}
+                  budget={dailyBudget}
+                  onDuration={setTripDuration}
+                  onBudget={setDailyBudget}
+                />
+              ) : null}
               {route.name === "article" ? (
                 <ArticleReader
                   guide={selectedGuide}
@@ -424,6 +443,7 @@ export default function App() {
                   cards={visibleCards}
                   loading={guidesLoading}
                   error={guidesError ? t("catalog.loadError") : ""}
+                  emptyLabel={matrixActive ? t("matrix.empty") : ""}
                   onOpen={openGuide}
                 />
               )}

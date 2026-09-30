@@ -32,4 +32,31 @@ describe("guide card tags", () => {
     expect(korean.tags).toContain("문화");
     expect(korean.tags).not.toContain("현지 음식");
   });
+
+  it("keeps the city when the filename also carries duration and budget", () => {
+    const card = toGuideCard("tokyo_1_days_50usd_guide.md", {
+      content: `---
+title: "Tokyo: 1 Day on Under $50/day"
+city: "Tokyo"
+duration_key: "1_days"
+budget_key: "50usd"
+---
+# Tokyo: 1 Day on Under $50/day
+
+A one-day Tokyo walk that stays inside a small daily budget and eats at market counters.
+
+## Where to Eat in Tokyo
+
+| Category | Recommended Location | Estimated Cost | Rating |
+| --- | --- | --- | --- |
+| Stall | Ameya-Yokocho | $8 | 4/5 |
+`,
+    });
+    expect(card.destination).toBe("Tokyo");
+    expect(card.durationKey).toBe("1_days");
+    expect(card.budgetKey).toBe("50usd");
+    expect(card.budgetFilter).toBe("under_50");
+    expect(card.tags).toContain("1 Day");
+    expect(card.tags).toContain("Under $50/day");
+  });
 });

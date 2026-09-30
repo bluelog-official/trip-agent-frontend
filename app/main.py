@@ -162,7 +162,15 @@ async def dismiss_marketing_alert_route(alert_id: int) -> Dict[str, Any]:
 )
 async def generate_guide(req: GenerateRequest) -> GenerateResponse:
     try:
-        return await generate_city_guide(req.destination, req.keyword, req.target_language)
+        return await generate_city_guide(
+            req.destination,
+            req.keyword,
+            req.target_language,
+            duration=req.duration,
+            budget=req.budget,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
     except Exception as exc:  # noqa: BLE001 - 에이전트 실패를 HTTP 오류로 변환
         print("❌ [오류] 가이드 생성 실패: {0}".format(exc))
         raise HTTPException(status_code=500, detail="가이드 생성 중 오류 발생: {0}".format(exc))

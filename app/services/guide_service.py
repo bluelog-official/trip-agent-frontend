@@ -13,6 +13,7 @@ from app.schemas.guide_schema import (
     ResearchOutput,
     SyndicationOutput,
 )
+from app.services.magazine_matrix import parse_matrix_guide_id
 
 # 프론트엔드 GET 요청 시 데이터를 유지하기 위한 메모리 DB
 _GUIDE_STORE: Dict[str, Dict[str, Any]] = {}
@@ -42,6 +43,9 @@ def format_seoul_stamp(moment: Optional[datetime] = None) -> str:
 
 
 def city_label(guide_id: str) -> str:
+    parsed = parse_matrix_guide_id(guide_id)
+    if parsed is not None:
+        return parsed.city
     stem = guide_id
     suffix = "_guide.md"
     if stem.endswith(suffix):
@@ -289,7 +293,7 @@ def _payload_from_file(guide_id: str) -> Optional[Dict[str, Any]]:
     if path is None:
         return None
     article = path.read_text(encoding="utf-8")
-    destination = guide_id.replace("_guide.md", "").replace("_", " ").title()
+    destination = city_label(guide_id)
     return build_generate_response(
         destination=destination,
         article_markdown=article,
@@ -365,7 +369,7 @@ def get_guide(guide_id: str) -> Dict[str, Any]:
     if payload is not None:
         return _with_review_state(guide_id, payload)
 
-    destination = guide_id.replace("_guide.md", "").replace("_", " ")
+    destination = city_label(guide_id)
     fallback_markdown = "## {0} 가이드\n\n데이터를 찾을 수 없습니다.".format(destination)
     return {
         "id": guide_id,

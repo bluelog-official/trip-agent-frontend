@@ -50,7 +50,7 @@ function StoryCard({ card, vote, onOpen }) {
   );
 }
 
-export default function ArticleGrid({ cards, loading, error, onOpen, loadVotes = true }) {
+export default function ArticleGrid({ cards, loading, error, emptyLabel = "", onOpen, loadVotes = true }) {
   const { t } = useTranslation();
   const [votes, setVotes] = useState({});
   const voteKey = cards.map((card) => card.id).filter(Boolean).join("|");
@@ -88,7 +88,7 @@ export default function ArticleGrid({ cards, loading, error, onOpen, loadVotes =
   }
 
   if (cards.length === 0) {
-    return <p className="grid-empty">{t("catalog.empty")}</p>;
+    return <p className="grid-empty">{emptyLabel || t("catalog.empty")}</p>;
   }
 
   return (

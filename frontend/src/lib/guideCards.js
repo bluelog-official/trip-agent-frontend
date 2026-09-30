@@ -1,4 +1,12 @@
 import { stripFrontmatter } from "./articleDocument";
+import {
+  budgetFilterFor,
+  budgetKeyFor,
+  budgetLabelFor,
+  durationKeyFor,
+  durationLabelFor,
+  parseGuideFilename,
+} from "./magazineMatrix";
 
 const DEFAULT_API_ORIGIN = "https://bluelog-trip-backend.onrender.com";
 
@@ -150,7 +158,12 @@ export function toGuideCard(summary, detail) {
   const id = (typeof summary === "string" ? summary : summary?.id) || detail?.id || "";
   const rawMarkdown = detail?.content || detail?.article_markdown || "";
   const markdown = stripFrontmatter(rawMarkdown);
-  const destination = titleCase(id.replace(/_guide\.md$/i, "").replace(/_/g, " "));
+  const identity = parseGuideFilename(id);
+  const durationKey = durationKeyFor(frontmatterValue(rawMarkdown, "duration_key") || identity.durationKey);
+  const budgetKey = budgetKeyFor(frontmatterValue(rawMarkdown, "budget_key") || identity.budgetKey);
+  const destination = titleCase(
+    (frontmatterValue(rawMarkdown, "city") || identity.citySlug).replace(/_/g, " "),
+  );
   const title = frontmatterValue(rawMarkdown, "title") || firstHeading(markdown) || `${destination} Trip Guide`;
   const summaryText = firstParagraph(markdown) || `Local trip notes for ${destination}.`;
   const region = classifyRegion(`${destination} ${id}`);
@@ -163,6 +176,10 @@ export function toGuideCard(summary, detail) {
   themeTags(rawMarkdown).forEach((tag) => {
     if (!tags.includes(tag)) tags.push(tag);
   });
+  const durationLabel = durationLabelFor(durationKey);
+  const budgetLabel = budgetLabelFor(budgetKey);
+  if (durationLabel && !tags.includes(durationLabel)) tags.push(durationLabel);
+  if (budgetLabel && !tags.includes(budgetLabel)) tags.push(budgetLabel);
 
   return {
     id,
@@ -175,6 +192,11 @@ export function toGuideCard(summary, detail) {
     score,
     approved,
     tags,
+    durationKey,
+    durationLabel,
+    budgetKey,
+    budgetLabel,
+    budgetFilter: budgetFilterFor(budgetKey),
   };
 }
 

@@ -1,7 +1,7 @@
 # Progress
 
 ## Current
-Step 2 of 3 is complete. Waiting for approval before step 3.
+Step 3 of 4 is complete. Waiting for approval before step 4.
 
 ## Completed
 1. Guest magazine request system
@@ -18,31 +18,37 @@ Step 2 of 3 is complete. Waiting for approval before step 3.
    - Vote controls sit on the map preview, every guide card, and the guide detail footer. The count goes up immediately and steps back if the server rejects the vote.
    - City rank uses that period's IP votes first, then published guide count and quality score. Periods include 1 week, 1 month, and all time.
 
+3. Duration × budget magazine engine
+   - Guide files can be named `{city}_{duration}_{budget}_guide.md`.
+   - Duration keys: `1_days`, `3_days`, `1_week`.
+   - Budget keys: `50usd`, `100usd`, `200usd`, `budget`, `luxury`. `50usd` and `budget` share the Under $50/day filter.
+   - Samples: `tokyo_1_days_50usd_guide.md`, `tokyo_3_days_200usd_guide.md`, `tokyo_1_week_budget_guide.md`.
+   - `scripts/magazine_matrix_generator.py` writes those files from the curation table. `--llm` uses the research and writer prompts with the same duration and budget block.
+   - `POST /api/v1/generate-guide` accepts `duration` and `budget` together. One without the other returns 400.
+   - Each city guide list has Duration and Daily budget chips. The browser filters the loaded magazines immediately.
+
 ## Remaining
-3. Duration × budget magazine engine — not started
+4. UGC fact-check mapping and points / O2O reward foundation — not started
 
 ## Files touched
-- `app/schemas/vote_schema.py`
-- `app/schemas/globe_schema.py`
-- `app/models/votes.py`
-- `app/services/vote_service.py`
-- `app/services/globe_service.py`
-- `app/routers/votes.py`
-- `app/main.py`
+- `app/schemas/magazine_matrix.py`
+- `app/schemas/guide_schema.py`
+- `app/services/magazine_matrix.py`
+- `app/services/guide_service.py`
+- `app/services/scheduler_service.py`
+- `app/agents/research_agent.py`
+- `app/agents/writer_agent.py`
+- `scripts/magazine_matrix_generator.py`
+- `tests/test_magazine_matrix.py`
+- `guides/tokyo_1_days_50usd_guide.md`
+- `guides/tokyo_3_days_200usd_guide.md`
+- `guides/tokyo_1_week_budget_guide.md`
+- `frontend/src/lib/magazineMatrix.js`
+- `frontend/src/components/portal/MagazineFilters.jsx`
+- `frontend/src/App.jsx`
 - `docs/skill.md`
-- `tests/test_votes.py`
-- `frontend/src/components/portal/FlatWorldMap.jsx`
-- `frontend/src/components/portal/GlobeMap.jsx`
-- `frontend/src/components/portal/VoteButton.jsx`
-- `frontend/src/components/portal/ArticleGrid.jsx`
-- `frontend/src/components/portal/GuideArticle.jsx`
-- `frontend/src/lib/flatMap.js`
-- `frontend/src/lib/votes.js`
-- `frontend/src/lib/globeCities.js`
-- `frontend/package.json`
 
 ## Notes
-- Votes DB default path: `output/votes.db`. Tests override `VOTES_DB_PATH`.
-- `GET /api/votes?article_ids=` returns the count and whether this IP already voted.
-- A local browser check rendered the flat map. The deployed cities API timed out, so live pins were not on that page. Component tests cover hover, vote, and pin navigation.
-- Importing `app.main` can still fail when installed `litellm` raises `NameError: InputAudio`. Vote tests mount the vote router on their own FastAPI app.
+- Legacy `{city}_guide.md` files stay on the city page when both chips are All. A specific duration or budget hides them.
+- `$200/day` is its own chip because `tokyo_3_days_200usd_guide.md` uses that budget token.
+- Importing `app.main` can still fail when installed `litellm` raises `NameError: InputAudio`. Matrix tests do not import the LLM harness.

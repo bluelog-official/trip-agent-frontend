@@ -10,6 +10,7 @@ from app.schemas.guide_schema import CityKeywordProfile, ResearchOutput
 from app.agents.syndication_agent import is_english_language
 from app.services.content_variation import finish_writer_article, writer_duration_block
 from app.services.keyword_map import format_keyword_context, resolve_city_keywords
+from app.services.magazine_matrix import prompt_block_for, resolve_matrix
 
 SYSTEM_PROMPT = (
     "당신은 구글 애드센스 수익화에 최적화된 한국어 여행 블로그를 쓰는 전문 작가입니다. "
@@ -43,10 +44,13 @@ def _build_english_writer_prompt(
     destination: str,
     research: ResearchOutput,
     profile: Optional[CityKeywordProfile] = None,
+    duration: str = "",
+    budget: str = "",
 ) -> str:
     keyword_block = _english_keyword_block(profile)
     keyword_section = "\n{0}\n".format(keyword_block) if keyword_block else ""
-    duration_rule = writer_duration_block(destination, "en")
+    matrix_block = prompt_block_for(destination, duration, budget, "en")
+    duration_rule = matrix_block or writer_duration_block(destination, "en")
     keyword_rule = ""
     if keyword_block:
         keyword_rule = (
@@ -97,14 +101,17 @@ def build_writer_prompt(
     research: ResearchOutput,
     profile: Optional[CityKeywordProfile] = None,
     target_language: str = "ko",
+    duration: str = "",
+    budget: str = "",
 ) -> str:
     if is_english_language(target_language):
-        return _build_english_writer_prompt(destination, research, profile)
+        return _build_english_writer_prompt(destination, research, profile, duration, budget)
 
     keyword_block = format_keyword_context(profile)
     keyword_section = ""
     keyword_rule = ""
-    duration_rule = writer_duration_block(destination, "ko")
+    matrix_block = prompt_block_for(destination, duration, budget, "ko")
+    duration_rule = matrix_block or writer_duration_block(destination, "ko")
     if keyword_block:
         keyword_section = "\n    {0}\n".format(keyword_block)
         keyword_rule = (
@@ -155,9 +162,12 @@ async def run_writer_agent(
     research: ResearchOutput,
     profile: Optional[CityKeywordProfile] = None,
     target_language: str = "ko",
+    duration: str = "",
+    budget: str = "",
 ) -> Tuple[str, str]:
     """리서치 데이터를 마크다운 아티클로 변환하고 (본문, 사용 모델명)을 반환한다."""
     print("✍️ [Agent 2] {0} 마크다운 아티클 작성 시작...".format(destination))
+    matrix = resolve_matrix(destination, duration, budget)
 
     config = types.GenerateContentConfig(temperature=0.8)
 
@@ -166,13 +176,16 @@ async def run_writer_agent(
 
     system_prompt = ENGLISH_SYSTEM_PROMPT if is_english_language(target_language) else SYSTEM_PROMPT
     article_markdown, model_used = await generate_with_fallback(
-        prompt=build_writer_prompt(destination, research, profile, target_language),
+        prompt=build_writer_prompt(destination, research, profile, target_language, duration, budget),
         system_prompt=system_prompt,
         config=config,
         expect_json=False,
     )
 
-    article_markdown = finish_writer_article(article_markdown.strip(), destination, target_language)
+    if matrix is None:
+        article_markdown = finish_writer_article(article_markdown.strip(), destination, target_language)
+    else:
+        article_markdown = article_markdown.strip()
     if not article_markdown.strip():
         raise RuntimeError("Writer Agent가 빈 아티클을 반환했습니다.")
 

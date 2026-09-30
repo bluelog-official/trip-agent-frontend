@@ -43,6 +43,13 @@ const THEME_LABELS = {
     WeekendTrip: "주말 여행",
     SlowTravel: "느린 여행",
     Photography: "사진",
+    "1 Day": "1일",
+    "3 Days": "3일",
+    "1 Week": "1주",
+    "Under $50/day": "하루 50달러 이하",
+    "$100/day": "하루 100달러",
+    "$200/day": "하루 200달러",
+    Luxury: "고품격",
   },
 };
 const CHROME_TAGS = new Set([
