@@ -14,6 +14,7 @@
     "oceania": "Oceania",
     "localFood": "Local Food",
     "community": "Community & Viral Log",
+    "events": "Events & Rewards",
     "searchPlaceholder": "Search",
     "searchGuides": "Search guides",
     "openMenu": "Open menu",
@@ -47,6 +48,7 @@
     "americas": "Americas",
     "localFood": "Local Food",
     "community": "Community Log",
+    "events": "Events & Rewards",
     "copyright": "Copyright ⓒ 2026 BlueLog Trip. All rights reserved."
   },
   "hero": {
@@ -75,6 +77,17 @@
     "rankHint": "Cities are ordered by votes in this period, then by published guides.",
     "votes": "{{count}} votes",
     "mapLabel": "Flat world map",
+    "labels": {
+      "northAmerica": "North America",
+      "southAmerica": "South America",
+      "europe": "Europe",
+      "africa": "Africa",
+      "asia": "Asia",
+      "oceania": "Oceania",
+      "pacific": "Pacific",
+      "atlantic": "Atlantic",
+      "indian": "Indian Ocean"
+    },
     "guides": "{{count}} guides",
     "quality": "QA {{score}}",
     "trendNew": "New",
@@ -305,7 +318,9 @@
     "cityTitle": "{{city}} guides · BlueLog Trip",
     "cityDescription": "Published trip and food guides for {{city}}.",
     "magazineTitle": "Magazine request · BlueLog Trip",
-    "magazineDescription": "Share a place you visited so it can be reviewed for a magazine guide."
+    "magazineDescription": "Share a place you visited so it can be reviewed for a magazine guide.",
+    "eventsTitle": "Events & Rewards · BlueLog Trip",
+    "eventsDescription": "How guest reports earn points, and how partner shop discounts will work."
   },
   "ads": {
     "label": "Sponsored Content",
@@ -406,6 +421,13 @@
     "city": "City",
     "place": "Recommended place",
     "review": "Review",
+    "transport": "Transport and getting around",
+    "transportHint": "Subway pass, rental car, walking route",
+    "discovery": "How you found this place",
+    "discoveryHint": "A coworker recommended it after their own visit",
+    "references": "Blogs, social posts, or videos you used",
+    "referencesHint": "https://… one link per line",
+    "optional": "(optional)",
     "photoUrl": "Photo URL",
     "photoFile": "Upload a photo",
     "submit": "Send request",
@@ -432,6 +454,22 @@
     "guestSource": "Guide source",
     "guestAnonymous": "Anonymous",
     "guestReady": "1-click source ready",
+    "guestHold": "Waiting for fact check",
+    "guestTransport": "Transport",
+    "guestDiscovery": "How it was found",
+    "factNote": "Verification note",
+    "factVerify": "Mark verified",
+    "factReject": "Reject",
+    "factSaved": "Fact check saved.",
+    "factFailed": "Fact check could not be saved.",
+    "publishDraft": "Create magazine draft",
+    "publishDone": "Draft saved as {{guide}}",
+    "publishFailed": "The magazine draft could not be created.",
+    "fact": {
+      "PENDING": "Fact check pending",
+      "VERIFIED": "Verified",
+      "REJECTED": "Rejected"
+    },
     "guestLoadFailed": "Guest requests could not be loaded.",
     "trigger": "Run manual batch",
     "triggerRunning": "Batch running...",
@@ -484,5 +522,20 @@
       "qa": "QA",
       "syndication": "Syndication"
     }
+  },
+  "events": {
+    "kicker": "Events & Rewards",
+    "title": "Points for reports that become real guides",
+    "lead": "A guest report earns points after the desk checks it and publishes it, and again if that guide reaches the top ranks.",
+    "pointsTitle": "How points are added",
+    "publishPoints": "100 points when your verified report is published as an official magazine.",
+    "rankPoints": "50 extra points when that magazine enters the top ranks by votes.",
+    "pointsNote": "The same guide does not earn the same bonus twice. Points stay on the email you leave with the report.",
+    "signInTitle": "Sign-in is coming",
+    "signInBody": "Google and Apple sign-in will attach these points to an account. Until then, the balance is stored against the reporter email.",
+    "partnersTitle": "Partner shop discounts",
+    "partnersBody": "Offline partner shops will apply a discount when a signed-in guest shows their points. The shop list below is the live partner table. It stays empty until a shop is added.",
+    "partnersEmpty": "No partner shops are connected yet.",
+    "requestCta": "Send a place report"
   }
 }

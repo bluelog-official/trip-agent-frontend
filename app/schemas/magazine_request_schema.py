@@ -1,4 +1,4 @@
-"""게스트 매거진 제보 계약. 상태는 서버가 PENDING_REVIEW로 고정한다."""
+"""게스트 매거진 제보 계약. 접수 상태는 PENDING_REVIEW, 팩트체크는 PENDING으로 시작한다."""
 
 import re
 from typing import List, Literal
@@ -8,6 +8,19 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _REVIEW_MIN = 50
+_URL_SPLIT = re.compile(r"[\s,]+")
+
+FactCheckStatus = Literal["PENDING", "VERIFIED", "REJECTED"]
+RequestStatus = Literal["PENDING_REVIEW", "PUBLISHED"]
+
+
+def normalize_reference_urls(value: str) -> str:
+    """공백·쉼표로 나뉜 http(s) 주소를 줄바꿈으로 맞춘다."""
+    parts = [part for part in _URL_SPLIT.split((value or "").strip()) if part]
+    for url in parts:
+        if not url.startswith(("http://", "https://")):
+            raise ValueError("reference url must be http or https")
+    return "\n".join(parts)
 
 
 class MagazineRequestCreate(BaseModel):
@@ -20,6 +33,9 @@ class MagazineRequestCreate(BaseModel):
     review: str
     photo_url: str = ""
     photo_data: str = ""
+    transport_info: str = ""
+    discovery_story: str = ""
+    reference_urls: str = ""
 
     @field_validator(
         "nickname",
@@ -30,6 +46,9 @@ class MagazineRequestCreate(BaseModel):
         "review",
         "photo_url",
         "photo_data",
+        "transport_info",
+        "discovery_story",
+        "reference_urls",
         mode="before",
     )
     @classmethod
@@ -50,11 +69,12 @@ class MagazineRequestCreate(BaseModel):
             raise ValueError("email is invalid")
         if self.photo_url and not self.photo_url.startswith(("http://", "https://")):
             raise ValueError("photo url must be http or https")
+        self.reference_urls = normalize_reference_urls(self.reference_urls)
         return self
 
 
 class GuideSource(BaseModel):
-    """1-click 가이드 생성에 넘길 원천 필드."""
+    """1-click 가이드 생성에 넘길 원천 필드. VERIFIED 이고 아직 초안이 없을 때만 준비된다."""
 
     request_id: int
     destination: str
@@ -64,7 +84,11 @@ class GuideSource(BaseModel):
     author_label: str
     review: str
     photo_url: str = ""
-    ready_for_one_click: bool = True
+    transport_info: str = ""
+    discovery_story: str = ""
+    reference_urls: str = ""
+    fact_check_status: FactCheckStatus = "PENDING"
+    ready_for_one_click: bool = False
 
 
 class MagazineRequestRecord(BaseModel):
@@ -77,10 +101,35 @@ class MagazineRequestRecord(BaseModel):
     place: str
     review: str
     photo_url: str = ""
-    status: Literal["PENDING_REVIEW"] = "PENDING_REVIEW"
+    transport_info: str = ""
+    discovery_story: str = ""
+    reference_urls: str = ""
+    status: RequestStatus = "PENDING_REVIEW"
+    fact_check_status: FactCheckStatus = "PENDING"
+    verification_note: str = ""
+    published_guide_id: str = ""
     created_at: str
     guide_source: GuideSource
 
 
 class MagazineRequestList(BaseModel):
     requests: List[MagazineRequestRecord] = Field(default_factory=list)
+
+
+class FactCheckUpdate(BaseModel):
+    fact_check_status: FactCheckStatus
+    verification_note: str = ""
+
+    @field_validator("verification_note", mode="before")
+    @classmethod
+    def _strip_note(cls, value: object) -> str:
+        if value is None:
+            return ""
+        return str(value).strip()
+
+
+class GuestPublishResult(BaseModel):
+    request_id: int
+    guide_id: str
+    fact_check_status: FactCheckStatus
+    article_markdown: str

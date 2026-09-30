@@ -80,6 +80,10 @@ describe("GlobeMap", () => {
 
     expect(await screen.findByTestId("flat-map")).toBeTruthy();
     expect(screen.getByRole("img", { name: "Flat world map" })).toBeTruthy();
+    expect(document.querySelector("[data-label='asia']")?.textContent).toBe("Asia");
+    expect(document.querySelector("[data-label='pacific']")?.textContent).toBe("Pacific");
+    expect(document.querySelector("[data-label='atlantic']")?.textContent).toBe("Atlantic");
+    expect(document.querySelector("[data-label='indian']")?.textContent).toBe("Indian Ocean");
     expect(screen.getAllByText("4 votes").length).toBeGreaterThan(0);
     expect(screen.getByText("2 guides")).toBeTruthy();
     expect(screen.getByText("QA 85")).toBeTruthy();

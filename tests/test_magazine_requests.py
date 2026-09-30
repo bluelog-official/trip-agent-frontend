@@ -21,6 +21,7 @@ def client(monkeypatch, tmp_path):
     monkeypatch.delenv("ADMIN_TOKEN_SECRET", raising=False)
     monkeypatch.setenv("MAGAZINE_REQUESTS_DB_PATH", str(tmp_path / "magazine_requests.db"))
     monkeypatch.setenv("MAGAZINE_UPLOAD_DIR", str(tmp_path / "uploads"))
+    monkeypatch.setenv("MAGAZINE_GUIDE_DIR", str(tmp_path / "guides"))
     application = FastAPI()
     application.include_router(magazine_router)
     return TestClient(application)
@@ -58,7 +59,26 @@ def test_guide_source_uses_city_and_place():
     assert source["destination"] == "Tokyo, Japan"
     assert source["keyword"] == "Yanaka Ginza"
     assert source["author_label"] == "Mira"
-    assert source["ready_for_one_click"] is True
+    assert source["ready_for_one_click"] is False
+
+    verified_row = {
+        "id": 4,
+        "author_type": "public",
+        "nickname": "Mira",
+        "country": "Japan",
+        "city": "Tokyo",
+        "place": "Yanaka Ginza",
+        "review": REVIEW,
+        "photo_url": "https://example.com/yanaka.jpg",
+        "status": "PENDING_REVIEW",
+        "fact_check_status": "VERIFIED",
+        "transport_info": "Use a subway day pass.",
+        "discovery_story": "A coworker insisted we go.",
+        "reference_urls": "https://example.com/notes",
+    }
+    ready = build_guide_source(verified_row)
+    assert ready["ready_for_one_click"] is True
+    assert ready["transport_info"] == "Use a subway day pass."
 
 
 def test_anonymous_request_is_pending_review(client):
@@ -66,11 +86,12 @@ def test_anonymous_request_is_pending_review(client):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "PENDING_REVIEW"
+    assert body["fact_check_status"] == "PENDING"
     assert body["author_type"] == "anonymous"
     assert body["guide_source"]["destination"] == "Tokyo, Japan"
     assert body["guide_source"]["keyword"] == "Yanaka Ginza"
     assert body["guide_source"]["author_label"] == "Anonymous"
-    assert body["guide_source"]["ready_for_one_click"] is True
+    assert body["guide_source"]["ready_for_one_click"] is False
 
 
 def test_public_name_requires_nickname_and_review_length(client):
@@ -116,5 +137,70 @@ def test_photo_upload_is_stored_and_admin_list_requires_token(client, tmp_path):
     rows = listed.json()["requests"]
     assert len(rows) == 1
     assert rows[0]["status"] == "PENDING_REVIEW"
-    assert rows[0]["guide_source"]["ready_for_one_click"] is True
+    assert rows[0]["fact_check_status"] == "PENDING"
+    assert rows[0]["guide_source"]["ready_for_one_click"] is False
     assert rows[0]["photo_url"] == photo_url
+
+
+def test_reliability_fields_and_verified_one_click_draft(client, tmp_path):
+    token = issue_admin_token()
+    headers = {"Authorization": "Bearer {0}".format(token)}
+    created = client.post(
+        "/api/magazine-requests",
+        json=_payload(
+            email="hana@example.com",
+            transport_info="Buy a subway day pass and walk the last stop.",
+            discovery_story="A coworker insisted after their own visit.",
+            reference_urls="https://example.com/blog https://youtu.be/yanaka",
+        ),
+    )
+    assert created.status_code == 200
+    body = created.json()
+    assert "subway day pass" in body["transport_info"]
+    assert body["reference_urls"] == "https://example.com/blog\nhttps://youtu.be/yanaka"
+    request_id = body["id"]
+
+    blocked = client.post(
+        "/api/v1/admin/magazine-requests/{0}/publish".format(request_id),
+        headers=headers,
+    )
+    assert blocked.status_code == 400
+
+    checked = client.patch(
+        "/api/v1/admin/magazine-requests/{0}/fact-check".format(request_id),
+        headers=headers,
+        json={
+            "fact_check_status": "VERIFIED",
+            "verification_note": "The alley shop is listed on the local map.",
+        },
+    )
+    assert checked.status_code == 200
+    assert checked.json()["fact_check_status"] == "VERIFIED"
+    assert checked.json()["guide_source"]["ready_for_one_click"] is True
+    assert "local map" in checked.json()["verification_note"]
+
+    published = client.post(
+        "/api/v1/admin/magazine-requests/{0}/publish".format(request_id),
+        headers=headers,
+    )
+    assert published.status_code == 200
+    guide_id = published.json()["guide_id"]
+    article = (tmp_path / "guides" / guide_id).read_text(encoding="utf-8")
+    assert "subway day pass" in article
+    assert "coworker insisted" in article
+    assert "https://youtu.be/yanaka" in article
+    assert published.json()["article_markdown"] == article
+
+    again = client.post(
+        "/api/v1/admin/magazine-requests/{0}/publish".format(request_id),
+        headers=headers,
+    )
+    assert again.status_code == 400
+
+
+def test_reference_url_must_be_http(client):
+    response = client.post(
+        "/api/magazine-requests",
+        json=_payload(reference_urls="notes.txt"),
+    )
+    assert response.status_code == 422

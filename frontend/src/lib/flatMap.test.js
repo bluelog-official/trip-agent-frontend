@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { continentPaths, projectLatLng } from "./flatMap";
+import { continentPaths, mapLabelPoints, projectLatLng } from "./flatMap";
 
 describe("flat map projection", () => {
   it("lays cities out from longitude and latitude", () => {
@@ -13,5 +13,12 @@ describe("flat map projection", () => {
     const shapes = continentPaths();
     expect(shapes.length).toBeGreaterThan(4);
     expect(shapes.every((shape) => shape.d.startsWith("M") && shape.d.endsWith("Z"))).toBe(true);
+    const labels = mapLabelPoints();
+    const ids = labels.map((label) => label.id);
+    expect(ids).toEqual(expect.arrayContaining([
+      "asia", "europe", "africa", "northAmerica", "southAmerica", "oceania",
+      "pacific", "atlantic", "indian",
+    ]));
+    expect(labels.every((label) => label.x >= 0 && label.x <= 960 && label.y >= 0 && label.y <= 480)).toBe(true);
   });
 });

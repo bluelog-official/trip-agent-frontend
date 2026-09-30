@@ -56,6 +56,21 @@ def normalize_ip(value: str) -> str:
     return ip_address[:80]
 
 
+def _in_top_ranks(conn, article_id: str, limit: int = 5) -> bool:
+    """추천 수가 많은 글 limit개 안에 있으면 True."""
+    rows = conn.execute(
+        """
+        SELECT article_id
+        FROM votes
+        GROUP BY article_id
+        ORDER BY COUNT(*) DESC, article_id ASC
+        LIMIT ?
+        """,
+        (int(limit),),
+    ).fetchall()
+    return article_id in {str(row["article_id"]) for row in rows}
+
+
 def cast_vote(article_id: str, ip_address: str, created_at: Optional[datetime] = None) -> Dict[str, object]:
     """한 IP가 한 글에 추천을 한 번 저장한다. 이미 있으면 created는 False."""
     article = normalize_article_id(article_id)
@@ -66,8 +81,16 @@ def cast_vote(article_id: str, ip_address: str, created_at: Optional[datetime] =
         try:
             created = vote_store.insert_vote(conn, article, ip_value, stamp)
             vote_count = vote_store.count_for_article(conn, article)
+            ranked = _in_top_ranks(conn, article) if created else False
         finally:
             conn.close()
+    if ranked:
+        try:
+            from app.services.rewards_service import award_top_rank
+
+            award_top_rank(article)
+        except Exception as exc:  # noqa: BLE001 - 추천 저장은 포인트 실패와 분리한다
+            print("⚠️ [Rewards] 상위 추천 포인트 적립 실패: {0}".format(exc))
     return {
         "article_id": article,
         "vote_count": vote_count,

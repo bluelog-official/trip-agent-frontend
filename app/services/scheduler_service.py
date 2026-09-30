@@ -326,6 +326,12 @@ async def publish_approved_guide(guide_id: str) -> Dict[str, Any]:
     file_path.write_text(payload.get("article_markdown") or "", encoding="utf-8")
     sitemap_path = refresh_sitemap()
     seo_ping = await ping_google_sitemap(sitemap_public_url())
+    try:
+        from app.services.rewards_service import award_published_guide
+
+        award_published_guide(guide_id)
+    except Exception as exc:  # noqa: BLE001 - 포인트 실패가 발행을 되돌리면 안 된다
+        print("⚠️ [Rewards] 발행 포인트 적립 실패: {0}".format(exc))
     published = dict(payload)
     published["status"] = "approved"
     published["file_path"] = str(file_path)

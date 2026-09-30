@@ -14,6 +14,7 @@
     "oceania": "오세아니아",
     "localFood": "현지 음식",
     "community": "커뮤니티와 바이럴 기록",
+    "events": "이벤트 & 혜택",
     "searchPlaceholder": "검색",
     "searchGuides": "가이드 검색",
     "openMenu": "메뉴 열기",
@@ -47,6 +48,7 @@
     "americas": "아메리카",
     "localFood": "현지 음식",
     "community": "커뮤니티 기록",
+    "events": "이벤트 & 혜택",
     "copyright": "저작권 ⓒ 2026 BlueLog Trip. 모든 권리를 보유합니다."
   },
   "hero": {
@@ -75,6 +77,17 @@
     "rankHint": "이 기간의 추천 수를 먼저 보고, 이어서 발행된 가이드 수를 봅니다.",
     "votes": "추천 {{count}}",
     "mapLabel": "평면 세계 지도",
+    "labels": {
+      "northAmerica": "북아메리카",
+      "southAmerica": "남아메리카",
+      "europe": "유럽",
+      "africa": "아프리카",
+      "asia": "아시아",
+      "oceania": "오세아니아",
+      "pacific": "태평양",
+      "atlantic": "대서양",
+      "indian": "인도양"
+    },
     "guides": "가이드 {{count}}편",
     "quality": "품질 {{score}}",
     "trendNew": "신규",
@@ -305,7 +318,9 @@
     "cityTitle": "{{city}} 가이드 · BlueLog Trip",
     "cityDescription": "{{city}}에 발행된 여행·맛집 가이드입니다.",
     "magazineTitle": "매거진 제보 · BlueLog Trip",
-    "magazineDescription": "다녀온 장소와 맛집을 제보하는 페이지입니다."
+    "magazineDescription": "다녀온 장소와 맛집을 제보하는 페이지입니다.",
+    "eventsTitle": "이벤트 & 혜택 · BlueLog Trip",
+    "eventsDescription": "제보 포인트 적립과 오프라인 제휴 할인 안내입니다."
   },
   "ads": {
     "label": "광고",
@@ -406,6 +421,13 @@
     "city": "도시",
     "place": "추천 장소 또는 맛집",
     "review": "후기",
+    "transport": "이용한 교통수단과 이동 팁",
+    "transportHint": "지하철 패스, 렌터카, 도보 동선",
+    "discovery": "이 장소를 알게 된 계기",
+    "discoveryHint": "회사 동료 추천으로 방문 후 극찬",
+    "references": "참고한 글과 영상 주소",
+    "referencesHint": "https://… 한 줄에 하나",
+    "optional": "(선택)",
     "photoUrl": "사진 주소",
     "photoFile": "사진 올리기",
     "submit": "제보 보내기",
@@ -432,6 +454,22 @@
     "guestSource": "가이드 원천",
     "guestAnonymous": "익명",
     "guestReady": "원클릭 가이드 원천 준비",
+    "guestHold": "팩트체크 대기",
+    "guestTransport": "교통",
+    "guestDiscovery": "발굴 계기",
+    "factNote": "검증 노트",
+    "factVerify": "검증 완료",
+    "factReject": "거절",
+    "factSaved": "팩트체크를 저장했습니다.",
+    "factFailed": "팩트체크를 저장하지 못했습니다.",
+    "publishDraft": "매거진 초안 만들기",
+    "publishDone": "{{guide}} 초안을 저장했습니다.",
+    "publishFailed": "매거진 초안을 만들지 못했습니다.",
+    "fact": {
+      "PENDING": "팩트체크 대기",
+      "VERIFIED": "검증됨",
+      "REJECTED": "거절됨"
+    },
     "guestLoadFailed": "제보 목록을 불러오지 못했습니다.",
     "trigger": "수동 배치 실행",
     "triggerRunning": "배치 실행 중...",
@@ -484,5 +522,20 @@
       "qa": "품질",
       "syndication": "배포"
     }
+  },
+  "events": {
+    "kicker": "이벤트 & 혜택",
+    "title": "정식 매거진이 된 제보에 포인트를 적립합니다",
+    "lead": "데스크가 사실을 확인하고 매거진으로 발행하면 포인트가 쌓입니다. 그 글이 추천 상위권에 들어가면 보너스가 한 번 더 붙습니다.",
+    "pointsTitle": "포인트가 쌓이는 때",
+    "publishPoints": "검증된 제보가 정식 매거진으로 발행되면 100포인트.",
+    "rankPoints": "그 매거진이 추천 수 기준 상위 순위에 들어가면 50포인트.",
+    "pointsNote": "같은 글의 같은 보너스는 한 번만 적립됩니다. 잔액은 제보에 남긴 이메일에 붙습니다.",
+    "signInTitle": "소셜 로그인은 준비 중입니다",
+    "signInBody": "구글과 애플 로그인으로 포인트를 계정에 연결할 예정입니다. 그 전까지는 제보 이메일에 잔액을 보관합니다.",
+    "partnersTitle": "오프라인 제휴 상점 할인",
+    "partnersBody": "로그인한 손님이 포인트를 보여 주면 제휴 상점에서 할인을 적용하는 구조입니다. 아래 목록은 제휴 상점 표이며, 상점이 등록되기 전에는 비어 있습니다.",
+    "partnersEmpty": "연결된 제휴 상점이 아직 없습니다.",
+    "requestCta": "장소 제보하기"
   }
 }

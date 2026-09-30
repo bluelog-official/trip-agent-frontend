@@ -5,12 +5,15 @@ from typing import Optional, Tuple
 os.environ.setdefault("LITELLM_LOCAL_MODEL_COST_MAP", "True")
 
 import httpx  # noqa: E402
-import litellm  # noqa: E402 - 위 환경변수 설정 이후에 import 해야 한다.
 from dotenv import load_dotenv  # noqa: E402
 from google import genai  # noqa: E402
 from google.genai import types  # noqa: E402
 
 load_dotenv()
+
+# litellm은 OpenRouter 우회에서만 쓴다. 모듈 로드 시점의 NameError(InputAudio)가
+# FastAPI 기동과 테스트 전체를 막지 않도록 호출 직전까지 수입을 미룬다.
+_litellm_module = None
 
 PRIMARY_GEMINI_MODEL = "gemini-3.6-flash"
 
@@ -30,14 +33,23 @@ OPENROUTER_MODELS = [
 
 OPENROUTER_TIMEOUT = 60.0
 
-# 모델 제공자별로 지원하지 않는 파라미터는 litellm이 조용히 제거하도록 한다.
-litellm.drop_params = True
-# 백업 모델을 순회하는 동안 나오는 litellm 내부 예외 배너를 감춘다.
-litellm.suppress_debug_info = True
-# aiohttp 전송 계층은 이벤트 루프 종료 시 커넥션을 닫지 못해 SSL 예외를 남긴다. httpx를 쓴다.
-litellm.disable_aiohttp_transport = True
-
 _gemini_client: Optional["genai.Client"] = None
+
+
+def _load_litellm():
+    """OpenRouter 호출 직전에만 litellm을 불러온다. 수입 실패는 그 경로의 오류로 남긴다."""
+    global _litellm_module
+    if _litellm_module is not None:
+        return _litellm_module
+    try:
+        import litellm
+    except Exception as exc:  # noqa: BLE001 - 깨진 타입 수입도 앱 기동과 분리한다
+        raise RuntimeError("OpenRouter fallback is unavailable: {0}".format(exc)) from exc
+    litellm.drop_params = True
+    litellm.suppress_debug_info = True
+    litellm.disable_aiohttp_transport = True
+    _litellm_module = litellm
+    return litellm
 
 
 def get_gemini_client() -> "genai.Client":
@@ -105,7 +117,7 @@ async def _call_openrouter(prompt: str, system_prompt: str, expect_json: bool) -
             if expect_json:
                 kwargs["response_format"] = {"type": "json_object"}
 
-            response = await litellm.acompletion(**kwargs)
+            response = await _load_litellm().acompletion(**kwargs)
             text = response.choices[0].message.content or ""
             if not text.strip():
                 raise RuntimeError("빈 응답을 반환했습니다.")

@@ -30,6 +30,134 @@ function scoreClass(score) {
   return Number(score) >= 75 ? "score-tag pass" : "score-tag hold";
 }
 
+function GuestRequestCard({ row, onUnauthorized, onChange }) {
+  const { t } = useTranslation();
+  const source = row.guide_source || {};
+  const author = row.author_type === "anonymous" ? t("dashboard.guestAnonymous") : row.nickname;
+  const [note, setNote] = useState(row.verification_note || "");
+  const [busy, setBusy] = useState("");
+  const [message, setMessage] = useState("");
+  const fact = row.fact_check_status || "PENDING";
+  const urls = String(row.reference_urls || "").split("\n").map((item) => item.trim()).filter(Boolean);
+
+  const sendFact = async (status) => {
+    setBusy(status);
+    setMessage("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/magazine-requests/${row.id}/fact-check`, {
+        method: "PATCH",
+        headers: { ...adminAuthHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ fact_check_status: status, verification_note: note.trim() }),
+      });
+      if (res.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      if (!res.ok) throw new Error(t("dashboard.factFailed"));
+      setMessage(t("dashboard.factSaved"));
+      onChange();
+    } catch (err) {
+      setMessage(err.message || t("dashboard.factFailed"));
+    } finally {
+      setBusy("");
+    }
+  };
+
+  const publishDraft = async () => {
+    setBusy("publish");
+    setMessage("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/magazine-requests/${row.id}/publish`, {
+        method: "POST",
+        headers: adminAuthHeaders(),
+      });
+      if (res.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      if (!res.ok) throw new Error(t("dashboard.publishFailed"));
+      const payload = await res.json();
+      setMessage(t("dashboard.publishDone", { guide: payload.guide_id || "" }));
+      onChange();
+    } catch (err) {
+      setMessage(err.message || t("dashboard.publishFailed"));
+    } finally {
+      setBusy("");
+    }
+  };
+
+  return (
+    <li className="guest-request-card" data-request-id={row.id}>
+      <header>
+        <strong>{author}</strong>
+        <span data-status={row.status}>
+          {row.status === "PENDING_REVIEW" ? t("dashboard.guestStatusPending") : row.status}
+        </span>
+        <span data-fact-status={fact}>{t(`dashboard.fact.${fact}`)}</span>
+      </header>
+      <p>
+        <span>{t("dashboard.guestPlace")}</span>
+        {` ${row.city}, ${row.country} · ${row.place}`}
+      </p>
+      <p>{row.review}</p>
+      {row.transport_info ? (
+        <p>
+          <span>{t("dashboard.guestTransport")}</span>
+          {` ${row.transport_info}`}
+        </p>
+      ) : null}
+      {row.discovery_story ? (
+        <p>
+          <span>{t("dashboard.guestDiscovery")}</span>
+          {` ${row.discovery_story}`}
+        </p>
+      ) : null}
+      {urls.length ? (
+        <ul className="guest-references">
+          {urls.map((url) => (
+            <li key={url}>
+              <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <div
+        className="guest-source"
+        data-source-ready={source.ready_for_one_click ? "true" : "false"}
+      >
+        <span>{t("dashboard.guestSource")}</span>
+        <strong>{source.destination}</strong>
+        <span>{source.keyword}</span>
+        {source.ready_for_one_click ? <em>{t("dashboard.guestReady")}</em> : <em>{t("dashboard.guestHold")}</em>}
+      </div>
+      <label className="contact-label" htmlFor={`fact-note-${row.id}`}>
+        {t("dashboard.factNote")}
+      </label>
+      <textarea
+        id={`fact-note-${row.id}`}
+        className="contact-input contact-message"
+        rows={2}
+        value={note}
+        onChange={(event) => setNote(event.target.value)}
+      />
+      <div className="guest-fact-actions">
+        <button type="button" disabled={Boolean(busy)} onClick={() => sendFact("VERIFIED")}>
+          {t("dashboard.factVerify")}
+        </button>
+        <button type="button" disabled={Boolean(busy)} onClick={() => sendFact("REJECTED")}>
+          {t("dashboard.factReject")}
+        </button>
+        {source.ready_for_one_click ? (
+          <button type="button" disabled={Boolean(busy)} onClick={publishDraft}>
+            {t("dashboard.publishDraft")}
+          </button>
+        ) : null}
+      </div>
+      {message ? <p className="dash-banner">{message}</p> : null}
+    </li>
+  );
+}
+
 function GuestRequests({ onUnauthorized }) {
   const { t } = useTranslation();
   const [rows, setRows] = useState([]);
@@ -75,36 +203,21 @@ function GuestRequests({ onUnauthorized }) {
       {!loading && !error && rows.length === 0 ? <p>{t("dashboard.guestEmpty")}</p> : null}
       {rows.length > 0 ? (
         <ul className="guest-request-list">
-          {rows.map((row) => {
-            const source = row.guide_source || {};
-            const author = row.author_type === "anonymous"
-              ? t("dashboard.guestAnonymous")
-              : row.nickname;
-            return (
-              <li key={row.id} className="guest-request-card" data-request-id={row.id}>
-                <header>
-                  <strong>{author}</strong>
-                  <span data-status={row.status}>
-                    {row.status === "PENDING_REVIEW" ? t("dashboard.guestStatusPending") : row.status}
-                  </span>
-                </header>
-                <p>
-                  <span>{t("dashboard.guestPlace")}</span>
-                  {` ${row.city}, ${row.country} · ${row.place}`}
-                </p>
-                <p>{row.review}</p>
-                <div
-                  className="guest-source"
-                  data-source-ready={source.ready_for_one_click ? "true" : "false"}
-                >
-                  <span>{t("dashboard.guestSource")}</span>
-                  <strong>{source.destination}</strong>
-                  <span>{source.keyword}</span>
-                  <em>{t("dashboard.guestReady")}</em>
-                </div>
-              </li>
-            );
-          })}
+          {rows.map((row) => (
+            <GuestRequestCard
+              key={row.id}
+              row={row}
+              onUnauthorized={onUnauthorized}
+              onChange={() => {
+                setLoading(true);
+                fetch(`${API_BASE_URL}/admin/magazine-requests`, { headers: adminAuthHeaders() })
+                  .then((res) => res.json())
+                  .then((data) => setRows(Array.isArray(data?.requests) ? data.requests : []))
+                  .catch(() => {})
+                  .finally(() => setLoading(false));
+              }}
+            />
+          ))}
         </ul>
       ) : null}
     </section>

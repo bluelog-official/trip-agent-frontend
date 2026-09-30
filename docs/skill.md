@@ -162,8 +162,25 @@ class GenerateResponse(BaseModel):
 - **Table:** `app/models/magazine_requests.py` — `magazine_requests`. 신규 행 `status`는 `PENDING_REVIEW`.
 - **Service:** `app/services/magazine_request_service.py` — `create_magazine_request()`, `list_magazine_requests()`, `build_guide_source()`.
 - **Router:** `POST /api/magazine-requests` 공개 접수. `GET /api/v1/admin/magazine-requests`는 Bearer 필수.
-- `guide_source`는 `destination`(도시, 국가), `keyword`(추천 장소), 후기, 사진 주소를 담아 1-click 가이드 생성 입력으로 쓴다.
-- DB 기본 경로는 `output/magazine_requests.db`. 테스트는 `MAGAZINE_REQUESTS_DB_PATH`와 `MAGAZINE_UPLOAD_DIR`로 바꾼다.
+- `guide_source`는 `destination`(도시, 국가), `keyword`(추천 장소), 후기, 사진 주소, `transport_info`, `discovery_story`, `reference_urls`를 담는다.
+- 신규 행의 `fact_check_status`는 `PENDING`이다. `VERIFIED`이고 아직 초안이 없을 때만 `ready_for_one_click`이 true다.
+- `PATCH /api/v1/admin/magazine-requests/{id}/fact-check`는 `PENDING`, `VERIFIED`, `REJECTED`와 검증 노트를 저장한다. Bearer 필수.
+- `POST /api/v1/admin/magazine-requests/{id}/publish`는 `VERIFIED` 제보만 `{city}_guest_{id}_guide.md` 초안으로 쓴다. 본문에 교통, 발굴 계기, 참고 URL이 들어간다.
+- DB 기본 경로는 `output/magazine_requests.db`. 테스트는 `MAGAZINE_REQUESTS_DB_PATH`, `MAGAZINE_UPLOAD_DIR`, `MAGAZINE_GUIDE_DIR`로 바꾼다.
+
+## 12. Points and partner shops
+
+- **Schema:** `app/schemas/rewards_schema.py`
+- **Tables:** `app/models/rewards.py`
+  - `users(id, email, auth_provider, points_balance, created_at)`
+  - `point_logs(id, user_id, reporter_email, amount, reason, article_id, created_at)` — 같은 사용자·사유·글은 한 행
+  - `partner_merchants(id, name, city, discount_rate, status)`
+- **Service:** `app/services/rewards_service.py` — `accrue_points()`, `award_published_guide()`, `award_top_rank()`
+- 정식 발행(`publish_approved_guide`)이 제보 초안과 연결되면 `MAGAZINE_PUBLISHED` 100포인트.
+- 그 글의 추천 수가 상위 5개에 들어가면 `UGC_TOP_RANK_BONUS` 50포인트. 추천 API가 적립을 호출한다.
+- `GET /api/v1/rewards/overview`는 공개. `POST /api/v1/rewards/accrue`는 Bearer 필수.
+- DB 기본 경로는 `output/rewards.db`. 테스트는 `REWARDS_DB_PATH`로 바꾼다.
+- 구글·애플 로그인은 `auth_provider` 자리만 열어 둔다. 이벤트 페이지(`/events`)가 적립 규칙과 제휴 할인 안내를 보여 준다.
 
 ## 10. Article Votes
 

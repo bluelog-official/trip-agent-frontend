@@ -129,6 +129,13 @@ export default function GlobalNav({
           >
             {t("nav.community")}
           </button>
+          <button
+            type="button"
+            className={active === "events" ? "nav-link active" : "nav-link"}
+            onClick={() => visit("/events")}
+          >
+            {t("nav.events")}
+          </button>
         </nav>
 
         <div className="gnb-tools">

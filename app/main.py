@@ -14,6 +14,7 @@ from fastapi.responses import Response
 
 from app.agents.marketing_agent import run_marketing_pipeline
 from app.routers.magazine_requests import router as magazine_router
+from app.routers.rewards import router as rewards_router
 from app.routers.stats import router as stats_router
 from app.routers.votes import router as vote_router
 from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
@@ -90,6 +91,7 @@ app = FastAPI(title="BlueLog AdSense Engine - AI Agents", lifespan=lifespan)
 app.include_router(stats_router)
 app.include_router(magazine_router)
 app.include_router(vote_router)
+app.include_router(rewards_router)
 
 app.add_middleware(
     CORSMiddleware,

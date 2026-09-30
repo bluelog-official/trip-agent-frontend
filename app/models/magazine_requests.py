@@ -1,4 +1,4 @@
-"""magazine_requests SQLite 테이블. 신규 행의 상태는 PENDING_REVIEW다."""
+"""magazine_requests SQLite 테이블. 신규 행은 PENDING_REVIEW, 팩트체크는 PENDING이다."""
 
 import sqlite3
 from pathlib import Path
@@ -6,6 +6,30 @@ from typing import Any, Dict, List, Optional
 
 
 PENDING_REVIEW = "PENDING_REVIEW"
+PUBLISHED = "PUBLISHED"
+FACT_PENDING = "PENDING"
+FACT_VERIFIED = "VERIFIED"
+FACT_REJECTED = "REJECTED"
+
+_COLUMNS = (
+    "id",
+    "author_type",
+    "nickname",
+    "email",
+    "country",
+    "city",
+    "place",
+    "review",
+    "photo_url",
+    "transport_info",
+    "discovery_story",
+    "reference_urls",
+    "status",
+    "fact_check_status",
+    "verification_note",
+    "published_guide_id",
+    "created_at",
+)
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS magazine_requests (
@@ -18,10 +42,25 @@ CREATE TABLE IF NOT EXISTS magazine_requests (
     place TEXT NOT NULL,
     review TEXT NOT NULL,
     photo_url TEXT NOT NULL DEFAULT '',
+    transport_info TEXT NOT NULL DEFAULT '',
+    discovery_story TEXT NOT NULL DEFAULT '',
+    reference_urls TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT 'PENDING_REVIEW',
+    fact_check_status TEXT NOT NULL DEFAULT 'PENDING',
+    verification_note TEXT NOT NULL DEFAULT '',
+    published_guide_id TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL
 );
 """
+
+_ADDED_COLUMNS = {
+    "transport_info": "TEXT NOT NULL DEFAULT ''",
+    "discovery_story": "TEXT NOT NULL DEFAULT ''",
+    "reference_urls": "TEXT NOT NULL DEFAULT ''",
+    "fact_check_status": "TEXT NOT NULL DEFAULT 'PENDING'",
+    "verification_note": "TEXT NOT NULL DEFAULT ''",
+    "published_guide_id": "TEXT NOT NULL DEFAULT ''",
+}
 
 
 def connect(path: Path) -> sqlite3.Connection:
@@ -29,7 +68,21 @@ def connect(path: Path) -> sqlite3.Connection:
     conn = sqlite3.connect(str(path), timeout=10, isolation_level=None)
     conn.row_factory = sqlite3.Row
     conn.executescript(_SCHEMA)
+    _ensure_columns(conn)
     return conn
+
+
+def _ensure_columns(conn: sqlite3.Connection) -> None:
+    existing = {row[1] for row in conn.execute("PRAGMA table_info(magazine_requests)")}
+    for name, column_type in _ADDED_COLUMNS.items():
+        if name not in existing:
+            conn.execute(
+                "ALTER TABLE magazine_requests ADD COLUMN {0} {1}".format(name, column_type)
+            )
+
+
+def _select_list() -> str:
+    return ", ".join(_COLUMNS)
 
 
 def insert_request(
@@ -42,6 +95,9 @@ def insert_request(
     place: str,
     review: str,
     photo_url: str,
+    transport_info: str,
+    discovery_story: str,
+    reference_urls: str,
     created_at: str,
 ) -> int:
     conn.execute("BEGIN IMMEDIATE")
@@ -49,8 +105,10 @@ def insert_request(
         cursor = conn.execute(
             """
             INSERT INTO magazine_requests (
-                author_type, nickname, email, country, city, place, review, photo_url, status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                author_type, nickname, email, country, city, place, review, photo_url,
+                transport_info, discovery_story, reference_urls,
+                status, fact_check_status, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 author_type,
@@ -61,7 +119,11 @@ def insert_request(
                 place,
                 review,
                 photo_url,
+                transport_info,
+                discovery_story,
+                reference_urls,
                 PENDING_REVIEW,
+                FACT_PENDING,
                 created_at,
             ),
         )
@@ -73,24 +135,51 @@ def insert_request(
         raise
 
 
-def fetch_request(conn: sqlite3.Connection, request_id: int) -> Optional[Dict[str, Any]]:
-    row = conn.execute(
+def update_fact_check(
+    conn: sqlite3.Connection,
+    request_id: int,
+    fact_check_status: str,
+    verification_note: str,
+) -> None:
+    conn.execute(
         """
-        SELECT id, author_type, nickname, email, country, city, place, review, photo_url, status, created_at
-        FROM magazine_requests
+        UPDATE magazine_requests
+        SET fact_check_status = ?, verification_note = ?
         WHERE id = ?
         """,
+        (fact_check_status, verification_note, int(request_id)),
+    )
+
+
+def mark_published(conn: sqlite3.Connection, request_id: int, guide_id: str) -> None:
+    conn.execute(
+        """
+        UPDATE magazine_requests
+        SET status = ?, published_guide_id = ?
+        WHERE id = ?
+        """,
+        (PUBLISHED, guide_id, int(request_id)),
+    )
+
+
+def fetch_request(conn: sqlite3.Connection, request_id: int) -> Optional[Dict[str, Any]]:
+    row = conn.execute(
+        "SELECT {0} FROM magazine_requests WHERE id = ?".format(_select_list()),
         (int(request_id),),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def fetch_by_guide_id(conn: sqlite3.Connection, guide_id: str) -> Optional[Dict[str, Any]]:
+    row = conn.execute(
+        "SELECT {0} FROM magazine_requests WHERE published_guide_id = ?".format(_select_list()),
+        (guide_id,),
     ).fetchone()
     return dict(row) if row else None
 
 
 def fetch_requests(conn: sqlite3.Connection) -> List[Dict[str, Any]]:
     rows = conn.execute(
-        """
-        SELECT id, author_type, nickname, email, country, city, place, review, photo_url, status, created_at
-        FROM magazine_requests
-        ORDER BY id DESC
-        """
+        "SELECT {0} FROM magazine_requests ORDER BY id DESC".format(_select_list())
     ).fetchall()
     return [dict(row) for row in rows]

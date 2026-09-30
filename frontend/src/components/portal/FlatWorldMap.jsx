@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { appLanguage } from "../../i18n/i18n";
-import { continentPaths, pinPlacement } from "../../lib/flatMap";
+import { continentPaths, mapLabelPoints, pinPlacement } from "../../lib/flatMap";
 import { globeCityLabel, pinScale } from "../../lib/globeCities";
 import { fetchVoteStatuses } from "../../lib/votes";
 import VoteButton from "./VoteButton";
 
 const PATHS = continentPaths();
+const LABELS = mapLabelPoints();
 
 function MapThumb({ src, name }) {
   const [failed, setFailed] = useState(false);
@@ -125,6 +126,18 @@ export default function FlatWorldMap({ cities, onOpenCity }) {
         })}
         {PATHS.map((shape) => (
           <path key={shape.id} className="flat-land" d={shape.d} />
+        ))}
+        {LABELS.map((label) => (
+          <text
+            key={label.id}
+            className={label.kind === "sea" ? "flat-label flat-label-sea" : "flat-label"}
+            x={label.x}
+            y={label.y}
+            textAnchor="middle"
+            data-label={label.id}
+          >
+            {t(`globe.labels.${label.id}`)}
+          </text>
         ))}
       </svg>
       <div className="flat-map-pins">

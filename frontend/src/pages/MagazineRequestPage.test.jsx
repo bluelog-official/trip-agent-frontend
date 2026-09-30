@@ -33,6 +33,15 @@ describe("MagazineRequestPage", () => {
     expect(fetchMock).not.toHaveBeenCalled();
 
     fireEvent.change(screen.getByRole("textbox", { name: "Review" }), { target: { value: REVIEW } });
+    fireEvent.change(screen.getByRole("textbox", { name: /^Transport/ }), {
+      target: { value: "Buy a subway day pass." },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: /^How you found/ }), {
+      target: { value: "A coworker recommended it." },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: /^Blogs/ }), {
+      target: { value: "https://example.com/notes" },
+    });
     fireEvent.change(screen.getByRole("textbox", { name: "Photo URL" }), { target: { value: "https://example.com/a.jpg" } });
     fireEvent.click(screen.getByRole("button", { name: "Send request" }));
 
@@ -47,6 +56,9 @@ describe("MagazineRequestPage", () => {
       city: "Tokyo",
       place: "Yanaka",
       review: REVIEW,
+      transport_info: "Buy a subway day pass.",
+      discovery_story: "A coworker recommended it.",
+      reference_urls: "https://example.com/notes",
       photo_url: "https://example.com/a.jpg",
     });
     expect((await screen.findByRole("status")).textContent).toMatch(/Request received/);

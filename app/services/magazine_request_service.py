@@ -9,7 +9,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from app.models.magazine_requests import PENDING_REVIEW, connect, fetch_request, fetch_requests, insert_request
+from app.models.magazine_requests import (
+    FACT_VERIFIED,
+    connect,
+    fetch_by_guide_id,
+    fetch_request,
+    fetch_requests,
+    insert_request,
+    mark_published,
+    update_fact_check,
+)
 
 
 _ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -39,8 +48,15 @@ def upload_dir() -> Path:
     return _ROOT_DIR / "output" / "magazine_uploads"
 
 
+def guide_dir() -> Path:
+    override = os.getenv("MAGAZINE_GUIDE_DIR", "").strip()
+    if override:
+        return Path(override)
+    return _ROOT_DIR / "output"
+
+
 def build_guide_source(row: Dict[str, object]) -> Dict[str, object]:
-    """제보 한 건을 가이드 생성 입력으로 맞춘다."""
+    """제보 한 건을 가이드 생성 입력으로 맞춘다. VERIFIED 이고 초안이 없을 때만 원클릭이 열린다."""
     country = str(row.get("country") or "").strip()
     city = str(row.get("city") or "").strip()
     nickname = str(row.get("nickname") or "").strip()
@@ -50,6 +66,8 @@ def build_guide_source(row: Dict[str, object]) -> Dict[str, object]:
     else:
         author_label = nickname
     destination = city if not country else "{0}, {1}".format(city, country)
+    fact_status = str(row.get("fact_check_status") or "PENDING")
+    published_id = str(row.get("published_guide_id") or "").strip()
     return {
         "request_id": int(row["id"]),
         "destination": destination,
@@ -59,8 +77,90 @@ def build_guide_source(row: Dict[str, object]) -> Dict[str, object]:
         "author_label": author_label,
         "review": str(row.get("review") or ""),
         "photo_url": str(row.get("photo_url") or ""),
-        "ready_for_one_click": str(row.get("status") or "") == PENDING_REVIEW,
+        "transport_info": str(row.get("transport_info") or ""),
+        "discovery_story": str(row.get("discovery_story") or ""),
+        "reference_urls": str(row.get("reference_urls") or ""),
+        "fact_check_status": fact_status,
+        "ready_for_one_click": fact_status == FACT_VERIFIED and not published_id,
     }
+
+
+def _slug(value: str) -> str:
+    text = re.sub(r"[^a-z0-9]+", "_", str(value or "").strip().lower()).strip("_")
+    return text or "guest"
+
+
+def guest_guide_id(row: Dict[str, object]) -> str:
+    city = _slug(str(row.get("city") or "city"))
+    return "{0}_guest_{1}_guide.md".format(city, int(row["id"]))
+
+
+def _plain(value: object) -> str:
+    return str(value).replace("{", "{{").replace("}", "}}")
+
+
+def render_guest_magazine(row: Dict[str, object]) -> str:
+    """검증된 제보의 교통·발굴·참고 주소를 매거진 본문에 넣는다. LLM을 호출하지 않는다."""
+    source = build_guide_source(row)
+    city = source["city"] or "City"
+    place = source["keyword"] or "Place"
+    country = source["country"]
+    title = "{0} in {1}".format(place, city)
+    transport = source["transport_info"] or "The guest did not add a transit note."
+    discovery = source["discovery_story"] or "The guest did not add how they found this place."
+    urls = [line for line in str(source["reference_urls"] or "").splitlines() if line.strip()]
+    if urls:
+        sources = "\n".join("- [{0}]({0})".format(url) for url in urls)
+    else:
+        sources = "No outside link was attached to this report."
+    photo = source["photo_url"]
+    photo_line = "\n![{0}]({1})\n".format(place, photo) if photo.startswith(("http://", "https://")) else ""
+    return """---
+title: "{title}"
+city: "{city}"
+country: "{country}"
+status: "Guest source"
+fact_check: "{fact}"
+---
+# {title}
+
+{author} visited {place} in {destination}. This draft keeps the guest's own notes so the desk can publish them after review.
+{photo}
+## What the guest noticed
+
+{review}
+
+## Getting there
+
+{transport}
+
+## How this place was found
+
+{discovery}
+
+## References the guest used
+
+{sources}
+
+## Where to go
+
+| Category | Recommended Location | Estimated Cost | Rating |
+| --- | --- | --- | --- |
+| Guest pick | {place} | Ask on site | Guest report |
+""".format(
+        title=_plain(title.replace('"', "'")),
+        city=_plain(city.replace('"', "'")),
+        country=_plain(country.replace('"', "'")),
+        fact=_plain(source["fact_check_status"]),
+        author=_plain(source["author_label"]),
+        place=_plain(place),
+        destination=_plain(source["destination"]),
+        photo=_plain(photo_line),
+        review=_plain(source["review"]),
+        transport=_plain(transport),
+        discovery=_plain(discovery),
+        sources=_plain(sources),
+    )
 
 
 def _stamp() -> str:
@@ -127,6 +227,9 @@ def create_magazine_request(payload: Dict[str, str]) -> Dict[str, object]:
                 place=str(payload["place"]),
                 review=str(payload["review"]),
                 photo_url=photo_url,
+                transport_info=str(payload.get("transport_info") or ""),
+                discovery_story=str(payload.get("discovery_story") or ""),
+                reference_urls=str(payload.get("reference_urls") or ""),
                 created_at=_stamp(),
             )
             row = fetch_request(conn, request_id)
@@ -147,3 +250,60 @@ def list_magazine_requests() -> List[Dict[str, object]]:
         finally:
             conn.close()
     return [_with_source(row) for row in rows]
+
+
+def set_fact_check(request_id: int, fact_check_status: str, verification_note: str) -> Dict[str, object]:
+    """어드민이 장소 실재 여부를 PENDING, VERIFIED, REJECTED로 남긴다."""
+    with _LOCK:
+        conn = connect(db_path())
+        try:
+            current = fetch_request(conn, request_id)
+            if not current:
+                raise LookupError(request_id)
+            update_fact_check(conn, request_id, fact_check_status, verification_note)
+            row = fetch_request(conn, request_id)
+        finally:
+            conn.close()
+    return _with_source(row)
+
+
+def find_request_by_guide(guide_id: str) -> Optional[Dict[str, object]]:
+    with _LOCK:
+        conn = connect(db_path())
+        try:
+            row = fetch_by_guide_id(conn, guide_id)
+        finally:
+            conn.close()
+    if not row:
+        return None
+    return _with_source(row)
+
+
+def publish_verified_request(request_id: int) -> Dict[str, object]:
+    """VERIFIED 제보만 매거진 초안 파일로 반영한다."""
+    with _LOCK:
+        conn = connect(db_path())
+        try:
+            row = fetch_request(conn, request_id)
+            if not row:
+                raise LookupError(request_id)
+            if str(row.get("fact_check_status") or "") != FACT_VERIFIED:
+                raise ValueError("only verified requests can become a magazine draft")
+            if str(row.get("published_guide_id") or "").strip():
+                raise ValueError("this request already has a magazine draft")
+            guide_id = guest_guide_id(row)
+            article = render_guest_magazine(row)
+            folder = guide_dir()
+            folder.mkdir(parents=True, exist_ok=True)
+            path = folder / guide_id
+            path.write_text(article, encoding="utf-8")
+            mark_published(conn, request_id, guide_id)
+            stored = fetch_request(conn, request_id)
+        except Exception:
+            raise
+        finally:
+            conn.close()
+    record = _with_source(stored)
+    record["article_markdown"] = article
+    record["guide_id"] = guide_id
+    return record

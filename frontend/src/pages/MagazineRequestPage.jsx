@@ -20,6 +20,9 @@ export default function MagazineRequestPage({ onNavigate }) {
   const [city, setCity] = useState("");
   const [place, setPlace] = useState("");
   const [review, setReview] = useState("");
+  const [transportInfo, setTransportInfo] = useState("");
+  const [discoveryStory, setDiscoveryStory] = useState("");
+  const [referenceUrls, setReferenceUrls] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [error, setError] = useState("");
@@ -55,6 +58,9 @@ export default function MagazineRequestPage({ onNavigate }) {
           city: city.trim(),
           place: place.trim(),
           review: review.trim(),
+          transport_info: transportInfo.trim(),
+          discovery_story: discoveryStory.trim(),
+          reference_urls: referenceUrls.trim(),
           photo_url: photoUrl.trim(),
           photo_data: photoData,
         }),
@@ -69,6 +75,9 @@ export default function MagazineRequestPage({ onNavigate }) {
       setCity("");
       setPlace("");
       setReview("");
+      setTransportInfo("");
+      setDiscoveryStory("");
+      setReferenceUrls("");
       setPhotoUrl("");
       setPhotoFile(null);
     } catch (err) {
@@ -176,6 +185,45 @@ export default function MagazineRequestPage({ onNavigate }) {
         <p className="review-count">
           {review.trim().length}/{REVIEW_MIN}
         </p>
+
+        <label className="contact-label" htmlFor="magazine-transport">
+          {t("magazineRequest.transport")}
+          <span> {t("magazineRequest.optional")}</span>
+        </label>
+        <textarea
+          id="magazine-transport"
+          className="contact-input contact-message"
+          rows={3}
+          value={transportInfo}
+          onChange={(event) => setTransportInfo(event.target.value)}
+          placeholder={t("magazineRequest.transportHint")}
+        />
+
+        <label className="contact-label" htmlFor="magazine-discovery">
+          {t("magazineRequest.discovery")}
+          <span> {t("magazineRequest.optional")}</span>
+        </label>
+        <textarea
+          id="magazine-discovery"
+          className="contact-input contact-message"
+          rows={3}
+          value={discoveryStory}
+          onChange={(event) => setDiscoveryStory(event.target.value)}
+          placeholder={t("magazineRequest.discoveryHint")}
+        />
+
+        <label className="contact-label" htmlFor="magazine-references">
+          {t("magazineRequest.references")}
+          <span> {t("magazineRequest.optional")}</span>
+        </label>
+        <textarea
+          id="magazine-references"
+          className="contact-input contact-message"
+          rows={3}
+          value={referenceUrls}
+          onChange={(event) => setReferenceUrls(event.target.value)}
+          placeholder={t("magazineRequest.referencesHint")}
+        />
 
         <label className="contact-label" htmlFor="magazine-photo-url">
           {t("magazineRequest.photoUrl")}

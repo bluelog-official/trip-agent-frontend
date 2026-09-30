@@ -6,6 +6,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import MagazineRequestPage from "./pages/MagazineRequestPage";
+import EventsPage from "./pages/EventsPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -50,6 +51,7 @@ function navActive(route) {
   if (route.name === "destinations") return "destinations";
   if (route.name === "food") return "food";
   if (route.name === "community") return "community";
+  if (route.name === "events") return "events";
   return "";
 }
 
@@ -205,6 +207,7 @@ export default function App() {
         about: t("meta.aboutTitle"),
         contact: t("meta.contactTitle"),
         magazineRequest: t("meta.magazineTitle"),
+        events: t("meta.eventsTitle"),
         notFound: t("meta.notFoundTitle"),
       };
       const descriptions = {
@@ -213,6 +216,7 @@ export default function App() {
         about: t("meta.aboutDescription"),
         contact: t("meta.contactDescription"),
         magazineRequest: t("meta.magazineDescription"),
+        events: t("meta.eventsDescription"),
         notFound: t("meta.notFoundDescription"),
       };
       title = titles[route.name] || t("meta.homeTitle");
@@ -408,6 +412,8 @@ export default function App() {
           <Contact />
         ) : route.name === "magazineRequest" ? (
           <MagazineRequestPage onNavigate={go} />
+        ) : route.name === "events" ? (
+          <EventsPage onNavigate={go} />
         ) : route.name === "notFound" ? (
           <NotFound onNavigate={go} />
         ) : (

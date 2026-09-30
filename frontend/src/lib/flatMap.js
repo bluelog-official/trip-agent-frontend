@@ -59,6 +59,25 @@ export function continentPaths() {
   }));
 }
 
+export function mapLabelPoints() {
+  return MAP_LABELS.map((label) => ({
+    ...label,
+    ...projectLatLng(label.lat, label.lng),
+  }));
+}
+
+export const MAP_LABELS = [
+  { id: "northAmerica", kind: "land", lat: 48, lng: -102 },
+  { id: "southAmerica", kind: "land", lat: -16, lng: -60 },
+  { id: "europe", kind: "land", lat: 50, lng: 12 },
+  { id: "africa", kind: "land", lat: 4, lng: 18 },
+  { id: "asia", kind: "land", lat: 38, lng: 98 },
+  { id: "oceania", kind: "land", lat: -25, lng: 134 },
+  { id: "pacific", kind: "sea", lat: 8, lng: -155 },
+  { id: "atlantic", kind: "sea", lat: 24, lng: -40 },
+  { id: "indian", kind: "sea", lat: -20, lng: 78 },
+];
+
 export function pinPlacement(lat, lng) {
   const point = projectLatLng(lat, lng);
   const left = (point.x / MAP_WIDTH) * 100;
