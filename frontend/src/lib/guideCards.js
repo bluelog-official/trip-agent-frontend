@@ -127,6 +127,25 @@ function frontmatterValue(markdown, key) {
   return match ? match[1].trim() : "";
 }
 
+function themeTags(markdown) {
+  const fromFrontmatter = frontmatterValue(markdown, "hashtags");
+  const source = fromFrontmatter
+    ? fromFrontmatter.split(/\s+/)
+    : String(markdown || "")
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .reverse()
+        .find((line) => /^(?:#[A-Za-z][A-Za-z0-9]*)(?:\s+#[A-Za-z][A-Za-z0-9]*)+$/.test(line))
+        ?.split(/\s+/) || [];
+  const labels = [];
+  source.forEach((tag) => {
+    const label = String(tag || "").replace(/^#/, "").trim();
+    if (label && !labels.includes(label)) labels.push(label);
+  });
+  return labels;
+}
+
 export function toGuideCard(summary, detail) {
   const id = (typeof summary === "string" ? summary : summary?.id) || detail?.id || "";
   const rawMarkdown = detail?.content || detail?.article_markdown || "";
@@ -141,7 +160,9 @@ export function toGuideCard(summary, detail) {
   const tags = [];
   if (REGION_LABELS[region]) tags.push(REGION_LABELS[region]);
   if (destination) tags.push(destination);
-  if (hasFood) tags.push("Local Food");
+  themeTags(rawMarkdown).forEach((tag) => {
+    if (!tags.includes(tag)) tags.push(tag);
+  });
 
   return {
     id,

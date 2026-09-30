@@ -1,19 +1,23 @@
 ---
-title: "Da Nang in Four Days: The Beach, the Marble Mountains, and Hoi An"
+title: "Field Notes from Da Nang: 3 Days"
 date: "2026-09-25"
-city: "Danang"
+city: "Da Nang"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/26550067/pexels-photo-26550067.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "3 Days"
+duration_key: "three"
+title_form: "field_notes"
+hashtags: "#Foodie #Photography #Nature #Beach"
 ---
 
-# Da Nang in Four Days: The Beach, the Marble Mountains, and Hoi An
+# Field Notes from Da Nang: 3 Days
 
-Da Nang is a beach city with a famous neighbor an hour away. This 3-night, 4-day route keeps My Khe for swimming, the Marble Mountains for one morning, and Hoi An for a full day that returns before you need another attraction on the same night.
+Da Nang is a beach city with a famous neighbor an hour away. This 3-day route keeps My Khe for swimming, the Marble Mountains for one morning, and Hoi An for a full day that returns before you need another attraction on the same night.
 
 ![Bright and sunny day at Da Nang beach in Vietnam with clear skies and a calm sea.](https://images.pexels.com/photos/26550067/pexels-photo-26550067.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Pragyan Bezbaruah](https://www.pexels.com/@pragyanbezbo)*
 
-## A 3-Night, 4-Day Danang Itinerary
+## 3 Days in Da Nang
 
 ### Day 1: My Khe and the riverfront, without a mountain
 
@@ -30,13 +34,13 @@ Go to the Marble Mountains early. The caves and the pagoda stairs are the visit,
 
 Leave in the morning for Hoi An and stay through the late afternoon. The old town is a walking place: the Japanese bridge, one assembly hall, a tailor only if you actually want clothes, and a lunch you sit down for. The lanterns are the evening picture, and they are also the crowded hour. Either see them and eat in town, or return to Da Nang for a calmer dinner. Do not add the Marble Mountains on the way back. You already did them. A basket boat on the coconut waterway is a separate half-day and should not be clipped onto the old town.
 
-### Day 4: A last swim and a short airport ride
+**A last swim and a short airport ride**
 
 Da Nang airport is close to My Khe. That is the luxury of the city and the reason people miss flights anyway, because the beach feels too near to require a buffer. Leave at least two and a half hours before an international departure. Use the morning for a swim and a noodle shop. If Hoi An is still on your list from yesterday, it is not available today. The road back is how a noon flight becomes a problem.
 
 ## Getting Around Danang
 
-Taxis and ride-hailing cars are the simple way between the airport, My Khe, the Marble Mountains, and Hoi An. Agree on the Hoi An fare before you relax into the idea that the town is 'just next door.' Walking is for the beach promenade and for Hoi An's old streets. A motorbike is common and unnecessary for this four-day plan if you are not already comfortable in local traffic.
+Taxis and ride-hailing cars are the simple way between the airport, My Khe, the Marble Mountains, and Hoi An. Agree on the Hoi An fare before you relax into the idea that the town is 'just next door.' Walking is for the beach promenade and for Hoi An's old streets. A motorbike is common and unnecessary for this three-day plan if you are not already comfortable in local traffic.
 
 ## Where to Eat in Danang
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Eat the beach seafood where the price is written per dish or per kilo before it hits the grill. A beautiful unmarked tank is not a recommendation. In Hoi An, cao lau and a simple com ga will tell you more than a lantern dinner that exists to be photographed.
+
+#Foodie #Photography #Nature #Beach

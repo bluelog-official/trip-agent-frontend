@@ -1,19 +1,23 @@
 ---
-title: "Kyoto in Four Days: Temples, One Market, and an Early Gate"
+title: "Kyoto: Where to Go in 3 Days"
 date: "2026-09-25"
 city: "Kyoto"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/29537651/pexels-photo-29537651.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "3 Days"
+duration_key: "three"
+title_form: "where_to_go"
+hashtags: "#Nature #HiddenGems #SlowTravel"
 ---
 
-# Kyoto in Four Days: Temples, One Market, and an Early Gate
+# Kyoto: Where to Go in 3 Days
 
-Kyoto is a bus city that looks like a walking city on a postcard. This 3-night, 4-day route separates Fushimi Inari, Arashiyama, and the northern temples, and it uses Nishiki Market as a meal rather than a corridor you rush through between shrines.
+Kyoto is a bus city that looks like a walking city on a postcard. This 3-day route separates Fushimi Inari, Arashiyama, and the northern temples, and it uses Nishiki Market as a meal rather than a corridor you rush through between shrines.
 
 ![Explore the iconic red torii gates of Fushimi Inari Shrine in Kyoto, Japan, featuring traditional architecture.](https://images.pexels.com/photos/29537651/pexels-photo-29537651.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [G N](https://www.pexels.com/@g-n-403098)*
 
-## A 3-Night, 4-Day Kyoto Itinerary
+## 3 Days in Kyoto
 
 ### Day 1: Fushimi Inari at opening, then Gion on foot
 
@@ -30,7 +34,7 @@ The bamboo grove is a short path that is only pleasant early. Combine it with th
 
 Start at Kinkaku-ji when it opens. The pavilion is a view from a fixed path, and the visit is shorter than the bus ride that delivered you. Ryoan-ji or Ninna-ji can be the second stop if they are genuinely on the way back. Otherwise return to the city and spend the afternoon at Nijo Castle or the Philosopher's Path, not both. The Philosopher's Path is a canal walk that needs unhurried time and is wasted as a checkbox between two tickets. Eat near the hotel. Northern Kyoto is not a dinner district for a first visit.
 
-### Day 4: Nishiki, a last temple you already passed, and the train
+**Nishiki, a last temple you already passed, and the train**
 
 Use the morning for Nishiki Market and one food stall you are willing to eat at the counter. Kyoto Station is the exit for the shinkansen to Tokyo or Osaka, and also the long ride to Kansai Airport. Leave earlier than the timetable's minimum. A reserved seat with luggage is calmer than a last-minute unreserved car. If the flight is from Itami or KIX, those are different trains. Do not add a new mountain temple on the way to the platform.
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Kyoto's best ordinary meal is often a small bowl shop or a tofu restaurant with a lunch set, not a kaiseki room booked from abroad. Eat the lunch set. Save one seated dinner for Pontocho or a reservation, and let the other meals be market snacks you can point at.
+
+#Nature #HiddenGems #SlowTravel

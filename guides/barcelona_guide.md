@@ -1,19 +1,23 @@
 ---
-title: "Barcelona in Four Days: Gaudí Once, the Gothic Quarter, the Sea"
+title: "Exploring Barcelona: A 4-Day Itinerary"
 date: "2026-09-25"
 city: "Barcelona"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/16984552/pexels-photo-16984552.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "4 Days"
+duration_key: "four"
+title_form: "exploring"
+hashtags: "#Photography #Architecture #Culture #Beach"
 ---
 
-# Barcelona in Four Days: Gaudí Once, the Gothic Quarter, the Sea
+# Exploring Barcelona: A 4-Day Itinerary
 
-Barcelona is a beach city and a Gothic city, and the two should not be scheduled as one sprint. This 3-night, 4-day route gives Sagrada Família a timed morning, the Gothic Quarter a walking day, and Barceloneta a late afternoon rather than a commuting base.
+Barcelona is a beach city and a Gothic city, and the two should not be scheduled as one sprint. This 4-day route gives Sagrada Família a timed morning, the Gothic Quarter a walking day, and Barceloneta a late afternoon rather than a commuting base.
 
 ![Capture of the iconic Sagrada Familia in Barcelona at sunset with reflections on a nearby pond.](https://images.pexels.com/photos/16984552/pexels-photo-16984552.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Mehmet Turgut  Kirkgoz](https://www.pexels.com/@tkirkgoz)*
 
-## A 3-Night, 4-Day Barcelona Itinerary
+## Barcelona in 4 Days, Neighborhood by Neighborhood
 
 ### Day 1: The Gothic Quarter and the Ramblas with a limit
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 The menu del día at lunch is the city's best-value seated meal, and it disappears in the evening. Eat a proper lunch, then let dinner be tapas or a smaller plate. A table on a cathedral square is a rent payment for the view, not a sign that the kitchen is better.
+
+#Photography #Architecture #Culture #Beach

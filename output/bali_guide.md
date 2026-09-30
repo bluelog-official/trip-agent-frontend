@@ -1,4 +1,13 @@
-# Ultimate Bali Travel Guide 2026: Best Places to Visit & Budget Itinerary
+---
+title: "The 5-Day Bali Edit"
+city: "Bali"
+duration: "5 Days"
+duration_key: "five"
+title_form: "local_edit"
+hashtags: "#Photography #Nature #Beach"
+---
+
+# The 5-Day Bali Edit
 
 ## Welcome to Paradise: Bali Travel Guide 2026
 
@@ -64,3 +73,5 @@ Here is a realistic estimated cost and breakdown for a 5-day Bali itinerary 2026
 | Day 3 | Central Bali | Ulun Danu Beratan Temple, Waterfalls & Coffee Plantation | $30 - $55 |
 | Day 4 | Nusa Penida | Kelingking Beach, Broken Beach & Snorkeling Trip | $45 - $80 |
 | Day 5 | Seminyak | Beach Club relaxation, Souvenir shopping & Departure | $30 - $70 |
+
+#Photography #Nature #Beach

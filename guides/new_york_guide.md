@@ -1,19 +1,23 @@
 ---
-title: "New York in Four Days: Manhattan on Foot, Brooklyn Once"
+title: "First Time in New York: 5 Days"
 date: "2026-09-25"
 city: "New York"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/8569166/pexels-photo-8569166.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "5 Days"
+duration_key: "five"
+title_form: "first_time"
+hashtags: "#Nightlife #Architecture"
 ---
 
-# New York in Four Days: Manhattan on Foot, Brooklyn Once
+# First Time in New York: 5 Days
 
-New York is a walking city that punishes a plan made of scattered landmarks. This 3-night, 4-day route keeps Lower Manhattan, Midtown, a museum morning, and one Brooklyn neighborhood in an order that follows the subway instead of fighting it.
+New York is a walking city that punishes a plan made of scattered landmarks. This 5-day route keeps Lower Manhattan, Midtown, a museum morning, and one Brooklyn neighborhood in an order that follows the subway instead of fighting it.
 
 ![Silhouette of the New York City skyline against a vibrant sunset sky.](https://images.pexels.com/photos/8569166/pexels-photo-8569166.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Ivana Rodriguez](https://www.pexels.com/@ivana-rodriguez-53736)*
 
-## A 3-Night, 4-Day New York Itinerary
+## 5 Days in New York
 
 ### Day 1: Lower Manhattan and the waterfront
 
@@ -32,7 +36,11 @@ Enter the High Line from the south end near Gansevoort and walk north until you 
 
 ### Day 4: A deli or a market, then the airport
 
-The last morning should be a meal and a short walk. Katz's is a Lower East Side commitment with a line. A bagel on the Upper West Side or a market stall at Essex is the lighter version. For JFK, leave Manhattan at least three hours before an international flight and use the AirTrain at the end of the subway or LIRR ride. Newark is a NJ Transit plus AirTrain problem, not a yellow-taxi default with luggage. LaGuardia is the shorter car ride and still needs a buffer in the afternoon.
+The last morning should be a meal and a short walk. Katz's is a Lower East Side commitment with a line. A bagel on the Upper West Side or a market stall at Essex is the lighter version.
+
+### Day 5: Departure
+
+For JFK, leave Manhattan at least three hours before an international flight and use the AirTrain at the end of the subway or LIRR ride. Newark is a NJ Transit plus AirTrain problem, not a yellow-taxi default with luggage. LaGuardia is the shorter car ride and still needs a buffer in the afternoon.
 
 ## Getting Around New York
 
@@ -53,3 +61,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 New York restaurants that are worth the reputation often take a walk-in only at the bar, or a reservation that disappeared two weeks ago. Eat one famous place at opening, and let the other meals be a slice, a market, or a counter with a posted menu. The city is more generous at lunch than at 20:00.
+
+#Nightlife #Architecture

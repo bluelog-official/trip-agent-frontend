@@ -1,19 +1,23 @@
 ---
-title: "Tokyo in Four Days: Trains, Neighborhoods, and Where to Eat"
+title: "See Tokyo in 5 Days"
 date: "2026-09-25"
 city: "Tokyo"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/30944529/pexels-photo-30944529.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "5 Days"
+duration_key: "five"
+title_form: "see_city"
+hashtags: "#HiddenGems #Photography #CityBreak"
 ---
 
-# Tokyo in Four Days: Trains, Neighborhoods, and Where to Eat
+# See Tokyo in 5 Days
 
-Tokyo is easier on a first visit when each day stays inside one or two neighborhoods instead of crossing the city by taxi. This 3-night, 4-day route links Asakusa, Harajuku, Shibuya, Tsukiji, and Shinjuku, with the Yamanote loop as the spine and a meal table you can actually use.
+Tokyo is easier on a first visit when each day stays inside one or two neighborhoods instead of crossing the city by taxi. This 5-day route links Asakusa, Harajuku, Shibuya, Tsukiji, and Shinjuku, with the Yamanote loop as the spine and a meal table you can actually use.
 
 ![Stunning nighttime aerial view of Senso-ji Temple and Tokyo skyline in Taito City, Japan.](https://images.pexels.com/photos/30944529/pexels-photo-30944529.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Ehsan Haque](https://www.pexels.com/@itsehsanh)*
 
-## A 3-Night, 4-Day Tokyo Itinerary
+## 5 Days in Tokyo
 
 ### Day 1: Asakusa, the Sumida, and Shibuya after dark
 
@@ -32,7 +36,11 @@ The inner tuna auction is no longer the visitor ritual it once was. The Tsukiji 
 
 ### Day 4: A slower neighborhood, then the airport
 
-Keep the last morning unfinished on purpose. Yanaka Ginza is a sloping shopping street with a temple graveyard behind it. Shimokitazawa is the alternative if you would rather browse records and small cafes. Be on an airport train with a real buffer: leave central Tokyo at least three hours before an international Narita departure, and about two and a half hours before a Haneda departure outside the morning rush. A short Tokyo trip fails more often on the ride back than at the sights.
+Keep the last morning unfinished on purpose. Yanaka Ginza is a sloping shopping street with a temple graveyard behind it. Shimokitazawa is the alternative if you would rather browse records and small cafes.
+
+### Day 5: Departure
+
+Be on an airport train with a real buffer: leave central Tokyo at least three hours before an international Narita departure, and about two and a half hours before a Haneda departure outside the morning rush. A short Tokyo trip fails more often on the ride back than at the sights.
 
 ## Getting Around Tokyo
 
@@ -53,3 +61,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Major stations hide a full meal under the ticket gates and in the adjacent department stores. An ekiben or a depachika counter is often faster than a famous restaurant with a 40-minute wait, and a convenience-store breakfast is a legitimate way to reach the first sight on time.
+
+#HiddenGems #Photography #CityBreak

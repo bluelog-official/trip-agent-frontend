@@ -1,4 +1,13 @@
-# Ultimate Paris Travel Guide: 3 Days Itinerary, Louvre Tips & Eiffel Tower Secrets
+---
+title: "Paris on Foot for 3 Days"
+city: "Paris"
+duration: "3 Days"
+duration_key: "three"
+title_form: "on_foot"
+hashtags: "#HiddenGems #CityBreak #Photography #Culture"
+---
+
+# Paris on Foot for 3 Days
 
 ## Welcome to Paris: The Ultimate Travel Experience
 
@@ -40,3 +49,5 @@ To ensure a seamless vacation, keep these essential local insider tips in mind. 
 ## Conclusion: Start Planning Your Paris Getaway
 
 Paris rewards both structured sightseers and casual explorers alike. By securing your tickets early, mastering the transit system, and embracing local customs, you are set for an incredible adventure in the French capital. Start planning today and experience the best places to visit in Paris firsthand!
+
+#HiddenGems #CityBreak #Photography #Culture

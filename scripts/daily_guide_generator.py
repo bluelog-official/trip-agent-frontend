@@ -38,6 +38,16 @@ import requests
 from dotenv import load_dotenv
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from app.services.content_variation import (  # noqa: E402
+    apply_variation,
+    build_daily_article_prompt,
+    choose_variation,
+    load_reserved,
+)
+
 GUIDES_DIR = ROOT_DIR / "guides"
 DEFAULT_STATUS = "Verified Travel Guide"
 
@@ -147,27 +157,11 @@ def fetch_hero_image(city: str) -> dict:
     }
 
 
-def _article_prompt(city: str) -> str:
-    return (
-        "Write an original English SEO travel guide for {0}.\n"
-        "Do not wrap the answer in markdown fences. Do not add YAML frontmatter. "
-        "Do not include HTML or script tags.\n"
-        "Structure:\n"
-        "1. One H1 title that names {0} and a 3-night, 4-day trip.\n"
-        "2. A summary of two short paragraphs for a first-time visitor.\n"
-        "3. An H2 'A 3-Night, 4-Day {0} Itinerary' with four H3 days (Day 1 through Day 4). "
-        "Each day needs a neighborhood route, timing, and one practical warning.\n"
-        "4. An H2 'Getting Around' with the local transit card or the simplest way to move.\n"
-        "5. An H2 'Where to Eat in {0}' followed by this exact Markdown table header and at least four rows:\n"
-        "| Category | Recommended Location | Estimated Cost | Rating |\n"
-        "| --- | --- | --- | --- |\n"
-        "Use realistic local prices and name specific places a visitor can find.\n"
-        "6. An H2 'Local Tip' with one paragraph a guidebook usually skips.\n"
-        "Keep the guide between 650 and 900 words. Sound like a careful local editor, not a brochure."
-    ).format(city)
+def _article_prompt(city: str, variation) -> str:
+    return build_daily_article_prompt(city, variation)
 
 
-def _gemini_text(city: str, api_key: str) -> str:
+def _gemini_text(city: str, api_key: str, variation) -> str:
     last_error = "Gemini request failed"
     for model in GEMINI_MODELS:
         try:
@@ -175,7 +169,7 @@ def _gemini_text(city: str, api_key: str) -> str:
                 "https://generativelanguage.googleapis.com/v1beta/models/{0}:generateContent".format(model),
                 headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
                 json={
-                    "contents": [{"role": "user", "parts": [{"text": _article_prompt(city)}]}],
+                    "contents": [{"role": "user", "parts": [{"text": _article_prompt(city, variation)}]}],
                     "generationConfig": {"temperature": 0.7},
                 },
                 timeout=90,
@@ -192,7 +186,7 @@ def _gemini_text(city: str, api_key: str) -> str:
     raise RuntimeError(last_error)
 
 
-def _openrouter_text(city: str, api_key: str) -> str:
+def _openrouter_text(city: str, api_key: str, variation) -> str:
     last_error = "OpenRouter request failed"
     for model in OPENROUTER_MODELS:
         try:
@@ -207,7 +201,7 @@ def _openrouter_text(city: str, api_key: str) -> str:
                     "temperature": 0.7,
                     "messages": [
                         {"role": "system", "content": "You write original English city guides."},
-                        {"role": "user", "content": _article_prompt(city)},
+                        {"role": "user", "content": _article_prompt(city, variation)},
                     ],
                 },
                 timeout=90,
@@ -222,18 +216,18 @@ def _openrouter_text(city: str, api_key: str) -> str:
     raise RuntimeError(last_error)
 
 
-def generate_article(city: str) -> str:
+def generate_article(city: str, variation) -> str:
     gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
     openrouter_key = os.getenv("OPENROUTER_API_KEY", "").strip()
     errors = []
     if gemini_key:
         try:
-            return _gemini_text(city, gemini_key)
+            return _gemini_text(city, gemini_key, variation)
         except RuntimeError as exc:
             errors.append(str(exc))
     if openrouter_key:
         try:
-            return _openrouter_text(city, openrouter_key)
+            return _openrouter_text(city, openrouter_key, variation)
         except RuntimeError as exc:
             errors.append(str(exc))
     if not gemini_key and not openrouter_key:
@@ -253,7 +247,7 @@ def clean_article(text: str) -> str:
     return cleaned + "\n"
 
 
-def build_document(city: str, article: str, image: dict) -> str:
+def build_document(city: str, article: str, image: dict, variation) -> str:
     hero = "![{0}]({1})\n*Photo by [{2}]({3})*\n\n".format(
         image["alt"].replace("[", "").replace("]", ""),
         image["url"],
@@ -273,7 +267,7 @@ def build_document(city: str, article: str, image: dict) -> str:
     frontmatter = "\n".join(
         [
             "---",
-            "title: {0}".format(yaml_quote(city.strip() + " in Four Days")),
+            "title: {0}".format(yaml_quote(variation.title)),
             "date: {0}".format(yaml_quote(date.today().isoformat())),
             "city: {0}".format(yaml_quote(city.strip())),
             "status: {0}".format(yaml_quote(DEFAULT_STATUS)),
@@ -300,9 +294,16 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
 
     city = choose_city(args.city)
+    variation = choose_variation(
+        city,
+        load_reserved(GUIDES_DIR),
+        salt=date.today().toordinal(),
+        structural=True,
+        language="en",
+    )
     image = fetch_hero_image(city)
-    article = clean_article(generate_article(city))
-    document = build_document(city, article, image)
+    article = clean_article(generate_article(city, variation))
+    document = apply_variation(build_document(city, article, image, variation), variation)
     GUIDES_DIR.mkdir(parents=True, exist_ok=True)
     path = output_path(city)
     path.write_text(document, encoding="utf-8")

@@ -10,6 +10,7 @@ from app.schemas.guide_schema import (
     ResearchOutput,
     SyndicationOutput,
 )
+from app.services.content_variation import variation_for_new_article
 from app.services.reddit_draft_service import build_reddit_draft
 
 
@@ -87,8 +88,7 @@ def _english_syndication(
     if tip:
         teasers.append(tip)
 
-    hashtags = ["#travel", "#{0}".format(place.replace(" ", ""))]
-    hashtags.extend("#{0}".format(keyword.replace(" ", "")) for keyword in keywords[:3])
+    hashtags = list(variation_for_new_article(place).hashtags)
 
     attraction_line = attractions or "the main sights"
     food_line = foods or "local food"
@@ -143,8 +143,7 @@ def _korean_syndication(
     if tip:
         teasers.append(tip)
 
-    hashtags = ["#travel", "#{0}".format(place.replace(" ", ""))]
-    hashtags.extend("#{0}".format(keyword.replace(" ", "")) for keyword in keywords[:3])
+    hashtags = list(variation_for_new_article(place).hashtags)
 
     attraction_line = attractions or "주요 관광지"
     food_line = foods or "로컬 맛집"

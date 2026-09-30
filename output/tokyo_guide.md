@@ -1,13 +1,22 @@
-# Tokyo in Four Days: A Neighborhood Route, Train Tips, and Where to Eat
+---
+title: "A Local Route Through Tokyo (5 Days)"
+city: "Tokyo"
+duration: "5 Days"
+duration_key: "five"
+title_form: "locals"
+hashtags: "#Photography #CityBreak #Nightlife"
+---
 
-Tokyo rewards a short trip when the days are grouped by neighborhood instead of crossed by taxi. This guide is a 3-night, 4-day route for a first visit: historic Asakusa, the shrine and shops of Harajuku, a reserved visit to Shibuya Sky, a morning at the Tsukiji outer market, and a night of small plates in Shinjuku. The train advice and the meal table below are meant to be used as you go, not memorized in advance.
+# A Local Route Through Tokyo (5 Days)
+
+Tokyo rewards a short trip when the days are grouped by neighborhood instead of crossed by taxi. This guide is a 5-day route for a first visit: historic Asakusa, the shrine and shops of Harajuku, a reserved visit to Shibuya Sky, a morning at the Tsukiji outer market, and a night of small plates in Shinjuku. The train advice and the meal table below are meant to be used as you go, not memorized in advance.
 
 ![Aerial view of the Tokyo skyline with Tokyo Skytree under a clear blue sky.](https://images.pexels.com/photos/20378132/pexels-photo-20378132.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Pexels](https://www.pexels.com)*
 
-## A 3-Night, 4-Day Tokyo Itinerary
+## 5 Days in Tokyo
 
-Stay in one hotel for all three nights. Shinjuku, Shibuya, and Tokyo Station are the easiest bases because the Yamanote loop and several subway lines meet there. A hotel beside a single minor station looks cheaper until every dinner requires two transfers.
+Stay in one hotel for all four nights. Shinjuku, Shibuya, and Tokyo Station are the easiest bases because the Yamanote loop and several subway lines meet there. A hotel beside a single minor station looks cheaper until every dinner requires two transfers.
 
 ### Day 1: Asakusa, the Sumida River, and Shibuya after dark
 
@@ -31,9 +40,11 @@ In the afternoon, the East Gardens of the Imperial Palace are free, flat, and a 
 
 ### Day 4: A slower neighborhood, then the airport
 
-Keep the last morning unfinished on purpose. Yanaka Ginza is a sloping shopping street with independent shops and a temple graveyard behind it. Shimokitazawa is the alternative if you would rather browse record shops and small cafes. Either visit fills two hours without a ticket.
+Keep the last morning unfinished on purpose. Yanaka Ginza is a sloping shopping street with independent shops and a temple graveyard behind it. Shimokitazawa is the alternative if you would rather browse record shops and small cafes. Either visit fills two hours without a ticket. Be on an airport train with a real buffer. For Narita, leave central Tokyo at least three hours before an international departure, earlier if you are checking bags at the airline counter instead of using a downtown check-in. For Haneda, two and a half hours is a practical target outside the morning rush.
 
-Be on an airport train with a real buffer. For Narita, leave central Tokyo at least three hours before an international departure, earlier if you are checking bags at the airline counter instead of using a downtown check-in. For Haneda, two and a half hours is a practical target outside the morning rush. A 3-night trip fails most often on the ride back to the airport, not at the sights.
+### Day 5: Departure
+
+A 3-night trip fails most often on the ride back to the airport, not at the sights.
 
 ## Getting Around Tokyo
 
@@ -72,4 +83,6 @@ Omoide Yokocho is a lantern alley west of Shinjuku Station. The lanes are narrow
 
 Every day in this plan has one gap: the walk between Asakusa and the river, the trees at Meiji Jingu, the East Gardens, or the last morning in Yanaka. Keep that gap. Tokyo is tiring when every hour is a reservation, and the neighborhoods above are close enough on the train that you do not need a fifth district to feel you have arrived.
 
-Buy the Shibuya Sky ticket before the trip, carry a Suica from the first platform, and eat one sit-down meal a day from the table. The rest can be a station box or a market snack. That is enough for four days.
+Buy the Shibuya Sky ticket before the trip, carry a Suica from the first platform, and eat one sit-down meal a day from the table. The rest can be a station box or a market snack. That is enough for five days.
+
+#Photography #CityBreak #Nightlife

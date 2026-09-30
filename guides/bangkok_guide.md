@@ -1,19 +1,23 @@
 ---
-title: "Bangkok in Four Days: The River, One Market, and Chinatown at Night"
+title: "Bangkok: A 5-Day City Guide"
 date: "2026-09-25"
 city: "Bangkok"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/13022780/pexels-photo-13022780.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "5 Days"
+duration_key: "five"
+title_form: "city_guide"
+hashtags: "#StreetFood #HiddenGems"
 ---
 
-# Bangkok in Four Days: The River, One Market, and Chinatown at Night
+# Bangkok: A 5-Day City Guide
 
-Bangkok is a river city that visitors try to cross by taxi at the worst hour. This 3-night, 4-day route uses the Chao Phraya for the palaces and temples, saves Chinatown for after dark, and gives one morning to a market that is not a mall.
+Bangkok is a river city that visitors try to cross by taxi at the worst hour. This 5-day route uses the Chao Phraya for the palaces and temples, saves Chinatown for after dark, and gives one morning to a market that is not a mall.
 
 ![Stunning view of the golden architecture of Wat Phra Kaew, a famous Bangkok temple.](https://images.pexels.com/photos/13022780/pexels-photo-13022780.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [www.EPiC VIDEO.es🎥](https://www.pexels.com/@www-epic-video-es-248510510)*
 
-## A 3-Night, 4-Day Bangkok Itinerary
+## 5 Days in Bangkok
 
 ### Day 1: The Grand Palace early, then the river
 
@@ -32,7 +36,11 @@ Chatuchak Weekend Market deserves a morning if you are in the city on a Saturday
 
 ### Day 4: A last bowl, then the airport rail
 
-The last morning is a bowl of jok or boat noodles near the hotel and a walk to the station. The Airport Rail Link is the straightforward ride to Suvarnabhumi. Don Mueang is the other airport and a different bus or rail problem. Leave at least three hours before an international departure. Bangkok traffic does not care that the flight is soon.
+The last morning is a bowl of jok or boat noodles near the hotel and a walk to the station. The Airport Rail Link is the straightforward ride to Suvarnabhumi. Don Mueang is the other airport and a different bus or rail problem. Leave at least three hours before an international departure.
+
+### Day 5: Departure
+
+Bangkok traffic does not care that the flight is soon.
 
 ## Getting Around Bangkok
 
@@ -53,3 +61,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 If a street stall will not point at a price, keep walking. The famous rooms, including the ones with a long queue and a theatrical wok, are a single meal on the trip, not the template for every lunch. A neighborhood noodle shop at 11:30 is the meal that tells you whether you understand the city.
+
+#StreetFood #HiddenGems

@@ -13,7 +13,13 @@ const TABLE_HEADER_CELLS = [
 ];
 
 const ENGLISH_HEADINGS = [
-  [/3박|4일|일정/u, "A 3-Night, 4-Day Itinerary"],
+  [/1주|일주일|7일/u, "A One-Week Itinerary"],
+  [/주말|2박/u, "A Weekend Itinerary"],
+  [/5일|4박/u, "A 5-Day Itinerary"],
+  [/3박\s*4일/u, "A 4-Day Itinerary"],
+  [/3일/u, "A 3-Day Itinerary"],
+  [/4일/u, "A 4-Day Itinerary"],
+  [/일정/u, "Itinerary"],
   [/추천\s*맛집|맛집/u, "Recommended Restaurants"],
   [/지하철|교통|패스|에키나카/u, "Getting Around"],
   [/로컬\s*팁/u, "Local Tip"],

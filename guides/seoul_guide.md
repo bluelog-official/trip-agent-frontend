@@ -1,19 +1,23 @@
 ---
-title: "Seoul in Four Days: Palaces, a Market, and the River at Night"
+title: "Seoul for Travelers Who Walk"
 date: "2026-09-25"
 city: "Seoul"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/39414394/pexels-photo-39414394.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "4 Days"
+duration_key: "four"
+title_form: "walkers"
+hashtags: "#Culture #HiddenGems #SoloTravel #Photography"
 ---
 
-# Seoul in Four Days: Palaces, a Market, and the River at Night
+# Seoul for Travelers Who Walk
 
-Seoul is dense enough to walk and large enough to waste a day on transfers. This 3-night, 4-day route pairs the palaces with Bukchon, gives Gwangjang Market a real meal, and saves Hongdae or the Han River for a night that does not also include a palace.
+Seoul is dense enough to walk and large enough to waste a day on transfers. This 4-day route pairs the palaces with Bukchon, gives Gwangjang Market a real meal, and saves Hongdae or the Han River for a night that does not also include a palace.
 
 ![Sunlit traditional Korean Hanok house rooftop in Seoul's historic Bukchon Hanok Village.](https://images.pexels.com/photos/39414394/pexels-photo-39414394.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [FREE VIDEO HAPPY](https://www.pexels.com/@free-video-happy-36420871)*
 
-## A 3-Night, 4-Day Seoul Itinerary
+## Day by Day: 4 Days in Seoul
 
 ### Day 1: Gyeongbokgung, Bukchon, and Insadong
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Many of the meals people remember in Seoul are ordered at a machine or a counter, then eaten at a shared table. Do not wait for a host to seat you in a market stall. Point, pay, and sit. The palace districts empty of good food after 14:00, so eat before you start the long walk back.
+
+#Culture #HiddenGems #SoloTravel #Photography

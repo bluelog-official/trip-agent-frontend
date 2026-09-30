@@ -1,19 +1,23 @@
 ---
-title: "Paris in Four Days: A Walkable Left-and-Right Bank Route"
+title: "Paris With Time to Spare (4 Days)"
 date: "2026-09-25"
 city: "Paris"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/16823627/pexels-photo-16823627.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "4 Days"
+duration_key: "four"
+title_form: "open_hours"
+hashtags: "#Architecture #HiddenGems #CityBreak #Photography"
 ---
 
-# Paris in Four Days: A Walkable Left-and-Right Bank Route
+# Paris With Time to Spare (4 Days)
 
-Paris rewards a visitor who picks a bank of the river and stays there until evening. This 3-night, 4-day guide keeps the Louvre, the Marais, the islands, and Montmartre on separate days so you are not crossing the city twice between museums.
+Paris rewards a visitor who picks a bank of the river and stays there until evening. This 4-day guide keeps the Louvre, the Marais, the islands, and Montmartre on separate days so you are not crossing the city twice between museums.
 
 ![Scenic view of Paris with the Seine River and iconic architecture during sunset.](https://images.pexels.com/photos/16823627/pexels-photo-16823627.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Josh Withers](https://www.pexels.com/@hellojoshwithers)*
 
-## A 3-Night, 4-Day Paris Itinerary
+## Paris in 4 Days, Neighborhood by Neighborhood
 
 ### Day 1: The islands, Notre-Dame, and the Marais
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Dinner reservations in Paris matter more than breakfast reservations. Book one seated dinner a day and let lunch be a bakery, a market stall, or a bouillon where you queue once and sit at a shared table. The city is more enjoyable when you are not hunting a table at 20:30.
+
+#Architecture #HiddenGems #CityBreak #Photography

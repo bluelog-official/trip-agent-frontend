@@ -8,6 +8,7 @@ from google.genai import types
 from app.agents.utils import generate_with_fallback
 from app.schemas.guide_schema import CityKeywordProfile, ResearchOutput
 from app.agents.syndication_agent import is_english_language
+from app.services.content_variation import finish_writer_article, writer_duration_block
 from app.services.keyword_map import format_keyword_context, resolve_city_keywords
 
 SYSTEM_PROMPT = (
@@ -45,6 +46,7 @@ def _build_english_writer_prompt(
 ) -> str:
     keyword_block = _english_keyword_block(profile)
     keyword_section = "\n{0}\n".format(keyword_block) if keyword_block else ""
+    duration_rule = writer_duration_block(destination, "en")
     keyword_rule = ""
     if keyword_block:
         keyword_rule = (
@@ -76,6 +78,7 @@ def _build_english_writer_prompt(
     6. Output markdown only, with no code blocks and no JSON.
     {keyword_rule}8. Write the full article in natural English for global readers. Headings, table labels, and prose must be English. Translate any non-English research note or keyword into English, and do not keep the original foreign wording.
     9. Strictly generate 100% pure target language without mixing foreign phrases. Every heading, table label, and sentence must stay in English. Never insert Korean words, Hangul, or parenthetical Korean explanations such as "도쿄 여행 필수 라멘 투어".
+    {duration_rule}
     """.format(
         destination=destination,
         attractions=", ".join(research.attractions),
@@ -85,6 +88,7 @@ def _build_english_writer_prompt(
         local_tip=research.local_tip,
         keyword_section=keyword_section,
         keyword_rule=keyword_rule,
+        duration_rule=duration_rule,
     ).strip()
 
 
@@ -100,6 +104,7 @@ def build_writer_prompt(
     keyword_block = format_keyword_context(profile)
     keyword_section = ""
     keyword_rule = ""
+    duration_rule = writer_duration_block(destination, "ko")
     if keyword_block:
         keyword_section = "\n    {0}\n".format(keyword_block)
         keyword_rule = (
@@ -130,6 +135,7 @@ def build_writer_prompt(
     {style_rule}
     6. 코드 블록이나 JSON 없이 마크다운 본문만 출력하세요.
     {keyword_rule}8. Strictly generate 100% pure target language without mixing foreign phrases. 제목, 표, 본문은 100% 한국어로만 작성하고 영어 문장이나 외국어 괄호 설명을 넣지 마세요.
+    {duration_rule}
     """.format(
         destination=destination,
         attractions=", ".join(research.attractions),
@@ -140,6 +146,7 @@ def build_writer_prompt(
         keyword_section=keyword_section,
         keyword_rule=keyword_rule,
         style_rule=style_rule,
+        duration_rule=duration_rule,
     ).strip()
 
 
@@ -165,8 +172,8 @@ async def run_writer_agent(
         expect_json=False,
     )
 
-    article_markdown = article_markdown.strip()
-    if not article_markdown:
+    article_markdown = finish_writer_article(article_markdown.strip(), destination, target_language)
+    if not article_markdown.strip():
         raise RuntimeError("Writer Agent가 빈 아티클을 반환했습니다.")
 
     print("✅ [Agent 2] 아티클 작성 완료 ({0}자)".format(len(article_markdown)))

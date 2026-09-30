@@ -1,19 +1,23 @@
 ---
-title: "Osaka in Four Days: Street Food, the Castle, and a Market Morning"
+title: "Osaka Trip Notes for 3 Days"
 date: "2026-09-25"
 city: "Osaka"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/37943715/pexels-photo-37943715.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "3 Days"
+duration_key: "three"
+title_form: "trip_notes"
+hashtags: "#StreetFood #Photography #Nightlife #CityBreak"
 ---
 
-# Osaka in Four Days: Street Food, the Castle, and a Market Morning
+# Osaka Trip Notes for 3 Days
 
-Osaka is a food city that visitors compress into one neon canal. This 3-night, 4-day route gives Dotonbori a night, Kuromon Market a morning, and Osaka Castle a bounded visit so the rest of the time can be Shinsekai, a side street, and a second meal.
+Osaka is a food city that visitors compress into one neon canal. This 3-day route gives Dotonbori a night, Kuromon Market a morning, and Osaka Castle a bounded visit so the rest of the time can be Shinsekai, a side street, and a second meal.
 
 ![Vibrant night view of Dotonbori Canal in Osaka, Japan, showcasing illuminated city lights.](https://images.pexels.com/photos/37943715/pexels-photo-37943715.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Andrea De Santis](https://www.pexels.com/@santesson89)*
 
-## A 3-Night, 4-Day Osaka Itinerary
+## 3 Days in Osaka
 
 ### Day 1: Dotonbori after dark, and only after dark
 
@@ -30,7 +34,7 @@ The castle park is a morning walk and a reconstructed keep. Go early, decide whe
 
 Kuromon is a morning market. Eat a little at a time, skip any stall that will not show a price, and do not try to assemble a banquet before 10:00. When you are done, ride to Umeda for the station city and a view, or to Nakazakicho if you want small cafes and fewer signs. A day trip to Nara or Kobe replaces this day. Nara is the better add on a longer trip and a poor squeeze between the market and a dinner reservation in Namba.
 
-### Day 4: A last counter meal and Kansai Airport
+**A last counter meal and Kansai Airport**
 
 Eat one more counter breakfast near the hotel. The Haruka limited express is the simple reserved ride from Tennoji or Shin-Osaka to Kansai Airport, and the Nankai line is the other option from Namba. Leave at least two and a half hours before an international departure, earlier with a large bag and an unreserved train. Itami is the closer domestic airport and a different bus.
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Order one skewer shop and sit down. Kushikatsu is a single-dip, no double-dip meal, and the rule is the culture of the counter. If you only eat standing snacks on Dotonbori, you will leave thinking Osaka is a food court. It is a city of small rooms.
+
+#StreetFood #Photography #Nightlife #CityBreak

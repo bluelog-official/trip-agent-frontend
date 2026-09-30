@@ -1,7 +1,16 @@
+---
+title: "로스앤젤레스에서 보내는 5일"
+city: "Los Angeles"
+duration: "5일"
+duration_key: "five"
+title_form: "ko_spend"
+hashtags: "#Nature #CityBreak #Beach #Nightlife"
+---
+
 ![Vibrant long exposure of Downtown Los Angeles skyscrapers at night, showcasing the city skyline.](https://images.pexels.com/photos/35291216/pexels-photo-35291216.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Stephen Leonardi](https://www.pexels.com/@stephen-leonardi-587681991)*
 
-# 3박 4일 LA 여행 완벽 코스: 산타모니카부터 할리우드, 현지인 맛집 총정리
+# 로스앤젤레스에서 보내는 5일
 
 태평양의 따스한 햇살과 영화 같은 풍경이 펼쳐지는 미 서부 최대의 도시 로스앤젤레스는 언제 방문해도 역동적인 매력을 선사합니다. 넓은 도시 규모만큼이나 효율적인 동선 작성이 여행의 성패를 가릅니다. 현지 실정을 반영한 실전 노하우와 핵심 스팟을 총망라하여 실패 없는 일정을 제안합니다.
 
@@ -24,9 +33,10 @@ LA는 대중교통만으로 이동하기에 한계가 명확한 도시입니다.
 ![Stunning aerial photo of Santa Monica Pier with Ferris wheel and bustling beach crowd.](https://images.pexels.com/photos/8783171/pexels-photo-8783171.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [RDNE Stock project](https://www.pexels.com/@rdne)*
 
-## 실패 없는 로스앤젤레스 여행: 추천 LA 3박4일 코스
+## 로스앤젤레스 5일 일정
 
 ### 1일 차: 해변의 로맨스, 산타모니카 해변 가이드
+
 LA 여행의 출발점은 시원한 바다 내음이 반기는 서부의 대표 해변입니다. 
 
 * **오전**: LAX 공항 도착 및 렌트카 인수 후 산타모니카(Santa Monica)로 이동.
@@ -34,6 +44,7 @@ LA 여행의 출발점은 시원한 바다 내음이 반기는 서부의 대표 
 * **일몰**: 산타모니카 피어 끝자락에서 태평양 수평선 너머로 떨어지는 일몰을 감상하며 첫날 일정을 마무리합니다.
 
 ### 2일 차: 화려한 영화의 도시, 할리우드 당일 일정
+
 영화 산업의 중심지이자 LA의 상징적인 장소들을 하루 만에 효율적으로 둘러보는 **할리우드 당일 일정**입니다.
 
 * **오전 (10시 이전 이동)**: '할리우드 명예의 거리(Walk of Fame)'로 이동하여 좋아하는 스타의 핸드프린팅을 찾아보세요. TCL 차이니즈 시어터와 돌비 시어터 주변을 산책합니다.
@@ -41,6 +52,7 @@ LA 여행의 출발점은 시원한 바다 내음이 반기는 서부의 대표 
 * **저녁**: 할리우드 디스트릭트 주변에서 식사를 마친 뒤, 야경을 위해 미리 이동을 준비합니다.
 
 ### 3일 차: 예술과 야경의 조화, 게티 센터와 그리피스 천문대
+
 문화예술 감상과 LA 최고 명소의 야경을 동시에 잡는 알찬 코스입니다.
 
 * **오전**: 산 정상에 위치한 문화 복합 공간 '게티 센터(Getty Center)' 방문. 트램을 타고 올라가 석조 건축물과 수많은 명화(고흐의 '아아리스' 등), 그리고 잘 가꿔진 정원을 관람합니다. (입장료 무료, 사전 예약 필수)
@@ -48,17 +60,21 @@ LA 여행의 출발점은 시원한 바다 내음이 반기는 서부의 대표 
 * **저녁**: 그리피스 천문대 야외 테라스에서 LA 시내 전경이 한눈에 펼쳐지는 환상적인 야경을 감상합니다.
 
 ### 4일 차: 미식과 문화, LA 한인타운 맛집 & 미식 탐방
+
 여행의 마지막 날은 로컬들의 숨은 미식 공간과 한인타운의 활기를 경험합니다.
 
-* **오전**: 다운타운의 역사가 숨 쉬는 '그랜드 센트럴 마켓(Grand Central Market)'에서 다양한 로컬 푸드를 맛봅니다. 맞은편의 앤젤스 플라이트(Angels Flight) 타기도 놓치지 마세요.
 * **오후**: 미 서부 최대 규모의 한인 커뮤니티가 형성된 한인타운(K-Town)으로 이동합니다. **LA 한인타운 맛집**으로 손꼽히는 정통 한국식 BBQ 전문점이나 24시간 순두부 전문점에서 여행의 피로를 푸는 만족스러운 식사를 즐깁니다.
-* **저녁**: 렌트카 반납 및 LAX 공항 이동, 출국.
 
 ---
 
 
 ![People enjoying a sunny day at Griffith Observatory in Los Angeles.](https://images.pexels.com/photos/33367971/pexels-photo-33367971.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [RITESH SINGH](https://www.pexels.com/@thekameragrapher)*
+
+### 5일 차: 출국
+
+* **오전**: 다운타운의 역사가 숨 쉬는 '그랜드 센트럴 마켓(Grand Central Market)'에서 다양한 로컬 푸드를 맛봅니다. 맞은편의 앤젤스 플라이트(Angels Flight) 타기도 놓치지 마세요.
+* **저녁**: 렌트카 반납 및 LAX 공항 이동, 출국.
 
 ## 추천 맛집 및 예상 비용
 
@@ -86,3 +102,5 @@ LA 방문 시 반드시 맛봐야 할 대표 먹거리와 현지 평가, 예상 
 
 ![Close-up of In-N-Out burgers and fries in a takeout box, showcasing fast food delight.](https://images.pexels.com/photos/29488492/pexels-photo-29488492.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Sarah Jane](https://www.pexels.com/@sarah-jane-295719363)*
+
+#Nature #CityBreak #Beach #Nightlife

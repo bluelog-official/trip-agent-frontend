@@ -1,19 +1,23 @@
 ---
-title: "Rome in Four Days: Ancient Core, Vatican Morning, Trastevere Night"
+title: "Stay Close in Rome for 4 Days"
 date: "2026-09-25"
 city: "Rome"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/17282659/pexels-photo-17282659.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "4 Days"
+duration_key: "four"
+title_form: "stay_close"
+hashtags: "#HiddenGems #Photography #Culture"
 ---
 
-# Rome in Four Days: Ancient Core, Vatican Morning, Trastevere Night
+# Stay Close in Rome for 4 Days
 
-Rome is a walking city that becomes a queue if every ancient site is booked for the same afternoon. This 3-night, 4-day route separates the Forum, the Vatican, and Trastevere, and it treats lunch as a neighborhood decision rather than a detour back to the hotel.
+Rome is a walking city that becomes a queue if every ancient site is booked for the same afternoon. This 4-day route separates the Forum, the Vatican, and Trastevere, and it treats lunch as a neighborhood decision rather than a detour back to the hotel.
 
 ![Striking black and white photograph of the iconic Colosseum in Rome, Italy, showcasing its historic architecture.](https://images.pexels.com/photos/17282659/pexels-photo-17282659.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Efrem  Efre](https://www.pexels.com/@efrem-efre-2786187)*
 
-## A 3-Night, 4-Day Rome Itinerary
+## Four Days in Rome
 
 ### Day 1: The Forum, the Colosseum, and a short Palatine
 
@@ -53,3 +57,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Eat where the menu is short and the pasta is the point. A cacio e pepe or a supplì from a shop that is busy with Romans at 13:00 will beat a piazza table with a photograph of the dish. Stand at the coffee bar in the morning and sit down only when you are ready to pay for the chair.
+
+#HiddenGems #Photography #Culture

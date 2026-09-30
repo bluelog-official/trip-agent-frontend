@@ -1,19 +1,23 @@
 ---
-title: "London in Four Days: The River, Two Museums, One Market"
+title: "5 Days in London: A Slower Route"
 date: "2026-09-25"
 city: "London"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/37544947/pexels-photo-37544947.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "5 Days"
+duration_key: "five"
+title_form: "slower_route"
+hashtags: "#Museums #CityBreak #HiddenGems"
 ---
 
-# London in Four Days: The River, Two Museums, One Market
+# 5 Days in London: A Slower Route
 
-London looks compact on a Tube map and very large on foot. This 3-night, 4-day route stays near the Thames for the monuments, gives one morning to a free museum, and spends a market day in one neighborhood instead of sampling five.
+London looks compact on a Tube map and very large on foot. This 5-day route stays near the Thames for the monuments, gives one morning to a free museum, and spends a market day in one neighborhood instead of sampling five.
 
 ![Moody view of London's Tower Bridge under cloudy skies, showcasing the city's historic architecture and urban skyline.](https://images.pexels.com/photos/37544947/pexels-photo-37544947.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Michal Libertowski](https://www.pexels.com/@michal-libertowski-2161423432)*
 
-## A 3-Night, 4-Day London Itinerary
+## 5 Days in London
 
 ### Day 1: South Bank to the Tower
 
@@ -32,7 +36,11 @@ Pick Notting Hill and Portobello if you want a market street, or Greenwich if yo
 
 ### Day 4: Breakfast, a short gallery, the airport train
 
-Use the last morning for a bakery and one free room in the National Gallery if you are already near Trafalgar Square. Heathrow is the Elizabeth line or the Piccadilly line; the Elizabeth line is the one to choose with luggage. Gatwick is a dedicated train from Victoria or London Bridge, not the Tube. Leave at least three hours before an international departure, and earlier if you still need to buy the airport ticket at a machine.
+Use the last morning for a bakery and one free room in the National Gallery if you are already near Trafalgar Square. Heathrow is the Elizabeth line or the Piccadilly line; the Elizabeth line is the one to choose with luggage. Gatwick is a dedicated train from Victoria or London Bridge, not the Tube.
+
+### Day 5: Departure
+
+Leave at least three hours before an international departure, and earlier if you still need to buy the airport ticket at a machine.
 
 ## Getting Around London
 
@@ -53,3 +61,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Free museums are the budget of the trip, and they are also the trap. One great museum in the morning is worth more than three foyers. Eat a market lunch so the afternoon can be a park or a play, not another ticket.
+
+#Museums #CityBreak #HiddenGems

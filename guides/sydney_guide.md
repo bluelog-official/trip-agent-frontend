@@ -1,19 +1,23 @@
 ---
-title: "Sydney in Four Days: The Harbour, a Ferry, and One Beach Morning"
+title: "How to Spend 5 Days in Sydney"
 date: "2026-09-25"
 city: "Sydney"
 status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/33378301/pexels-photo-33378301.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+duration: "5 Days"
+duration_key: "five"
+title_form: "how_to_spend"
+hashtags: "#CityBreak #SoloTravel #Photography #SlowTravel"
 ---
 
-# Sydney in Four Days: The Harbour, a Ferry, and One Beach Morning
+# How to Spend 5 Days in Sydney
 
-Sydney's postcard is a harbor that is also a transport system. This 3-night, 4-day route walks the Opera House and the Rocks, uses a ferry as the trip itself, and gives Bondi or Manly a morning instead of treating every beach as a backdrop for lunch in the CBD.
+Sydney's postcard is a harbor that is also a transport system. This 5-day route walks the Opera House and the Rocks, uses a ferry as the trip itself, and gives Bondi or Manly a morning instead of treating every beach as a backdrop for lunch in the CBD.
 
 ![Scenic view of Sydney Opera House and bustling harbor in cloudy weather, New South Wales, Australia.](https://images.pexels.com/photos/33378301/pexels-photo-33378301.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 *Photo by [Khoi Pham](https://www.pexels.com/@khoi-pham-2154248309)*
 
-## A 3-Night, 4-Day Sydney Itinerary
+## 5 Days in Sydney
 
 ### Day 1: Circular Quay, the Opera House, and the Rocks
 
@@ -32,11 +36,15 @@ Bondi is a morning swim and a cliff walk as far as you feel like going toward Br
 
 ### Day 4: A bakery, a last quay walk, the airport train
 
-Sydney's last morning should be a bakery and a walk you already know, not a new suburb. The Airport Link train is the straightforward ride from the city stations, and the station access fee is the annoying part, not a reason to invent a cheaper route with two bags. Leave at least two and a half hours before an international departure. A beach morning and a midday flight is how people watch the plane leave from a bus.
+Sydney's last morning should be a bakery and a walk you already know, not a new suburb. The Airport Link train is the straightforward ride from the city stations, and the station access fee is the annoying part, not a reason to invent a cheaper route with two bags. Leave at least two and a half hours before an international departure.
+
+### Day 5: Departure
+
+A beach morning and a midday flight is how people watch the plane leave from a bus.
 
 ## Getting Around Sydney
 
-Use an Opal card or a contactless bank card on trains, ferries, light rail, and buses. The ferry is both transport and the view. Trains reach Bondi Junction, and a bus finishes the ride to the sand. Walking is for the quay, the Rocks, and the coastal path. A car is useful in the Blue Mountains and unnecessary inside this four-day plan.
+Use an Opal card or a contactless bank card on trains, ferries, light rail, and buses. The ferry is both transport and the view. Trains reach Bondi Junction, and a bus finishes the ride to the sand. Walking is for the quay, the Rocks, and the coastal path. A car is useful in the Blue Mountains and unnecessary inside this five-day plan.
 
 ## Where to Eat in Sydney
 
@@ -53,3 +61,5 @@ Prices are for one person and a normal order, before a drink. Ratings are a trav
 ## Local Tip
 
 Book the Manly ferry as a pleasure, not a gap between meetings. Sit outside if the wind allows it, and eat at the destination. A harbor cruise that repeats the same view for ninety minutes is the expensive version of a ticket you could have used to go somewhere and get off.
+
+#CityBreak #SoloTravel #Photography #SlowTravel
