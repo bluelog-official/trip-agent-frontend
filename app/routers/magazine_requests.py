@@ -2,7 +2,9 @@
 
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
+
+from app.core.limiter import limiter
 
 from app.schemas.magazine_request_schema import (
     FactCheckUpdate,
@@ -32,7 +34,8 @@ def require_admin(authorization: Optional[str] = Header(default=None)) -> None:
 
 
 @router.post("/api/magazine-requests", response_model=MagazineRequestRecord)
-def post_magazine_request(body: MagazineRequestCreate) -> MagazineRequestRecord:
+@limiter.limit("5/minute")
+def post_magazine_request(request: Request, body: MagazineRequestCreate) -> MagazineRequestRecord:
     try:
         record = create_magazine_request(body.model_dump())
     except ValueError as exc:

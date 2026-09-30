@@ -2,7 +2,9 @@
 
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
+
+from app.core.limiter import limiter
 
 from app.schemas.partner_schema import PartnerApply, PartnerApplication, PartnerApplicationList, PartnerApproval
 from app.services.auth_service import authorization_is_valid
@@ -21,7 +23,8 @@ def require_admin(authorization: Optional[str] = Header(default=None)) -> None:
 
 
 @router.post("/api/partners", response_model=PartnerApplication)
-def post_partner(body: PartnerApply) -> PartnerApplication:
+@limiter.limit("5/minute")
+def post_partner(request: Request, body: PartnerApply) -> PartnerApplication:
     try:
         record = apply_partner(body.model_dump())
     except ValueError as exc:

@@ -1,7 +1,7 @@
 # Progress
 
 ## Current
-AdSense tags, ads.txt, sitemap/robots, and the social share card are on `main`.
+DevSecOps hardening is on `main`: startup secret checks, IP rate limits, DOMPurify, pinned CORS, and security headers.
 
 ## Completed
 1. Guest magazine request system
@@ -65,24 +65,33 @@ AdSense tags, ads.txt, sitemap/robots, and the social share card are on `main`.
    - Header, home banner, and footer link to `/promote-store`. `POST /api/partners` stores `PENDING_APPROVAL`. Admin approval writes a Partner Verified Magazine and sets `is_active`.
    - `/events` and the guide footer list active shops. `POST /api/vouchers/claim` spends points for an 8-character code and a signed QR. `/wallet` shows it. `POST /api/vouchers/verify` checks or redeems the code.
 
+9. DevSecOps hardening
+   - Startup calls `enforce_production_secrets()`. `VOUCHER_SECRET` and `OAUTH_TOKEN_SECRET` must be at least 32 characters and must not be empty or a default/test string (`test`, `secret`, `your_super_secret`, `changeme`, and the same family). Otherwise the process raises `SystemExit` before it serves traffic. Pytest skips that check so the suite can import the app.
+   - slowapi limits by client IP (`X-Forwarded-For`, then the socket host): `POST /api/vouchers/claim` and `POST /api/vouchers/verify` are 10/minute, `GET /api/auth/signin/{provider}` is 10/minute, and `POST /api/magazine-requests` plus `POST /api/partners` are 5/minute. Those last two are the APIs behind `/magazine-request` and `/promote-store`.
+   - `ArticleView` runs magazine and K-Culture markdown through DOMPurify before React Markdown. `script`, `iframe`, `onload`, and `javascript:` / `vbscript:` / `data:` URLs are removed. Link and image hrefs are checked again at render.
+   - CORS `allow_origins` has no `*` and no `*.vercel.app` regex. Allowed origins are `FRONTEND_URL`, `SITE_URL`, `https://bluelogtrip.com`, `https://www.bluelogtrip.com`, and the Vite dev origins `http://localhost:5173` and `http://127.0.0.1:5173`. `allow_credentials` stays true.
+   - Every HTTP response sets `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`, and `Strict-Transport-Security: max-age=31536000; includeSubDomains`.
+
 ## Deployment checklist
 - `app.main` imports without loading `litellm`. OpenRouter still imports it only when a fallback call runs.
 - Frontend `npm run build` and `npm test` pass.
-- Backend pytest (90) and frontend `npm test` (44) pass. `npm run build` writes `dist/sitemap.xml`, `dist/robots.txt`, and `dist/ads.txt`.
+- Backend pytest (96) and frontend `npm test` (46) pass. `npm run build` writes `dist/sitemap.xml`, `dist/robots.txt`, and `dist/ads.txt`.
+- The API process exits on startup until `VOUCHER_SECRET` and `OAUTH_TOKEN_SECRET` are unique production values of at least 32 characters. Placeholder and test strings are rejected.
 - Set `VITE_ADSENSE_CLIENT_ID` and `VITE_ADSENSE_PUBLISHER_ID` on the frontend host before live ads. Set `VITE_KAKAO_JS_KEY` before the Kakao share button can open the official picker. `OG_API_ORIGIN` is the API origin the edge middleware calls for crawler HTML.
 - Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, and `KAKAO_CLIENT_SECRET` on the API host before the live buttons can complete a redirect. `OAUTH_PUBLIC_URL` is the API origin. `FRONTEND_URL` is the site origin.
 - Do not commit `venv/`. Local site-packages were mutated outside the project requirements.
 
 ## Files touched in this step
-- `app/services/seo_files.py`
-- `app/services/opengraph_service.py`
-- `app/services/scheduler_service.py`
+- `app/core/config.py`
+- `app/core/limiter.py`
 - `app/main.py`
-- `frontend/index.html`
-- `frontend/public/robots.txt`
-- `frontend/middleware.js`
-- `frontend/src/components/portal/ShareSheet.jsx`
-- `frontend/src/pages/PartnerPage.jsx`
+- `app/routers/vouchers.py`
+- `app/routers/magazine_requests.py`
+- `app/routers/partners.py`
+- `app/routers/oauth.py`
+- `frontend/src/lib/sanitizeMarkdown.js`
+- `frontend/src/components/ArticleView.jsx`
+- `requirements.txt`
 - `docs/skill.md`
 
 ## Notes
@@ -90,6 +99,6 @@ AdSense tags, ads.txt, sitemap/robots, and the social share card are on `main`.
 - Point balances now follow the signed-in user. Until someone signs in, accrual still keys off the reporter email.
 - Partner shops appear on `/events` after an admin approves the application. Until then the public list stays empty.
 - An XRPL link appears only after `xrpl_tx_hash` is stored on the report. The English magazine SHA-256 is stored separately as `english_sha256`.
-- `VOUCHER_SECRET` signs voucher QR payloads. It falls back to `OAUTH_TOKEN_SECRET`.
+- `VOUCHER_SECRET` signs voucher QR payloads. It falls back to `OAUTH_TOKEN_SECRET` inside the signer. Startup still requires both names to be set to real values.
 - Without `VITE_ADSENSE_CLIENT_ID`, the AdSense script is not injected. `ads.txt` still serves the committed publisher line until an env id replaces it.
 - Kakao link previews of a pasted URL need the edge middleware and `OG_API_ORIGIN`. The share button itself sends the card through the Kakao SDK when `VITE_KAKAO_JS_KEY` is set.

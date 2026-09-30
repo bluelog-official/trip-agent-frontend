@@ -15,3 +15,4 @@ httpx>=0.28.1
 requests>=2.32.5
 pytest>=8.4.2
 apscheduler>=3.10.4
+slowapi>=0.1.9

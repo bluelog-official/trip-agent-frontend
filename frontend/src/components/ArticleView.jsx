@@ -1,6 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { slugifyHeading, stripPhotoCredits } from "../lib/articleDocument";
+import { allowedUrl, sanitizeMarkdown } from "../lib/sanitizeMarkdown";
 import { buildArticleBlocks } from "./adSlotPlan";
 import AdSenseUnit from "./AdSenseUnit";
 
@@ -26,16 +27,33 @@ function headingComponent(level, headings) {
   };
 }
 
+function SafeLink({ href, children }) {
+  const url = allowedUrl(href);
+  if (!url) return <span>{children}</span>;
+  return <a href={url}>{children}</a>;
+}
+
+function SafeImage({ src, alt }) {
+  const url = allowedUrl(src);
+  if (!url || !/^https?:/i.test(url)) return null;
+  return <img src={url} alt={alt || ""} />;
+}
+
 export default function ArticleView({
   markdown,
   isApproved = false,
   headingIds = null,
   plain = false,
 }) {
-  const blocks = buildArticleBlocks(stripPhotoCredits(markdown), isApproved === true);
+  const blocks = buildArticleBlocks(
+    stripPhotoCredits(sanitizeMarkdown(markdown)),
+    isApproved === true,
+  );
   const components = {
     h2: headingComponent("h2", headingIds),
     h3: headingComponent("h3", headingIds),
+    a: SafeLink,
+    img: SafeImage,
   };
 
   return (

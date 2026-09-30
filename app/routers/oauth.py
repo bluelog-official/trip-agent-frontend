@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 from fastapi import APIRouter, Header, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
+from app.core.limiter import limiter
+
 from app.schemas.oauth_schema import AuthProviderList, OAuthStart, UserSession
 from app.services.oauth_service import (
     OAuthExchangeError,
@@ -53,6 +55,7 @@ def get_session(authorization: Optional[str] = Header(default=None)) -> UserSess
 
 
 @router.get("/signin/{provider}", response_model=OAuthStart)
+@limiter.limit("10/minute")
 def start_signin(provider: str, request: Request) -> OAuthStart:
     if provider not in ("google", "apple", "kakao"):
         raise HTTPException(status_code=404, detail="unknown provider")

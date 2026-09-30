@@ -2,8 +2,9 @@
 
 from typing import Optional
 
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Header, HTTPException, Request
 
+from app.core.limiter import limiter
 from app.routers.oauth import require_user
 from app.schemas.voucher_schema import VoucherCard, VoucherClaim, VoucherList, VoucherVerifyRequest, VoucherVerifyResult
 from app.services.voucher_service import claim_voucher, list_vouchers, verify_voucher
@@ -18,7 +19,9 @@ def get_vouchers(authorization: Optional[str] = Header(default=None)) -> Voucher
 
 
 @router.post("/api/vouchers/claim", response_model=VoucherCard)
+@limiter.limit("10/minute")
 def post_claim(
+    request: Request,
     body: VoucherClaim,
     authorization: Optional[str] = Header(default=None),
 ) -> VoucherCard:
@@ -33,7 +36,8 @@ def post_claim(
 
 
 @router.post("/api/vouchers/verify", response_model=VoucherVerifyResult)
-def post_verify(body: VoucherVerifyRequest) -> VoucherVerifyResult:
+@limiter.limit("10/minute")
+def post_verify(request: Request, body: VoucherVerifyRequest) -> VoucherVerifyResult:
     if not body.voucher_code:
         raise HTTPException(status_code=400, detail="voucher code is required")
     return VoucherVerifyResult.model_validate(

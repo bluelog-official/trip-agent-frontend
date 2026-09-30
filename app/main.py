@@ -11,6 +11,13 @@ from dotenv import load_dotenv
 from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from starlette.datastructures import MutableHeaders
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
+
+from app.core.config import enforce_production_secrets
+from app.core.limiter import limiter
 
 from app.agents.marketing_agent import run_marketing_pipeline
 from app.routers.magazine_requests import router as magazine_router
@@ -44,10 +51,11 @@ from app.services.scheduler_service import (
 from app.services.seo_files import ads_txt_body, robots_txt_body
 
 load_dotenv()
+enforce_production_secrets()
 
 DEFAULT_SITE_URL = "https://bluelogtrip.com"
 SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).strip().rstrip("/") or DEFAULT_SITE_URL
-VERCEL_ORIGIN_REGEX = r"https://[a-zA-Z0-9-]+\.vercel\.app"
+FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip()
 
 
 def _origin(value: str) -> str:
@@ -62,27 +70,55 @@ def _origin(value: str) -> str:
     return "{0}://{1}".format(parsed.scheme, parsed.netloc)
 
 
-def _cors_allow_origins(site_url: str) -> List[str]:
-    """로컬 개발, SITE_URL, bluelogtrip.com 커스텀 도메인을 허용한다."""
+def _cors_allow_origins(site_url: str, frontend_url: str = "") -> List[str]:
+    """로컬 개발, FRONTEND_URL, SITE_URL, bluelogtrip.com만 허용한다."""
     origins = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        _origin(frontend_url),
         _origin(site_url),
         _origin(DEFAULT_SITE_URL),
         "https://bluelogtrip.com",
         "https://www.bluelogtrip.com",
     ]
-    parsed = urlparse(_origin(site_url))
-    host = (parsed.hostname or "").lower()
-    if host.startswith("www."):
-        origins.append("{0}://{1}".format(parsed.scheme, host[4:]))
-    elif host and host not in ("localhost", "127.0.0.1"):
-        origins.append("{0}://www.{1}".format(parsed.scheme, host))
+    for candidate in (_origin(frontend_url), _origin(site_url), _origin(DEFAULT_SITE_URL)):
+        parsed = urlparse(candidate)
+        host = (parsed.hostname or "").lower()
+        if not host or host in ("localhost", "127.0.0.1"):
+            continue
+        if host.startswith("www."):
+            origins.append("{0}://{1}".format(parsed.scheme, host[4:]))
+        else:
+            origins.append("{0}://www.{1}".format(parsed.scheme, host))
     unique: List[str] = []
     for origin in origins:
-        if origin and origin not in unique:
+        if origin and origin != "*" and origin not in unique:
             unique.append(origin)
     return unique
+
+
+class SecurityHeadersMiddleware:
+    """클릭재킹, MIME 스니핑, 리퍼러, 기능 정책, HSTS를 모든 HTTP 응답에 붙인다."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        async def send_with_security_headers(message: Message) -> None:
+            if message["type"] == "http.response.start":
+                headers = MutableHeaders(scope=message)
+                headers["X-Frame-Options"] = "DENY"
+                headers["X-Content-Type-Options"] = "nosniff"
+                headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+                headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+                headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+            await send(message)
+
+        await self.app(scope, receive, send_with_security_headers)
 
 
 @asynccontextmanager
@@ -93,6 +129,8 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="BlueLog AdSense Engine - AI Agents", lifespan=lifespan)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(stats_router)
 app.include_router(magazine_router)
@@ -105,12 +143,12 @@ app.include_router(vouchers_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_allow_origins(SITE_URL),
-    allow_origin_regex=VERCEL_ORIGIN_REGEX,
+    allow_origins=_cors_allow_origins(SITE_URL, FRONTEND_URL),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SecurityHeadersMiddleware)
 
 
 def _passwords_match(provided: str, expected: str) -> bool:

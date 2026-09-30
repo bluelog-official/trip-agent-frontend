@@ -244,4 +244,13 @@ class GenerateResponse(BaseModel):
 - `POST /api/vouchers/claim`은 사용자 Bearer가 필요하다. 승인된 상점의 `voucher_points`(기본 50)를 빼고 8자 `voucher_code`와 서명 `qr_token`, SVG QR을 만든다.
 - `POST /api/vouchers/verify`는 코드와 선택적 `qr_token`을 확인한다. `consume: true`면 `REDEEMED`로 바꾼다.
 - 지갑 `/wallet`과 `/mypage`의 내 바우처 탭이 QR을 연다. 서명 비밀은 `VOUCHER_SECRET`이고, 없으면 `OAUTH_TOKEN_SECRET`을 쓴다.
+- 프로세스 기동은 `VOUCHER_SECRET`과 `OAUTH_TOKEN_SECRET`이 비어 있거나 32자 미만이거나 `test`·`secret`·`your_super_secret` 같은 기본 문자열이면 `SystemExit`로 멈춘다. pytest 수집 중에는 이 검사를 건너뛴다.
+
+## 17. Request limits and browser hardening
+
+- `POST /api/vouchers/claim`, `POST /api/vouchers/verify`, `GET /api/auth/signin/{provider}`는 IP당 분당 10회다.
+- `POST /api/magazine-requests`(`/magazine-request`)와 `POST /api/partners`(`/promote-store`)는 IP당 분당 5회다.
+- CORS `allow_origins`는 `*`와 `*.vercel.app` 정규식을 쓰지 않는다. `FRONTEND_URL`, `SITE_URL`, `https://bluelogtrip.com`, `https://www.bluelogtrip.com`, `http://localhost:5173`, `http://127.0.0.1:5173`만 허용하고 `allow_credentials=True`다.
+- 모든 HTTP 응답에 `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`, `Strict-Transport-Security: max-age=31536000; includeSubDomains`를 붙인다.
+- 매거진 본문 `ArticleView`는 DOMPurify로 `script`, `iframe`, `onload`, `javascript:`를 지운 뒤 렌더한다.
 
