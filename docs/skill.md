@@ -131,7 +131,7 @@ class GenerateResponse(BaseModel):
 | GET | `/api/v1/guides` | 생성된 가이드 목록 |
 | GET | `/api/v1/guides/{guide_id}` | 가이드 상세. 승인 전에는 `qa_result.is_approved`가 false |
 | POST | `/api/v1/guides/{guide_id}/approve` | 휴먼 리뷰 승인. `is_approved`를 true로 바꾸고 sitemap 갱신 후 Google ping. 응답 후 Marketing Agent를 Background Task로 실행 |
-| GET | `/api/v1/admin/dashboard-stats` | Bearer 필수. 가이드 수, QA 75점 승인/보류, 배치 상태, 에이전트 헬스, 최근 10개, `marketing_alerts` 최근 20개 |
+| GET | `/api/v1/admin/dashboard-stats` | Bearer 필수. 전체 가이드 수, 승인된 발행 수, 미승인 검수 대기 수, 배치 상태, 에이전트 헬스, 최근 10개, `marketing_alerts` 최근 20개 |
 | DELETE | `/api/v1/admin/marketing-alerts/{alert_id}` | Bearer 필수. 확인한 마케팅 초안을 삭제 |
 | GET | `/api/v1/stats/visitors` | 오늘(Asia/Seoul) 순 방문자와 누적 순 방문자 |
 | POST | `/api/v1/stats/hit` | 방문 1회 기록. 같은 IP 해시는 하루에 한 번만 집계 |

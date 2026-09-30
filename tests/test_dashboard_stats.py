@@ -97,7 +97,7 @@ def test_dashboard_stats_counts_approval_gate(client, monkeypatch, tmp_path):
         payload = response.json()
         assert payload["total_guides_count"] == 3
         assert payload["approved_count"] == 1
-        assert payload["pending_count"] == 1
+        assert payload["pending_count"] == 2
         assert payload["daily_batch_status"] == {
             "last_run": "2026-09-26 09:00",
             "status": "SUCCESS",

@@ -30,6 +30,20 @@ function scoreClass(score) {
   return Number(score) >= 75 ? "score-tag pass" : "score-tag hold";
 }
 
+export function applyGuideApproval(stats, filename) {
+  const guides = Array.isArray(stats?.recent_guides) ? stats.recent_guides : [];
+  const target = guides.find((guide) => guide.filename === filename);
+  if (!target || target.is_approved) return stats;
+  return {
+    ...stats,
+    approved_count: Number(stats.approved_count || 0) + 1,
+    pending_count: Math.max(0, Number(stats.pending_count || 0) - 1),
+    recent_guides: guides.map((guide) =>
+      guide.filename === filename ? { ...guide, is_approved: true } : guide,
+    ),
+  };
+}
+
 export default function Dashboard({ onUnauthorized }) {
   const { t } = useTranslation();
   const [stats, setStats] = useState(EMPTY_STATS);
@@ -41,7 +55,9 @@ export default function Dashboard({ onUnauthorized }) {
   const [copiedId, setCopiedId] = useState(null);
   const [dismissingId, setDismissingId] = useState(null);
   const onUnauthorizedRef = useRef(onUnauthorized);
+  const statsRef = useRef(stats);
   onUnauthorizedRef.current = onUnauthorized;
+  statsRef.current = stats;
 
   const loadStats = useCallback(async () => {
     const res = await fetch(`${API_BASE_URL}/admin/dashboard-stats`, {
@@ -125,14 +141,19 @@ export default function Dashboard({ onUnauthorized }) {
 
   const approveGuide = async (filename) => {
     if (!filename || approvingId) return;
+    const previous = statsRef.current;
+    const optimistic = applyGuideApproval(previous, filename);
+    if (optimistic === previous) return;
     setApprovingId(filename);
     setError("");
+    setStats(optimistic);
     try {
       const res = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(filename)}/approve`, {
         method: "POST",
         headers: adminAuthHeaders(),
       });
       if (res.status === 401) {
+        setStats(previous);
         onUnauthorizedRef.current();
         return;
       }
@@ -141,9 +162,14 @@ export default function Dashboard({ onUnauthorized }) {
         throw new Error(payload.detail || t("dashboard.approveFailed"));
       }
       setNotice(t("dashboard.approvedNotice", { filename }));
-      const data = await loadStats();
-      setStats(data);
+      try {
+        const data = await loadStats();
+        setStats(data);
+      } catch (refreshErr) {
+        if (refreshErr.message !== "Unauthorized") setError(refreshErr.message);
+      }
     } catch (err) {
+      setStats(previous);
       setError(err.message);
     } finally {
       setApprovingId("");
@@ -240,19 +266,25 @@ export default function Dashboard({ onUnauthorized }) {
       {error ? <p className="dash-banner error">{error}</p> : null}
       {notice ? <p className="dash-banner">{notice}</p> : null}
 
-      <div className="dash-cards">
-        <article className="dash-card">
+      <div className="dash-metrics" aria-label={t("dashboard.metricsLabel")}>
+        <article className="dash-card metric-total">
           <span>{t("dashboard.totalContent")}</span>
-          <strong>{loading ? "…" : stats.total_guides_count}</strong>
+          <strong data-metric="total">{loading ? "…" : stats.total_guides_count}</strong>
+          <small>{t("dashboard.totalContentHelp")}</small>
         </article>
-        <article className="dash-card">
-          <span>{t("dashboard.autoPublish")}</span>
-          <strong>{loading ? "…" : stats.approved_count}</strong>
+        <article className="dash-card metric-published">
+          <span>{t("dashboard.publishedCount")}</span>
+          <strong data-metric="published">{loading ? "…" : stats.approved_count}</strong>
+          <small>{t("dashboard.publishedCountHelp")}</small>
         </article>
-        <article className="dash-card">
-          <span>{t("dashboard.pendingHold")}</span>
-          <strong>{loading ? "…" : stats.pending_count}</strong>
+        <article className="dash-card metric-waiting">
+          <span>{t("dashboard.waitingReview")}</span>
+          <strong data-metric="waiting">{loading ? "…" : stats.pending_count}</strong>
+          <small>{t("dashboard.waitingReviewHelp")}</small>
         </article>
+      </div>
+
+      <div className="dash-cards">
         <article className={`dash-card batch ${String(batch.status || "").toLowerCase()}`}>
           <span>{t("dashboard.batchStatus")}</span>
           <strong>{batchStatus(batch.status)}</strong>

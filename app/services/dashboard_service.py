@@ -2,7 +2,7 @@
 
 from typing import Any, Dict
 
-from app.services.guide_service import _MIN_APPROVED_SCORE, list_guide_records
+from app.services.guide_service import list_guide_records
 from app.services.marketing_service import list_marketing_alerts
 from app.services.scheduler_service import read_daily_batch_status
 
@@ -28,16 +28,10 @@ def agent_health() -> Dict[str, str]:
 
 
 def build_dashboard_stats() -> Dict[str, Any]:
-    """QA 75점 자동 발행과 75점 미만 검수 대기를 집계한다."""
+    """전체 가이드를 승인된 발행본과 아직 승인되지 않은 검수 대기로 나눈다."""
     guides = list_guide_records()
-    approved_count = 0
-    pending_count = 0
-    for guide in guides:
-        score = int(guide.get("qa_score") or 0)
-        if score >= _MIN_APPROVED_SCORE and guide.get("is_approved"):
-            approved_count += 1
-        elif score < _MIN_APPROVED_SCORE and not guide.get("is_approved"):
-            pending_count += 1
+    approved_count = sum(1 for guide in guides if guide.get("is_approved"))
+    pending_count = sum(1 for guide in guides if not guide.get("is_approved"))
     return {
         "total_guides_count": len(guides),
         "approved_count": approved_count,
