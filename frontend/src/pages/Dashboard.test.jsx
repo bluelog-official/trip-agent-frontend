@@ -152,4 +152,43 @@ describe("dashboard metrics", () => {
     });
     expect(screen.getByRole("button", { name: "Approve" }).disabled).toBe(false);
   });
+
+  it("shows guest requests as one-click guide source", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url) => {
+        if (String(url).includes("magazine-requests")) {
+          return jsonResponse({
+            requests: [
+              {
+                id: 7,
+                author_type: "anonymous",
+                nickname: "",
+                country: "Japan",
+                city: "Tokyo",
+                place: "Yanaka",
+                review: "A quiet alley noodle shop worth the walk.",
+                status: "PENDING_REVIEW",
+                guide_source: {
+                  destination: "Tokyo, Japan",
+                  keyword: "Yanaka",
+                  ready_for_one_click: true,
+                },
+              },
+            ],
+          });
+        }
+        return jsonResponse(STATS);
+      }),
+    );
+
+    render(<Dashboard onUnauthorized={() => {}} />);
+    fireEvent.click(await screen.findByRole("tab", { name: "Guest Requests" }));
+
+    expect(await screen.findByText("Tokyo, Japan")).toBeTruthy();
+    expect(screen.getByText("PENDING_REVIEW")).toBeTruthy();
+    expect(screen.getByText("1-click source ready")).toBeTruthy();
+    expect(document.querySelector("[data-source-ready='true']")).toBeTruthy();
+    expect(document.querySelector("[data-status='PENDING_REVIEW']")).toBeTruthy();
+  });
 });

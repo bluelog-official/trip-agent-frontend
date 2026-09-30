@@ -5,6 +5,7 @@ import VisitorBadge from "./components/VisitorBadge";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
+import MagazineRequestPage from "./pages/MagazineRequestPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -17,6 +18,7 @@ import CommunityBoard from "./components/portal/CommunityBoard";
 import GlobalNav from "./components/portal/GlobalNav";
 import HeroSearch, { CategoryIntro, CityIntro } from "./components/portal/HeroSearch";
 import GlobeMap from "./components/portal/GlobeMap";
+import MagazineRequestCta from "./components/portal/MagazineRequestCta";
 import PortalSidebar from "./components/portal/PortalSidebar";
 import {
   API_BASE_URL,
@@ -193,6 +195,7 @@ export default function App() {
         terms: t("meta.termsTitle"),
         about: t("meta.aboutTitle"),
         contact: t("meta.contactTitle"),
+        magazineRequest: t("meta.magazineTitle"),
         notFound: t("meta.notFoundTitle"),
       };
       const descriptions = {
@@ -200,6 +203,7 @@ export default function App() {
         terms: t("meta.termsDescription"),
         about: t("meta.aboutDescription"),
         contact: t("meta.contactDescription"),
+        magazineRequest: t("meta.magazineDescription"),
         notFound: t("meta.notFoundDescription"),
       };
       title = titles[route.name] || t("meta.homeTitle");
@@ -363,6 +367,7 @@ export default function App() {
         <>
           <HeroSearch query={query} onQueryChange={setQuery} onSearch={handleSearch} />
           <GlobeMap onOpenCity={openCityGuides} />
+          <MagazineRequestCta onRequest={() => go("/magazine-request")} />
           <div className="ad-band">
             <AdSenseUnit slotId="hero-below" format="auto" />
           </div>
@@ -390,6 +395,8 @@ export default function App() {
           <About />
         ) : route.name === "contact" ? (
           <Contact />
+        ) : route.name === "magazineRequest" ? (
+          <MagazineRequestPage onNavigate={go} />
         ) : route.name === "notFound" ? (
           <NotFound onNavigate={go} />
         ) : (

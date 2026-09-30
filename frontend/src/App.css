@@ -2413,3 +2413,130 @@
     min-height: 320px;
   }
 }
+
+.magazine-cta {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 22px 12px;
+}
+
+.magazine-cta h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  color: #134e4a !important;
+}
+
+.magazine-cta p {
+  margin: 0 0 16px;
+  max-width: 42rem;
+  color: #44403c !important;
+  line-height: 1.6;
+}
+
+.magazine-cta-button,
+.contact-submit {
+  cursor: pointer;
+}
+
+.magazine-cta-button {
+  border: 0;
+  border-radius: 999px;
+  background: #0f766e;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  padding: 12px 18px;
+}
+
+.author-types {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.author-types legend {
+  width: 100%;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.author-types label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.review-count {
+  margin: 0;
+  color: #78716c !important;
+  font-size: 0.85rem;
+}
+
+.dash-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.dash-tabs button {
+  border: 1px solid #d6cfc3;
+  background: #fff;
+  color: #44403c;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dash-tabs button.is-active {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #ffffff;
+}
+
+.guest-request-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.guest-request-card,
+.guest-source {
+  border: 1px solid #e6dfd4;
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px;
+}
+
+.guest-request-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.guest-source {
+  margin-top: 8px;
+  background: #f6f3ee;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: baseline;
+}
+
+.text-link {
+  margin-top: 16px;
+  border: 0;
+  background: transparent;
+  color: #0f766e;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}

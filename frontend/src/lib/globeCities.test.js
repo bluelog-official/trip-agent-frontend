@@ -9,6 +9,7 @@ describe("globe city helpers", () => {
     expect(destinationSlug("Da Nang")).toBe("danang");
     expect(cityHeading("paris", [{ destination: "Paris" }])).toBe("Paris");
     expect(parseRoute("/city/new_york")).toMatchObject({ name: "city", city: "new_york" });
+    expect(parseRoute("/magazine-request")).toMatchObject({ name: "magazineRequest" });
     expect(parseRoute("/city/")).toMatchObject({ name: "notFound" });
   });
 

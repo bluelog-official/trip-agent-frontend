@@ -155,3 +155,12 @@ class GenerateResponse(BaseModel):
 - 해외 서브레딧 초안은 `app/services/reddit_draft_service.py`가 가이드 본문·리서치 스팟으로 100% 영문 작성한다. 스타일은 경험 공유, 질문, 팁 세 가지를 도시마다 나눈다.
 - 서브레딧: 일본 도시(Tokyo, Osaka, Kyoto 등)는 `JapanTravel` 또는 `travel`. 유럽은 `travel`, `solotravel`, `Europe`. 그 외 도시는 `travel` 또는 `solotravel`. 본문 끝에 도시·스팟 태그를 붙인다.
 - 한글 정형문(`첫 방문 때 실제로 도움이 됐던 동선`)이 남아 있으면 알림 저장 전에 영문 초안으로 다시 쓴다.
+
+## 9. Magazine Requests
+
+- **Schema:** `app/schemas/magazine_request_schema.py` — `MagazineRequestCreate`, `MagazineRequestRecord`, `GuideSource`
+- **Table:** `app/models/magazine_requests.py` — `magazine_requests`. 신규 행 `status`는 `PENDING_REVIEW`.
+- **Service:** `app/services/magazine_request_service.py` — `create_magazine_request()`, `list_magazine_requests()`, `build_guide_source()`.
+- **Router:** `POST /api/magazine-requests` 공개 접수. `GET /api/v1/admin/magazine-requests`는 Bearer 필수.
+- `guide_source`는 `destination`(도시, 국가), `keyword`(추천 장소), 후기, 사진 주소를 담아 1-click 가이드 생성 입력으로 쓴다.
+- DB 기본 경로는 `output/magazine_requests.db`. 테스트는 `MAGAZINE_REQUESTS_DB_PATH`와 `MAGAZINE_UPLOAD_DIR`로 바꾼다.

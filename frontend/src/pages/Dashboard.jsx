@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { adminAuthHeaders } from "../lib/adminSession";
@@ -30,6 +30,87 @@ function scoreClass(score) {
   return Number(score) >= 75 ? "score-tag pass" : "score-tag hold";
 }
 
+function GuestRequests({ onUnauthorized }) {
+  const { t } = useTranslation();
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE_URL}/admin/magazine-requests`, {
+      headers: adminAuthHeaders(),
+    })
+      .then(async (res) => {
+        if (res.status === 401) {
+          onUnauthorized();
+          throw new Error("Unauthorized");
+        }
+        if (!res.ok) throw new Error(t("dashboard.guestLoadFailed"));
+        return res.json();
+      })
+      .then((data) => {
+        if (!cancelled) {
+          setRows(Array.isArray(data?.requests) ? data.requests : []);
+          setError("");
+        }
+      })
+      .catch((err) => {
+        if (!cancelled && err.message !== "Unauthorized") setError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [onUnauthorized, t]);
+
+  return (
+    <section className="guest-requests" aria-label={t("dashboard.tabGuests")}>
+      <h2>{t("dashboard.tabGuests")}</h2>
+      <p>{t("dashboard.guestLead")}</p>
+      {error ? <p className="dash-banner error">{error}</p> : null}
+      {loading ? <p>{t("dashboard.guestLoading")}</p> : null}
+      {!loading && !error && rows.length === 0 ? <p>{t("dashboard.guestEmpty")}</p> : null}
+      {rows.length > 0 ? (
+        <ul className="guest-request-list">
+          {rows.map((row) => {
+            const source = row.guide_source || {};
+            const author = row.author_type === "anonymous"
+              ? t("dashboard.guestAnonymous")
+              : row.nickname;
+            return (
+              <li key={row.id} className="guest-request-card" data-request-id={row.id}>
+                <header>
+                  <strong>{author}</strong>
+                  <span data-status={row.status}>
+                    {row.status === "PENDING_REVIEW" ? t("dashboard.guestStatusPending") : row.status}
+                  </span>
+                </header>
+                <p>
+                  <span>{t("dashboard.guestPlace")}</span>
+                  {` ${row.city}, ${row.country} · ${row.place}`}
+                </p>
+                <p>{row.review}</p>
+                <div
+                  className="guest-source"
+                  data-source-ready={source.ready_for_one_click ? "true" : "false"}
+                >
+                  <span>{t("dashboard.guestSource")}</span>
+                  <strong>{source.destination}</strong>
+                  <span>{source.keyword}</span>
+                  <em>{t("dashboard.guestReady")}</em>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
+
 export function applyGuideApproval(stats, filename) {
   const guides = Array.isArray(stats?.recent_guides) ? stats.recent_guides : [];
   const target = guides.find((guide) => guide.filename === filename);
@@ -54,6 +135,7 @@ export default function Dashboard({ onUnauthorized }) {
   const [approvingId, setApprovingId] = useState("");
   const [copiedId, setCopiedId] = useState(null);
   const [dismissingId, setDismissingId] = useState(null);
+  const [panel, setPanel] = useState("overview");
   const onUnauthorizedRef = useRef(onUnauthorized);
   const statsRef = useRef(stats);
   onUnauthorizedRef.current = onUnauthorized;
@@ -266,6 +348,31 @@ export default function Dashboard({ onUnauthorized }) {
       {error ? <p className="dash-banner error">{error}</p> : null}
       {notice ? <p className="dash-banner">{notice}</p> : null}
 
+      <div className="dash-tabs" role="tablist" aria-label={t("dashboard.tabsLabel")}>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={panel === "overview"}
+          className={panel === "overview" ? "is-active" : ""}
+          onClick={() => setPanel("overview")}
+        >
+          {t("dashboard.tabOverview")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={panel === "guests"}
+          className={panel === "guests" ? "is-active" : ""}
+          onClick={() => setPanel("guests")}
+        >
+          {t("dashboard.tabGuests")}
+        </button>
+      </div>
+
+      {panel === "guests" ? (
+        <GuestRequests onUnauthorized={onUnauthorized} />
+      ) : (
+        <>
       <div className="dash-metrics" aria-label={t("dashboard.metricsLabel")}>
         <article className="dash-card metric-total">
           <span>{t("dashboard.totalContent")}</span>
@@ -396,6 +503,8 @@ export default function Dashboard({ onUnauthorized }) {
           </ul>
         )}
       </section>
+        </>
+      )}
     </section>
   );
 }
