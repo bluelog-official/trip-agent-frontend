@@ -338,7 +338,25 @@
     "eventsTitle": "이벤트 & 혜택 · BlueLog Trip",
     "eventsDescription": "제보 포인트 적립과 오프라인 제휴 할인 안내입니다.",
     "walletTitle": "지갑 · BlueLog Trip",
-    "walletDescription": "로그인한 계정의 포인트 잔액, 제보 상태, 저장한 매거진입니다."
+    "walletDescription": "로그인한 계정의 포인트 잔액, 제보 상태, 저장한 매거진입니다.",
+    "kcultureTitle": "한국 문화 가이드 · BlueLog Trip",
+    "kcultureDescription": "한식, 뷰티 거리, 대중문화 장소, 골목 코스를 모았습니다.",
+    "partnerTitle": "{{name}} · BlueLog Trip",
+    "partnerDescription": "{{city}} 제휴 상점입니다."
+  },
+  "share": {
+    "button": "공유하기",
+    "title": "이 페이지 공유",
+    "kakao": "카카오톡",
+    "copy": "주소 복사",
+    "copied": "주소를 복사했습니다",
+    "imageSaved": "이미지 카드를 저장했습니다",
+    "x": "엑스",
+    "instagram": "사진 카드",
+    "close": "닫기",
+    "kakaoReady": "카카오톡 공유를 열었습니다.",
+    "kakaoCopied": "문구를 복사했습니다. 카카오톡에 붙여 넣으세요.",
+    "failed": "공유하지 못했습니다."
   },
   "ads": {
     "label": "광고",

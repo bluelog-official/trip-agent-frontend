@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import ArticleView from "../ArticleView";
+import ShareSheet from "./ShareSheet";
 import VoteButton from "./VoteButton";
 import AdSenseUnit from "../AdSenseUnit";
 import { prepareArticle, buildGuideJsonLd } from "../../lib/articleDocument";
@@ -198,8 +199,14 @@ export default function GuideArticle({ guide, fileName, onNavigate }) {
         </div>
 
         <AdSenseUnit slotId="article-bottom" format="auto" />
-        <footer className="guide-vote">
+        <footer className="guide-vote guide-share-row">
           <VoteButton articleId={card.id} />
+          <ShareSheet
+            title={card.title}
+            description={card.summary}
+            pathname={`/guide/${encodeURIComponent(fileName || card.id)}`}
+            image={card.image}
+          />
         </footer>
       </div>
     </article>

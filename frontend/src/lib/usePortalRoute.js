@@ -68,6 +68,21 @@ export function parseRoute(pathname) {
   if (path === "/events") {
     return { name: "events", category: "", guideId: "" };
   }
+  if (path === "/k-culture" || path.startsWith("/k-culture/")) {
+    const theme = path.split("/")[2] || "all";
+    const known = ["all", "k-food", "k-beauty", "k-pop", "k-trend"];
+    if (!known.includes(theme)) {
+      return { name: "notFound", category: "", guideId: "" };
+    }
+    return { name: "kculture", category: "kculture", guideId: "", theme: theme === "all" ? "all" : theme };
+  }
+  if (path.startsWith("/partners/")) {
+    const partnerId = path.slice("/partners/".length).split("/")[0];
+    if (!/^\d+$/.test(partnerId)) {
+      return { name: "notFound", category: "", guideId: "" };
+    }
+    return { name: "partner", category: "", guideId: "", partnerId };
+  }
   if (path === "/promote-store" || path === "/partner-apply") {
     return { name: "promoteStore", category: "", guideId: "" };
   }

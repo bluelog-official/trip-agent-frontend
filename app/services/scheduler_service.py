@@ -52,7 +52,14 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = ROOT_DIR / "output"
 GUIDES_DIR = ROOT_DIR / "guides"
 SITEMAP_PATH = OUTPUT_DIR / "sitemap.xml"
-PUBLIC_SITEMAP_PATHS = ("/about", "/contact", "/privacy", "/terms")
+PUBLIC_SITEMAP_PATHS = ("/about", "/contact", "/privacy", "/terms", "/events")
+K_CULTURE_SITEMAP_PATHS = (
+    "/k-culture",
+    "/k-culture/k-food",
+    "/k-culture/k-beauty",
+    "/k-culture/k-pop",
+    "/k-culture/k-trend",
+)
 STATE_PATH = OUTPUT_DIR / "scheduler_state.json"
 GOOGLE_SITEMAP_PING = "http://www.google.com/ping"
 _SCRIPT_TAG = re.compile(
@@ -229,6 +236,44 @@ def _sitemap_sources() -> List[Path]:
     return [found[name] for name in sorted(found)]
 
 
+def _today() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
+
+
+def _active_partner_paths() -> List[Dict[str, str]]:
+    """승인된 제휴 상점의 공개 경로와 lastmod."""
+    try:
+        from app.models import rewards as reward_store
+        from app.services.rewards_service import db_path
+
+        database = db_path()
+        if not database.is_file():
+            return []
+        conn = reward_store.connect(database)
+        try:
+            rows = reward_store.fetch_partners(conn, active_only=True)
+        finally:
+            conn.close()
+    except Exception:  # noqa: BLE001 - 상점 DB가 없어도 sitemap은 가이드를 담는다
+        return []
+    paths: List[Dict[str, str]] = []
+    for row in rows:
+        try:
+            partner_id = int(row.get("id") or 0)
+        except (TypeError, ValueError):
+            continue
+        if partner_id <= 0:
+            continue
+        lastmod = str(row.get("created_at") or "")[:10]
+        paths.append(
+            {
+                "path": "/partners/{0}".format(partner_id),
+                "lastmod": lastmod if len(lastmod) == 10 else _today(),
+            }
+        )
+    return paths
+
+
 def _sitemap_url(loc: str, changefreq: str, priority: str, lastmod: str = "") -> str:
     """Sitemap protocol url 항목을 줄 단위 태그로 만든다."""
     lines = [
@@ -251,15 +296,25 @@ def refresh_sitemap(base_url: str = "") -> Path:
     """guides 디렉터리의 마크다운을 표준 Sitemap XML urlset으로 다시 쓴다."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     site_url = resolve_site_base_url(base_url)
+    today = _today()
     home = "{0}/".format(site_url) if site_url else "/"
-    entries = [_sitemap_url(home, changefreq="daily", priority="1.0")]
+    entries = [_sitemap_url(home, changefreq="daily", priority="1.0", lastmod=today)]
     for public_path in PUBLIC_SITEMAP_PATHS:
         loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
-        entries.append(_sitemap_url(loc, changefreq="monthly", priority="0.4"))
+        entries.append(_sitemap_url(loc, changefreq="monthly", priority="0.4", lastmod=today))
+    for public_path in K_CULTURE_SITEMAP_PATHS:
+        loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
+        priority = "0.9" if public_path == "/k-culture" else "0.7"
+        entries.append(_sitemap_url(loc, changefreq="weekly", priority=priority, lastmod=today))
     for path in _sitemap_sources():
         lastmod = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).date().isoformat()
         loc = "{0}/guide/{1}".format(site_url, path.name) if site_url else "/guide/{0}".format(path.name)
         entries.append(_sitemap_url(loc, changefreq="weekly", priority="0.8", lastmod=lastmod))
+    for partner in _active_partner_paths():
+        loc = "{0}{1}".format(site_url, partner["path"]) if site_url else partner["path"]
+        entries.append(
+            _sitemap_url(loc, changefreq="weekly", priority="0.6", lastmod=partner["lastmod"])
+        )
     document = strip_script_tags(
         (
             '<?xml version="1.0" encoding="UTF-8"?>\n'

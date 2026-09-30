@@ -338,7 +338,25 @@
     "eventsTitle": "Events & Rewards · BlueLog Trip",
     "eventsDescription": "How guest reports earn points, and how partner shop discounts will work.",
     "walletTitle": "Wallet · BlueLog Trip",
-    "walletDescription": "Point balance, report status, and saved magazines for the signed-in account."
+    "walletDescription": "Point balance, report status, and saved magazines for the signed-in account.",
+    "kcultureTitle": "Korea culture guides · BlueLog Trip",
+    "kcultureDescription": "Neighborhood meals, beauty streets, pop-culture stops, and walks in Korea.",
+    "partnerTitle": "{{name}} · BlueLog Trip",
+    "partnerDescription": "Partner shop in {{city}}."
+  },
+  "share": {
+    "button": "Share",
+    "title": "Share this page",
+    "kakao": "KakaoTalk",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "imageSaved": "Image card saved",
+    "x": "X",
+    "instagram": "Instagram card",
+    "close": "Close",
+    "kakaoReady": "Opened KakaoTalk share.",
+    "kakaoCopied": "Caption copied. Paste it in KakaoTalk.",
+    "failed": "Could not share this page."
   },
   "ads": {
     "label": "Sponsored Content",

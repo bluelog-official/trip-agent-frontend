@@ -3103,3 +3103,80 @@
 .partner-list button {
   margin-left: 8px;
 }
+
+.guide-share-row,
+.kculture-page-head .share-sheet,
+.events-page .share-sheet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.kculture-page-head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.share-open,
+.share-actions button,
+.share-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #134e4a;
+  background: #fff;
+  color: #134e4a;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.share-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: rgba(28, 25, 23, 0.45);
+  padding: 16px;
+}
+
+.share-dialog {
+  width: min(440px, 100%);
+  background: #fffdf8;
+  color: #1c1917;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.share-dialog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-close {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.share-preview-title {
+  margin: 12px 0 4px;
+  font-weight: 700;
+}
+
+.share-preview-copy {
+  margin: 0 0 14px;
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

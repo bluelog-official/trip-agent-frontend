@@ -36,6 +36,14 @@ def _stamp() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def _public_image(raw: str) -> str:
+    for line in str(raw or "").splitlines():
+        url = line.strip()
+        if url.startswith("https://") or url.startswith("http://"):
+            return url
+    return ""
+
+
 def _public_partner(row: Dict[str, object]) -> Dict[str, object]:
     return {
         "id": int(row["id"]),
@@ -46,6 +54,8 @@ def _public_partner(row: Dict[str, object]) -> Dict[str, object]:
         "category": str(row.get("category") or ""),
         "address": str(row.get("address") or ""),
         "offered_benefit": str(row.get("offered_benefit") or ""),
+        "store_description": str(row.get("store_description") or ""),
+        "image_url": _public_image(str(row.get("catalog_images") or "")),
         "voucher_points": int(row.get("voucher_points") or 50),
     }
 

@@ -127,7 +127,10 @@ class GenerateResponse(BaseModel):
 | POST | `/api/v1/generate-guide` | 가이드 생성 (Research → Writer → Pexels → Syndication → QA → 저장) |
 | POST | `/api/v1/cron/trigger` | 도시 큐의 다음 목적지를 검수 전 초안으로 저장한다. sitemap과 Google ping은 보내지 않는다 |
 | GET | `/api/v1/cron/status` | 스케줄러 실행 여부와 다음 실행 시각 |
-| GET | `/api/v1/sitemap.xml` | 승인된 가이드만 포함한 sitemap |
+| GET | `/sitemap.xml`, `/api/v1/sitemap.xml` | 가이드, K-Culture, 승인 제휴 상점, 고정 페이지 sitemap. `loc`, `lastmod`, `changefreq`, `priority` |
+| GET | `/ads.txt`, `/api/ads.txt` | `VITE_ADSENSE_PUBLISHER_ID` 또는 클라이언트 ID로 `google.com, pub-…, DIRECT, f08c47fec0942fa0` |
+| GET | `/robots.txt`, `/api/robots.txt` | `User-agent: *` / `Allow: /` 와 공개 sitemap |
+| GET | `/api/v1/opengraph?path=` | 매거진·K-Culture·제휴 상점 Open Graph HTML. 소셜 크롤러용 |
 | GET | `/api/v1/guides` | 생성된 가이드 목록 |
 | GET | `/api/v1/guides/{guide_id}` | 가이드 상세. 승인 전에는 `qa_result.is_approved`가 false |
 | POST | `/api/v1/guides/{guide_id}/approve` | 휴먼 리뷰 승인. `is_approved`를 true로 바꾸고 sitemap 갱신 후 Google ping. 응답 후 Marketing Agent를 Background Task로 실행 |

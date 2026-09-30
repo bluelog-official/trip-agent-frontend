@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
+import { adsTxtBody, normalizePublisherId } from "./src/lib/adsTxt.js";
 
 const FRONTEND_DIR = path.dirname(fileURLToPath(import.meta.url));
 const GUIDES_DIR = path.resolve(FRONTEND_DIR, "../guides");
@@ -35,9 +36,28 @@ function sitemapUrl({ loc, lastmod, changefreq, priority }) {
 
 function buildStaticSitemap(siteUrl) {
   const origin = String(siteUrl || DEFAULT_SITE_URL).replace(/\/$/, "") || DEFAULT_SITE_URL;
-  const entries = [sitemapUrl({ loc: `${origin}/`, changefreq: "daily", priority: "1.0" })];
-  for (const publicPath of ["/about", "/contact", "/privacy", "/terms"]) {
-    entries.push(sitemapUrl({ loc: `${origin}${publicPath}`, changefreq: "monthly", priority: "0.4" }));
+  const today = new Date().toISOString().slice(0, 10);
+  const entries = [sitemapUrl({ loc: `${origin}/`, lastmod: today, changefreq: "daily", priority: "1.0" })];
+  for (const publicPath of ["/about", "/contact", "/privacy", "/terms", "/events"]) {
+    entries.push(
+      sitemapUrl({ loc: `${origin}${publicPath}`, lastmod: today, changefreq: "monthly", priority: "0.4" }),
+    );
+  }
+  for (const publicPath of [
+    "/k-culture",
+    "/k-culture/k-food",
+    "/k-culture/k-beauty",
+    "/k-culture/k-pop",
+    "/k-culture/k-trend",
+  ]) {
+    entries.push(
+      sitemapUrl({
+        loc: `${origin}${publicPath}`,
+        lastmod: today,
+        changefreq: "weekly",
+        priority: publicPath === "/k-culture" ? "0.9" : "0.7",
+      }),
+    );
   }
   if (fs.existsSync(GUIDES_DIR)) {
     const names = fs
@@ -59,6 +79,36 @@ function buildStaticSitemap(siteUrl) {
   return stripScripts(
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`,
   );
+}
+
+function adsTxtPlugin(env) {
+  const publisher = normalizePublisherId(env.VITE_ADSENSE_PUBLISHER_ID || env.ADSENSE_PUBLISHER_ID || env.VITE_ADSENSE_CLIENT_ID || "");
+  const body = publisher ? adsTxtBody(publisher) : "";
+  const serve = (req, res, next) => {
+    const requestPath = (req.url || "").split("?")[0];
+    if (!body || (requestPath !== "/ads.txt" && requestPath !== "/api/ads.txt")) {
+      next();
+      return;
+    }
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.end(body);
+  };
+  return {
+    name: "bluelog-ads-txt",
+    configureServer(server) {
+      server.middlewares.use(serve);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(serve);
+    },
+    writeBundle(options) {
+      if (!body) return;
+      const dir = options.dir || path.resolve(FRONTEND_DIR, "dist");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, "ads.txt"), body);
+    },
+  };
 }
 
 function pureSitemapPlugin(env) {
@@ -106,7 +156,7 @@ function pureSitemapPlugin(env) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
-    plugins: [pureSitemapPlugin(env), react()],
+    plugins: [adsTxtPlugin(env), pureSitemapPlugin(env), react()],
     test: {
       environment: "jsdom",
       globals: false,

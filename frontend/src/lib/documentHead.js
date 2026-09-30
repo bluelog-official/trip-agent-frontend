@@ -7,6 +7,14 @@ export function canonicalHref(pathname) {
   return path === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${path}`;
 }
 
+function absoluteImage(image) {
+  const value = String(image || "").trim();
+  if (!value) return "";
+  if (value.startsWith("https://") || value.startsWith("http://")) return value;
+  if (value.startsWith("/")) return `${SITE_ORIGIN}${value}`;
+  return value;
+}
+
 function upsertMeta(attribute, key, content) {
   if (typeof document === "undefined") return;
   const value = String(content || "").trim();
@@ -33,6 +41,7 @@ export function applyPageHead({
 }) {
   if (typeof document === "undefined") return;
   const url = canonicalHref(pathname);
+  const shareImage = absoluteImage(image);
   let link = document.head.querySelector('link[rel="canonical"]');
   if (!link) {
     link = document.createElement("link");
@@ -47,5 +56,9 @@ export function applyPageHead({
   upsertMeta("property", "og:type", type === "article" ? "article" : "website");
   upsertMeta("property", "og:site_name", "BlueLog Trip");
   upsertMeta("property", "og:locale", locale === "ko_KR" ? "ko_KR" : "en_US");
-  upsertMeta("property", "og:image", image);
+  upsertMeta("property", "og:image", shareImage);
+  upsertMeta("name", "twitter:card", shareImage ? "summary_large_image" : "summary");
+  upsertMeta("name", "twitter:title", title);
+  upsertMeta("name", "twitter:description", description);
+  upsertMeta("name", "twitter:image", shareImage);
 }

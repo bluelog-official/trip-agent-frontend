@@ -11,6 +11,11 @@ describe("globe city helpers", () => {
     expect(parseRoute("/city/new_york")).toMatchObject({ name: "city", city: "new_york" });
     expect(parseRoute("/magazine-request")).toMatchObject({ name: "magazineRequest" });
     expect(parseRoute("/events")).toMatchObject({ name: "events" });
+    expect(parseRoute("/k-culture")).toMatchObject({ name: "kculture", theme: "all" });
+    expect(parseRoute("/k-culture/k-food")).toMatchObject({ name: "kculture", theme: "k-food" });
+    expect(parseRoute("/k-culture/nope")).toMatchObject({ name: "notFound" });
+    expect(parseRoute("/partners/12")).toMatchObject({ name: "partner", partnerId: "12" });
+    expect(parseRoute("/partners/shop")).toMatchObject({ name: "notFound" });
     expect(parseRoute("/promote-store")).toMatchObject({ name: "promoteStore" });
     expect(parseRoute("/city/")).toMatchObject({ name: "notFound" });
   });

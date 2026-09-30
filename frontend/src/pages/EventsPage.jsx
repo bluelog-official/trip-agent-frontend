@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import PartnerOffers from "../components/portal/PartnerOffers";
+import ShareSheet from "../components/portal/ShareSheet";
 
 export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher, onClaimVoucher }) {
   const { t } = useTranslation();
@@ -9,6 +10,11 @@ export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher, 
       <p className="policy-kicker">{t("events.kicker")}</p>
       <h1>{t("events.title")}</h1>
       <p>{t("events.lead")}</p>
+      <ShareSheet
+        title={t("meta.eventsTitle")}
+        description={t("meta.eventsDescription")}
+        pathname="/events"
+      />
 
       <h2>{t("events.pointsTitle")}</h2>
       <ul>

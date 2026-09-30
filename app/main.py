@@ -31,6 +31,7 @@ from app.services.globe_service import build_globe_map
 from app.services.vote_service import counts_for_period
 from app.services.marketing_service import dismiss_marketing_alert
 from app.services.guide_service import get_guide, list_guides
+from app.services.opengraph_service import render_opengraph_html
 from app.services.scheduler_service import (
     generate_city_guide,
     publish_approved_guide,
@@ -40,6 +41,7 @@ from app.services.scheduler_service import (
     shutdown_scheduler,
     start_scheduler,
 )
+from app.services.seo_files import ads_txt_body, robots_txt_body
 
 load_dotenv()
 
@@ -198,6 +200,49 @@ async def trigger_daily_generation() -> Dict[str, Any]:
 @app.get("/api/v1/cron/status")
 async def get_cron_status() -> Dict[str, Any]:
     return scheduler_status()
+
+
+@app.get("/ads.txt", include_in_schema=False)
+@app.get("/api/ads.txt", include_in_schema=False)
+async def get_ads_txt() -> Response:
+    return Response(
+        content=ads_txt_body(),
+        media_type="text/plain",
+        headers={
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "public, max-age=3600",
+        },
+    )
+
+
+@app.get("/robots.txt", include_in_schema=False)
+@app.get("/api/robots.txt", include_in_schema=False)
+async def get_robots_txt() -> Response:
+    return Response(
+        content=robots_txt_body(SITE_URL),
+        media_type="text/plain",
+        headers={
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "public, max-age=3600",
+        },
+    )
+
+
+@app.get("/api/v1/opengraph", include_in_schema=False)
+async def get_opengraph(
+    path: str = Query(default="/"),
+    site: str = Query(default=""),
+) -> Response:
+    html = render_opengraph_html(path, site or SITE_URL)
+    return Response(
+        content=html,
+        media_type="text/html",
+        headers={
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=300",
+            "X-Robots-Tag": "noindex",
+        },
+    )
 
 
 @app.get("/sitemap.xml", include_in_schema=False)

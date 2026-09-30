@@ -58,6 +58,15 @@ describe("canonical and Open Graph head", () => {
     expect(document.querySelector('meta[property="og:image"]')?.getAttribute("content")).toBe(
       "https://images.example/kyoto.jpg",
     );
+    expect(document.querySelector('meta[name="twitter:card"]')?.getAttribute("content")).toBe(
+      "summary_large_image",
+    );
+    expect(document.querySelector('meta[name="twitter:title"]')?.getAttribute("content")).toBe(
+      "Kyoto · BlueLog Trip",
+    );
+    expect(document.querySelector('meta[name="twitter:image"]')?.getAttribute("content")).toBe(
+      "https://images.example/kyoto.jpg",
+    );
 
     applyPageHead({
       title: "Home",
@@ -66,6 +75,8 @@ describe("canonical and Open Graph head", () => {
       image: "",
     });
     expect(document.querySelector('meta[property="og:image"]')).toBeNull();
+    expect(document.querySelector('meta[name="twitter:image"]')).toBeNull();
+    expect(document.querySelector('meta[name="twitter:card"]')?.getAttribute("content")).toBe("summary");
   });
 });
 
@@ -73,6 +84,6 @@ describe("robots.txt", () => {
   it("allows every crawler and points at the public sitemap", () => {
     const robots = readFileSync(path.join(FRONTEND_DIR, "public/robots.txt"), "utf8");
     expect(robots).toMatch(/User-agent:\s*\*\s*Allow:\s*\//);
-    expect(robots).toContain("Sitemap: https://www.bluelogtrip.com/sitemap.xml");
+    expect(robots).toContain("Sitemap: https://bluelogtrip.com/sitemap.xml");
   });
 });

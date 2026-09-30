@@ -1,7 +1,7 @@
 # Progress
 
 ## Current
-Globe language picker, Promote My Store applications, and point vouchers are on `main`.
+AdSense tags, ads.txt, sitemap/robots, and the social share card are on `main`.
 
 ## Completed
 1. Guest magazine request system
@@ -49,6 +49,15 @@ Globe language picker, Promote My Store applications, and point vouchers are on 
    - `/wallet` and `/mypage` show the profile, point balance, history, report state (`PENDING`, `VERIFIED`, `PUBLISHED`), an XRPL explorer link when `xrpl_tx_hash` is set, and saved magazines.
    - The sign-in modal opens for a report, point check, voucher, or save when there is no session. A report can continue as a guest.
 
+8. AdSense, sitemap, and social cards
+   - `index.html` loads `adsbygoogle.js` only when `VITE_ADSENSE_CLIENT_ID` is a real publisher client. An empty value removes the account meta and skips the script.
+   - `frontend/public/ads.txt` stays the live line. `GET /ads.txt` and `GET /api/ads.txt` prefer `VITE_ADSENSE_PUBLISHER_ID`, then `ADSENSE_PUBLISHER_ID`, then `VITE_ADSENSE_CLIENT_ID` (`ca-pub-` becomes `pub-`). The line is `google.com, pub-…, DIRECT, f08c47fec0942fa0`. With no id and no fallback file, the body is a disabled comment. A set publisher id also replaces `dist/ads.txt` at build time.
+   - `frontend/public/robots.txt` allows every crawler (`User-agent: *`, `Allow: /`) and points at `Sitemap: https://bluelogtrip.com/sitemap.xml`. `GET /robots.txt` uses the same directives with the resolved public site origin.
+   - `GET /sitemap.xml` lists guides, `/k-culture` and the four theme URLs, `/events`, and each approved `partner_merchants` row at `/partners/{id}`. Every url has `loc`, `lastmod`, `changefreq`, and `priority`.
+   - `/k-culture` and `/k-culture/{theme}` filter the Korea spotlight. `/partners/{id}` shows an approved shop.
+   - Magazine, K-Culture, events, and partner pages set `og:title`, `og:description`, `og:image`, `og:url`, and Twitter card tags in the browser. `GET /api/v1/opengraph?path=` returns the same card as HTML for crawlers that do not run JavaScript. `frontend/middleware.js` serves that HTML to Kakao, Instagram, and X fetchers.
+   - The guide footer and the events page open a share dialog: Kakao Share when `VITE_KAKAO_JS_KEY` is set, otherwise the caption is copied; plus copy link, an X intent, and a 1200×630 image card.
+
 7. Globe picker, partner applications, and O2O vouchers
    - The header globe opens English, Korean, Japanese, Simplified Chinese, Traditional Chinese, Vietnamese, Thai, Spanish, and French. The choice is stored as `app_lang` and the visible chrome switches immediately.
    - `/magazine-request` sends `submit_language`. A verified report publishes `{city}_guest_{id}_guide.md` in English and `{city}_guest_{id}_ko_guide.md` in Korean. `english_sha256` is the SHA-256 of the English file and is the hash to anchor on XRPL.
@@ -59,22 +68,21 @@ Globe language picker, Promote My Store applications, and point vouchers are on 
 ## Deployment checklist
 - `app.main` imports without loading `litellm`. OpenRouter still imports it only when a fallback call runs.
 - Frontend `npm run build` and `npm test` pass.
-- Backend pytest for magazine requests, rewards, votes, oauth/wallet, and the app import pass.
+- Backend pytest (90) and frontend `npm test` (44) pass. `npm run build` writes `dist/sitemap.xml`, `dist/robots.txt`, and `dist/ads.txt`.
+- Set `VITE_ADSENSE_CLIENT_ID` and `VITE_ADSENSE_PUBLISHER_ID` on the frontend host before live ads. Set `VITE_KAKAO_JS_KEY` before the Kakao share button can open the official picker. `OG_API_ORIGIN` is the API origin the edge middleware calls for crawler HTML.
 - Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, and `KAKAO_CLIENT_SECRET` on the API host before the live buttons can complete a redirect. `OAUTH_PUBLIC_URL` is the API origin. `FRONTEND_URL` is the site origin.
 - Do not commit `venv/`. Local site-packages were mutated outside the project requirements.
 
 ## Files touched in this step
-- `app/services/magazine_translation.py`
-- `app/agents/translation_agent.py`
-- `app/services/partner_service.py`
-- `app/services/voucher_service.py`
-- `app/services/qr_svg.py`
-- `app/routers/partners.py`
-- `app/routers/vouchers.py`
-- `frontend/src/i18n/i18n.js`
-- `frontend/src/components/portal/GlobalNav.jsx`
-- `frontend/src/pages/PromoteStorePage.jsx`
-- `frontend/src/pages/WalletPage.jsx`
+- `app/services/seo_files.py`
+- `app/services/opengraph_service.py`
+- `app/services/scheduler_service.py`
+- `app/main.py`
+- `frontend/index.html`
+- `frontend/public/robots.txt`
+- `frontend/middleware.js`
+- `frontend/src/components/portal/ShareSheet.jsx`
+- `frontend/src/pages/PartnerPage.jsx`
 - `docs/skill.md`
 
 ## Notes
@@ -83,3 +91,5 @@ Globe language picker, Promote My Store applications, and point vouchers are on 
 - Partner shops appear on `/events` after an admin approves the application. Until then the public list stays empty.
 - An XRPL link appears only after `xrpl_tx_hash` is stored on the report. The English magazine SHA-256 is stored separately as `english_sha256`.
 - `VOUCHER_SECRET` signs voucher QR payloads. It falls back to `OAUTH_TOKEN_SECRET`.
+- Without `VITE_ADSENSE_CLIENT_ID`, the AdSense script is not injected. `ads.txt` still serves the committed publisher line until an env id replaces it.
+- Kakao link previews of a pasted URL need the edge middleware and `OG_API_ORIGIN`. The share button itself sends the card through the Kakao SDK when `VITE_KAKAO_JS_KEY` is set.

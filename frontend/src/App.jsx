@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Footer from "./components/Footer";
 import VisitorBadge from "./components/VisitorBadge";
@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import MagazineRequestPage from "./pages/MagazineRequestPage";
 import PromoteStorePage from "./pages/PromoteStorePage";
 import EventsPage from "./pages/EventsPage";
+import PartnerPage from "./pages/PartnerPage";
 import WalletPage from "./pages/WalletPage";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -23,6 +24,7 @@ import GlobalNav from "./components/portal/GlobalNav";
 import HeroSearch, { CategoryIntro, CityIntro } from "./components/portal/HeroSearch";
 import GlobeMap from "./components/portal/GlobeMap";
 import KCultureBar from "./components/portal/KCultureBar";
+import ShareSheet from "./components/portal/ShareSheet";
 import MagazineRequestCta from "./components/portal/MagazineRequestCta";
 import SocialLoginModal from "./components/portal/SocialLoginModal";
 import PortalSidebar from "./components/portal/PortalSidebar";
@@ -93,6 +95,7 @@ export default function App() {
   const [dailyBudget, setDailyBudget] = useState("all");
   const [hotKorea, setHotKorea] = useState(false);
   const [kTheme, setKTheme] = useState("all");
+  const [partnerShare, setPartnerShare] = useState(null);
   const [session, setSession] = useState(() => readUserSession());
   const [authOpen, setAuthOpen] = useState(false);
   const [authReason, setAuthReason] = useState("sign-in");
@@ -199,9 +202,17 @@ export default function App() {
   };
 
   const selectKTheme = (id) => {
+    if (route.name === "kculture") {
+      go(id === "all" ? "/k-culture" : `/k-culture/${id}`);
+      return;
+    }
     setKTheme(id);
     if (id !== "all") setHotKorea(true);
   };
+
+  const rememberPartner = useCallback((partner) => {
+    setPartnerShare(partner);
+  }, []);
 
   const handleUserLogout = () => {
     clearUserSession();
@@ -327,6 +338,22 @@ export default function App() {
       description = card?.summary || t("meta.siteDescription");
       type = "article";
       image = card?.image || "";
+    } else if (route.name === "kculture") {
+      title = t("meta.kcultureTitle");
+      description = t("meta.kcultureDescription");
+      const theme = route.theme || "all";
+      const cover = cards
+        .map((item) => presentGuideCard(item, language))
+        .find((item) => matchesKCulture(item, theme, true) && item.image);
+      image = cover?.image || "";
+    } else if (route.name === "partner") {
+      const name = partnerShare?.name || t("events.partnersTitle");
+      title = t("meta.partnerTitle", { name });
+      description =
+        partnerShare?.store_description ||
+        partnerShare?.offered_benefit ||
+        t("meta.partnerDescription", { city: partnerShare?.city || "" });
+      image = partnerShare?.image_url || "";
     } else {
       const titles = {
         home: t("meta.homeTitle"),
@@ -371,12 +398,15 @@ export default function App() {
       locale,
       image,
     });
-  }, [route, cards, language, t]);
+  }, [route, cards, language, t, partnerShare]);
 
   const localizedCards = useMemo(
     () => cards.map((card) => presentGuideCard(card, language)),
     [cards, language],
   );
+
+  const spotlightOn = route.name === "kculture" || hotKorea;
+  const spotlightTheme = route.name === "kculture" ? route.theme || "all" : kTheme;
 
   const visibleCards = useMemo(() => {
     return localizedCards.filter((card) => {
@@ -386,10 +416,10 @@ export default function App() {
       if (route.name === "food" && !card.hasFood) return false;
       if (route.name === "city" && destinationSlug(card.destination) !== route.city) return false;
       if (route.name === "city" && !matchesMagazineMatrix(card, tripDuration, dailyBudget)) return false;
-      if (!matchesKCulture(card, kTheme, hotKorea)) return false;
+      if (!matchesKCulture(card, spotlightTheme, spotlightOn)) return false;
       return matchesGuideQuery(card, query);
     });
-  }, [localizedCards, route, query, tripDuration, dailyBudget, hotKorea, kTheme]);
+  }, [localizedCards, route, query, tripDuration, dailyBudget, spotlightOn, spotlightTheme]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -492,7 +522,7 @@ export default function App() {
     }
   };
 
-  const showCatalog = route.name === "home" || route.name === "destinations" || route.name === "food" || route.name === "city";
+  const showCatalog = route.name === "home" || route.name === "destinations" || route.name === "food" || route.name === "city" || route.name === "kculture";
   const showSidebar = showCatalog || route.name === "article";
   const cityLabel = route.name === "city" ? cityHeading(route.city, localizedCards) : "";
   const matrixActive = route.name === "city" && (tripDuration !== "all" || dailyBudget !== "all");
@@ -569,6 +599,13 @@ export default function App() {
           <MagazineRequestPage onNavigate={go} />
         ) : route.name === "promoteStore" ? (
           <PromoteStorePage onNavigate={go} />
+        ) : route.name === "partner" ? (
+          <PartnerPage
+            partnerId={route.partnerId}
+            onNavigate={go}
+            onClaim={claimVoucher}
+            onLoaded={rememberPartner}
+          />
         ) : route.name === "events" ? (
           <EventsPage
             onNavigate={go}
@@ -593,7 +630,26 @@ export default function App() {
               {route.name === "destinations" || route.name === "food" ? (
                 <CategoryIntro category={route.category} />
               ) : null}
-              {hotKorea && route.name !== "home" ? (
+              {route.name === "kculture" ? (
+                <header className="kculture-page-head">
+                  <p className="policy-kicker">{t("kculture.label")}</p>
+                  <h1>{t("kculture.bannerTitle")}</h1>
+                  <p>{t("kculture.bannerCopy")}</p>
+                  <ShareSheet
+                    title={t("meta.kcultureTitle")}
+                    description={t("meta.kcultureDescription")}
+                    pathname={route.theme && route.theme !== "all" ? `/k-culture/${route.theme}` : "/k-culture"}
+                    image={visibleCards.find((card) => card.image)?.image || ""}
+                  />
+                  <KCultureBar
+                    active
+                    theme={route.theme || "all"}
+                    onToggle={() => go("/")}
+                    onTheme={selectKTheme}
+                  />
+                </header>
+              ) : null}
+              {hotKorea && route.name !== "home" && route.name !== "kculture" ? (
                 <KCultureBar
                   active={hotKorea}
                   theme={kTheme}

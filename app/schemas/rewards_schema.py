@@ -42,6 +42,8 @@ class PartnerMerchantRecord(BaseModel):
     category: str = ""
     address: str = ""
     offered_benefit: str = ""
+    store_description: str = ""
+    image_url: str = ""
     voucher_points: int = 50
 
 
