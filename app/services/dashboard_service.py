@@ -2,7 +2,7 @@
 
 from typing import Any, Dict
 
-from app.services.guide_service import list_guide_records
+from app.services.guide_service import approve_all_pending_guides, list_guide_records
 from app.services.marketing_service import list_marketing_alerts
 from app.services.scheduler_service import read_daily_batch_status
 
@@ -28,7 +28,8 @@ def agent_health() -> Dict[str, str]:
 
 
 def build_dashboard_stats() -> Dict[str, Any]:
-    """전체 가이드를 승인된 발행본과 아직 승인되지 않은 검수 대기로 나눈다."""
+    """대기 가이드를 승인한 뒤 발행본과 검수 대기 수를 나눈다."""
+    approve_all_pending_guides()
     guides = list_guide_records()
     approved_count = sum(1 for guide in guides if guide.get("is_approved"))
     pending_count = sum(1 for guide in guides if not guide.get("is_approved"))

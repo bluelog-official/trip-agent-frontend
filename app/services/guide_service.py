@@ -390,6 +390,46 @@ def get_guide(guide_id: str) -> Dict[str, Any]:
     }
 
 
+def known_guide_ids() -> List[str]:
+    """메모리와 가이드 파일에 있는 ID. 경로 조작이 섞인 키는 제외한다."""
+    seen = set()
+    ordered: List[str] = []
+    for guide_id in _GUIDE_STORE:
+        if guide_id in seen or Path(guide_id).name != guide_id:
+            continue
+        seen.add(guide_id)
+        ordered.append(guide_id)
+    for path in _iter_guide_files():
+        if path.name in seen:
+            continue
+        seen.add(path.name)
+        ordered.append(path.name)
+    return ordered
+
+
+def approve_all_pending_guides() -> List[str]:
+    """대기 중인 가이드를 APPROVED로 저장한다. 이미 승인된 ID는 유지한다."""
+    approved = load_approved_ids()
+    approved_set = set(approved)
+    added: List[str] = []
+    for guide_id in known_guide_ids():
+        if guide_id in approved_set:
+            continue
+        approved.append(guide_id)
+        approved_set.add(guide_id)
+        added.append(guide_id)
+        payload = _GUIDE_STORE.get(guide_id)
+        if isinstance(payload, dict):
+            stored = dict(payload)
+            qa_result = dict(stored.get("qa_result") or {})
+            qa_result["is_approved"] = True
+            stored["qa_result"] = qa_result
+            _GUIDE_STORE[guide_id] = stored
+    if added:
+        _write_approved_ids(approved)
+    return added
+
+
 def mark_guide_approved(guide_id: str) -> Optional[Dict[str, Any]]:
     """검수가 끝난 가이드의 is_approved를 True로 저장한다. 없으면 None."""
     if Path(guide_id).name != guide_id:

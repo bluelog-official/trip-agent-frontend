@@ -89,7 +89,7 @@ export function parseRoute(pathname) {
   if (path === "/wallet" || path === "/mypage") {
     return { name: "wallet", category: "", guideId: "" };
   }
-  if (path === "/") {
+  if (path === "/" || path === "/guides" || path === "/guide") {
     return { name: "home", category: "home", guideId: "" };
   }
   const staticPages = {

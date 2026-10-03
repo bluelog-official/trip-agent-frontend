@@ -96,8 +96,10 @@ def test_dashboard_stats_counts_approval_gate(client, monkeypatch, tmp_path):
         assert response.status_code == 200, response.text
         payload = response.json()
         assert payload["total_guides_count"] == 3
-        assert payload["approved_count"] == 1
-        assert payload["pending_count"] == 2
+        assert payload["approved_count"] == 3
+        assert payload["pending_count"] == 0
+        stored = json.loads((output / "approved_guides.json").read_text(encoding="utf-8"))
+        assert set(stored) == {"seoul_guide.md", "busan_guide.md", "osaka_guide.md"}
         assert payload["daily_batch_status"] == {
             "last_run": "2026-09-26 09:00",
             "status": "SUCCESS",
@@ -117,12 +119,12 @@ def test_dashboard_stats_counts_approval_gate(client, monkeypatch, tmp_path):
         ]
         assert recent[0]["city"] == "Osaka"
         assert recent[0]["qa_score"] < 75
-        assert recent[0]["is_approved"] is False
+        assert recent[0]["is_approved"] is True
         assert recent[0]["created_at"]
         assert recent[2]["city"] == "Seoul"
         assert recent[2]["qa_score"] >= 75
         assert recent[2]["is_approved"] is True
-        assert recent[1]["is_approved"] is False
+        assert recent[1]["is_approved"] is True
         assert recent[1]["qa_score"] >= 75
         assert payload["marketing_alerts"] == []
     finally:

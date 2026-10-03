@@ -18,6 +18,12 @@ describe("globe city helpers", () => {
     expect(parseRoute("/partners/shop")).toMatchObject({ name: "notFound" });
     expect(parseRoute("/promote-store")).toMatchObject({ name: "promoteStore" });
     expect(parseRoute("/city/")).toMatchObject({ name: "notFound" });
+    expect(parseRoute("/guides")).toMatchObject({ name: "home", category: "home", guideId: "" });
+    expect(parseRoute("/guide")).toMatchObject({ name: "home", category: "home", guideId: "" });
+    expect(parseRoute("/guides/kyoto_guide.md")).toMatchObject({
+      name: "article",
+      guideId: "kyoto_guide.md",
+    });
   });
 
   it("shrinks pins as the period and the map get busier", () => {

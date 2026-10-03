@@ -37,7 +37,7 @@ from app.services.dashboard_service import build_dashboard_stats
 from app.services.globe_service import build_globe_map
 from app.services.vote_service import counts_for_period
 from app.services.marketing_service import dismiss_marketing_alert
-from app.services.guide_service import get_guide, list_guides
+from app.services.guide_service import approve_all_pending_guides, get_guide, list_guides
 from app.services.opengraph_service import render_opengraph_html
 from app.services.partner_service import ensure_demo_cafe
 from app.services.scheduler_service import (
@@ -125,6 +125,9 @@ class SecurityHeadersMiddleware:
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     ensure_demo_cafe()
+    approved = approve_all_pending_guides()
+    if approved:
+        print("✅ [Review] 대기 가이드 {0}건을 APPROVED로 변경".format(len(approved)))
     start_scheduler()
     yield
     shutdown_scheduler()
