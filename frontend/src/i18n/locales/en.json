@@ -612,6 +612,8 @@
     "apple": "Continue with Apple",
     "kakao": "Continue with Kakao",
     "guest": "Continue as guest",
+    "devSignIn": "Continue as Guest",
+    "devSignInHint": "Dev Test Sign-In",
     "close": "Close",
     "unconfigured": "This sign-in provider is not connected yet.",
     "failed": "Sign-in could not start."
@@ -631,6 +633,7 @@
     "qrClose": "Close",
     "coupon": "Coupon number",
     "reasonVoucher": "Voucher claimed",
+    "reasonDev": "Test account points",
     "anchor": "English edition fingerprint",
     "emptyHistory": "No points have been added yet.",
     "emptyReports": "No reports are linked to this account.",

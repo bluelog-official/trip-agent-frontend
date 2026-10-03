@@ -1,6 +1,7 @@
 """포인트 적립. LLM 의존성 없음. 같은 글·같은 사유는 한 번만 쌓인다."""
 
 import os
+import secrets
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,6 +19,12 @@ TOP_RANK_POINTS = 50
 TOP_RANK_LIMIT = 5
 REASON_PUBLISHED = "MAGAZINE_PUBLISHED"
 REASON_TOP_RANK = "UGC_TOP_RANK_BONUS"
+REASON_DEV_GRANT = "DEV_TEST_GRANT"
+DEV_TEST_EMAIL = "testuser@bluelog.com"
+DEV_TEST_NAME = "Test User"
+DEV_TEST_PROVIDER = "dev"
+DEV_TEST_SUBJECT = "dev-testuser"
+DEV_TEST_POINTS = 100
 
 _AMOUNTS = {
     REASON_PUBLISHED: PUBLISH_POINTS,
@@ -224,6 +231,76 @@ def link_social_account(
         "points_balance": balance,
         "created_at": str(stored["created_at"]),
         "migrated_point_logs": int(moved),
+    }
+
+
+def ensure_dev_test_user() -> Dict[str, object]:
+    """고정 테스트 계정을 열고, 잔액이 100 미만이면 100까지 채운다."""
+    address = DEV_TEST_EMAIL
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            user = reward_store.fetch_user_by_email(conn, address)
+            if user is None:
+                user_id = reward_store.insert_user(
+                    conn,
+                    address,
+                    DEV_TEST_PROVIDER,
+                    _stamp(),
+                    DEV_TEST_NAME,
+                    DEV_TEST_SUBJECT,
+                )
+                balance = 0
+            else:
+                user_id = int(user["id"])
+                reward_store.update_user_identity(
+                    conn,
+                    user_id,
+                    DEV_TEST_PROVIDER,
+                    DEV_TEST_NAME,
+                    DEV_TEST_SUBJECT,
+                )
+                balance = int(user.get("points_balance") or 0)
+            shortfall = DEV_TEST_POINTS - balance
+            if shortfall > 0:
+                created = reward_store.insert_point_log(
+                    conn,
+                    user_id,
+                    address,
+                    shortfall,
+                    REASON_DEV_GRANT,
+                    "seed",
+                    _stamp(),
+                )
+                if created is None:
+                    created = reward_store.insert_point_log(
+                        conn,
+                        user_id,
+                        address,
+                        shortfall,
+                        REASON_DEV_GRANT,
+                        "seed-{0}".format(secrets.token_hex(4)),
+                        _stamp(),
+                    )
+                if created is None:
+                    raise RuntimeError("dev test points were not stored")
+                balance = reward_store.add_points(conn, user_id, shortfall)
+            conn.execute("COMMIT")
+            stored = reward_store.fetch_user_by_id(conn, user_id)
+        except Exception:
+            conn.execute("ROLLBACK")
+            raise
+        finally:
+            conn.close()
+    if not stored:
+        raise RuntimeError("dev test account was not stored")
+    return {
+        "id": int(stored["id"]),
+        "email": str(stored["email"]),
+        "display_name": str(stored.get("display_name") or ""),
+        "auth_provider": str(stored.get("auth_provider") or ""),
+        "points_balance": int(balance),
     }
 
 

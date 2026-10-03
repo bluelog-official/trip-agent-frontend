@@ -56,6 +56,7 @@ import {
   clearUserSession,
   consumeAuthReturn,
   readUserSession,
+  startDevSignIn,
   startSocialSignIn,
   authHeaders,
 } from "./lib/session";
@@ -192,6 +193,14 @@ export default function App() {
   const closeAuth = () => {
     setAuthOpen(false);
     setAuthDismissed(route.name);
+  };
+
+  const handleDevSignIn = async () => {
+    const next = await startDevSignIn();
+    if (!next) throw new Error("sign-in");
+    setSession(next);
+    setAuthOpen(false);
+    setAuthDismissed("");
   };
 
   const toggleHotKorea = () => {
@@ -732,6 +741,7 @@ export default function App() {
           reason={authReason}
           onClose={closeAuth}
           onGuest={closeAuth}
+          onDevSignIn={handleDevSignIn}
           onSelect={(provider) => startSocialSignIn(
             provider,
             authReason === "report" ? "/magazine-request" : "/wallet",

@@ -178,6 +178,57 @@ def test_wallet_saved_guides_round_trip(monkeypatch, tmp_path):
     assert rejected.status_code == 400
 
 
+def test_dev_signin_grants_a_hundred_points_and_claims_the_cafe(monkeypatch, tmp_path):
+    _paths(monkeypatch, tmp_path)
+    from app.core.limiter import limiter
+    from app.routers.rewards import router as rewards_router
+    from app.routers.vouchers import router as vouchers_router
+    from app.services.partner_service import ensure_demo_cafe
+
+    cafe_id = ensure_demo_cafe()
+    application = FastAPI()
+    application.state.limiter = limiter
+    application.include_router(oauth_router)
+    application.include_router(rewards_router)
+    application.include_router(vouchers_router)
+    application.include_router(wallet_router)
+    client = TestClient(application)
+
+    signed = client.post("/api/auth/dev-signin")
+    assert signed.status_code == 200
+    body = signed.json()
+    assert body["email"] == "testuser@bluelog.com"
+    assert body["points_balance"] == 100
+    assert body["auth_provider"] == "dev"
+    token = body["access_token"]
+    headers = {"Authorization": "Bearer {0}".format(token)}
+
+    again = client.post("/api/auth/dev-signin")
+    assert again.status_code == 200
+    assert again.json()["points_balance"] == 100
+    assert again.json()["user_id"] == body["user_id"]
+
+    partners = client.get("/api/v1/rewards/overview").json()["partners"]
+    cafe = next(item for item in partners if item["name"] == "BlueLog Travel Cafe")
+    assert cafe["id"] == cafe_id
+    assert cafe["voucher_points"] == 50
+
+    claimed = client.post("/api/vouchers/claim", headers=headers, json={"merchant_id": cafe_id})
+    assert claimed.status_code == 200
+    card = claimed.json()
+    assert len(card["voucher_code"]) == 8
+    assert card["qr_svg"].startswith("<svg")
+    assert card["points_balance"] == 50
+    assert card["merchant_name"] == "BlueLog Travel Cafe"
+
+    wallet = client.get("/api/v1/wallet", headers=headers)
+    assert wallet.status_code == 200
+    assert wallet.json()["vouchers"][0]["voucher_code"] == card["voucher_code"]
+
+    topped = client.post("/api/auth/dev-signin")
+    assert topped.json()["points_balance"] == 100
+
+
 def test_publish_state_and_apple_token_payload():
     assert publish_state("PENDING_REVIEW", "PENDING") == "PENDING"
     assert publish_state("PENDING_REVIEW", "VERIFIED") == "VERIFIED"

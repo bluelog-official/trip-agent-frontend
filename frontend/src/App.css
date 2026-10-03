@@ -2949,6 +2949,16 @@
   opacity: 0.55;
 }
 
+.auth-dev {
+  background: #102a3a;
+  border-color: #102a3a;
+  color: #fffdf9;
+}
+
+.auth-dev small {
+  color: #e7e5e4;
+}
+
 .auth-provider small,
 .auth-error {
   font-size: 0.78rem;

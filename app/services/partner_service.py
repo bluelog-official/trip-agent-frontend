@@ -98,6 +98,50 @@ partner: true
     )
 
 
+DEMO_CAFE_NAME = "BlueLog Travel Cafe"
+
+
+def ensure_demo_cafe() -> int:
+    """바우처 확인용 카페가 없으면 50포인트 승인 상점으로 넣는다."""
+    with _LOCK:
+        conn = reward_store.connect(db_path())
+        try:
+            for row in reward_store.fetch_partners(conn, active_only=False):
+                if str(row.get("name") or "").strip().lower() != DEMO_CAFE_NAME.lower():
+                    continue
+                partner_id = int(row["id"])
+                if str(row.get("status") or "") != "APPROVED" or not row.get("is_active"):
+                    guide_id = str(row.get("guide_id") or "").strip() or "bluelog_travel_cafe_partner_guide.md"
+                    reward_store.activate_partner(conn, partner_id, guide_id)
+                if int(row.get("voucher_points") or 0) != VOUCHER_POINTS:
+                    conn.execute(
+                        "UPDATE partner_merchants SET voucher_points = ? WHERE id = ?",
+                        (VOUCHER_POINTS, partner_id),
+                    )
+                return partner_id
+            partner_id = reward_store.insert_partner(
+                conn,
+                {
+                    "name": DEMO_CAFE_NAME,
+                    "city": "Seoul",
+                    "discount_rate": 10,
+                    "category": "Cafe",
+                    "address": "Seoul",
+                    "contact_email": "",
+                    "phone": "",
+                    "store_description": "BlueLog test cafe for point vouchers.",
+                    "catalog_images": "",
+                    "offered_benefit": "10% off a drink",
+                    "voucher_points": VOUCHER_POINTS,
+                    "created_at": _stamp(),
+                },
+            )
+            reward_store.activate_partner(conn, partner_id, "bluelog_travel_cafe_partner_guide.md")
+            return partner_id
+        finally:
+            conn.close()
+
+
 def apply_partner(payload: Dict[str, str]) -> Dict[str, object]:
     images = str(payload.get("catalog_images") or "")
     catalog_data = str(payload.get("catalog_data") or "")

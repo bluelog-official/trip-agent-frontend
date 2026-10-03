@@ -9,6 +9,7 @@ function reasonLabel(reason, t) {
   if (reason === "MAGAZINE_PUBLISHED") return t("wallet.reasonPublished");
   if (reason === "UGC_TOP_RANK_BONUS") return t("wallet.reasonRank");
   if (reason === "VOUCHER_CLAIM") return t("wallet.reasonVoucher");
+  if (reason === "DEV_TEST_GRANT") return t("wallet.reasonDev");
   return reason;
 }
 

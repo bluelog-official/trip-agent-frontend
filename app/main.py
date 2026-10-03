@@ -39,6 +39,7 @@ from app.services.vote_service import counts_for_period
 from app.services.marketing_service import dismiss_marketing_alert
 from app.services.guide_service import get_guide, list_guides
 from app.services.opengraph_service import render_opengraph_html
+from app.services.partner_service import ensure_demo_cafe
 from app.services.scheduler_service import (
     generate_city_guide,
     publish_approved_guide,
@@ -123,6 +124,7 @@ class SecurityHeadersMiddleware:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    ensure_demo_cafe()
     start_scheduler()
     yield
     shutdown_scheduler()

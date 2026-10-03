@@ -73,6 +73,17 @@ export async function fetchAuthProviders() {
   return Array.isArray(data?.providers) ? data.providers : [];
 }
 
+export async function startDevSignIn() {
+  const response = await fetch(`${apiOrigin()}/api/auth/dev-signin`, { method: "POST" });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.access_token) {
+    const error = new Error(data.detail || "sign-in");
+    error.status = response.status;
+    throw error;
+  }
+  return storeUserSession({ ...data, token: data.access_token });
+}
+
 export async function startSocialSignIn(provider, returnPath) {
   if (returnPath) rememberAuthReturn(returnPath);
   const response = await fetch(`${apiOrigin()}/api/auth/signin/${encodeURIComponent(provider)}`);

@@ -221,6 +221,7 @@ class GenerateResponse(BaseModel):
   - `GET /api/auth/signin/{google|apple|kakao}`
   - `GET|POST /api/auth/callback/{provider}`
   - `GET /api/auth/session`
+  - `POST /api/auth/dev-signin`은 `testuser@bluelog.com` 세션을 열고, 잔액이 100 미만이면 100까지 채운다. 응답에 `access_token`이 있다.
 - 제공자 키: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`, `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`. 리다이렉트 기준은 `OAUTH_PUBLIC_URL`, 로그인 후 이동은 `FRONTEND_URL`.
 - 키가 없으면 sign-in은 503이다. 콜백은 인가 코드를 프로필로 바꾼 뒤 사용자 세션 토큰을 `#session`으로 프론트 `/wallet`에 넘긴다.
 - 소셜 이메일이 제보 `email`(게스트 이메일)과 같으면 `magazine_requests.user_id`와 `point_logs.user_id`를 그 `users.id`로 옮기고, `points_balance`는 그 사용자의 로그 합계로 다시 맞춘다.
@@ -248,7 +249,8 @@ class GenerateResponse(BaseModel):
 
 ## 17. Request limits and browser hardening
 
-- `POST /api/vouchers/claim`, `POST /api/vouchers/verify`, `GET /api/auth/signin/{provider}`는 IP당 분당 10회다.
+- `POST /api/vouchers/claim`, `POST /api/vouchers/verify`, `GET /api/auth/signin/{provider}`, `POST /api/auth/dev-signin`은 IP당 분당 10회다.
+- 서버 기동 시 `BlueLog Travel Cafe`가 없으면 50포인트 승인 상점으로 넣는다.
 - `POST /api/magazine-requests`(`/magazine-request`)와 `POST /api/partners`(`/promote-store`)는 IP당 분당 5회다.
 - CORS `allow_origins`는 `*`와 `*.vercel.app` 정규식을 쓰지 않는다. `FRONTEND_URL`, `SITE_URL`, `https://bluelogtrip.com`, `https://www.bluelogtrip.com`, `http://localhost:5173`, `http://127.0.0.1:5173`만 허용하고 `allow_credentials=True`다.
 - 모든 HTTP 응답에 `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`, `Strict-Transport-Security: max-age=31536000; includeSubDomains`를 붙인다.

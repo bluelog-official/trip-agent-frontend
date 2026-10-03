@@ -14,7 +14,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from app.services.magazine_request_service import assign_guest_requests
-from app.services.rewards_service import link_social_account, load_user
+from app.services.rewards_service import ensure_dev_test_user, link_social_account, load_user
 
 
 PROVIDERS = ("google", "apple", "kakao")
@@ -359,6 +359,26 @@ def complete_social_login(provider: str, email: str, subject: str, name: str = "
         "points_balance": int(account["points_balance"]),
         "migrated_reports": int(moved_reports),
         "migrated_point_logs": int(account["migrated_point_logs"]),
+        "access_token": token,
+    }
+
+
+def complete_dev_login() -> Dict[str, object]:
+    """소셜 키가 없을 때 100포인트 테스트 계정 세션을 연다."""
+    account = ensure_dev_test_user()
+    token = issue_user_token(
+        int(account["id"]),
+        str(account["email"]),
+        str(account["auth_provider"]),
+    )
+    return {
+        "user_id": int(account["id"]),
+        "email": str(account["email"]),
+        "name": str(account["display_name"] or ""),
+        "auth_provider": str(account["auth_provider"]),
+        "points_balance": int(account["points_balance"]),
+        "migrated_reports": 0,
+        "migrated_point_logs": 0,
         "access_token": token,
     }
 

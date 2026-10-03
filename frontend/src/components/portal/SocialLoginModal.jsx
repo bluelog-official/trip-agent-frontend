@@ -20,6 +20,7 @@ export default function SocialLoginModal({
   onClose,
   onSelect,
   onGuest,
+  onDevSignIn,
 }) {
   const { t } = useTranslation();
   const [providers, setProviders] = useState([]);
@@ -71,6 +72,17 @@ export default function SocialLoginModal({
             );
           })}
         </div>
+        <button
+          type="button"
+          className="auth-provider auth-dev"
+          onClick={() => {
+            setError("");
+            Promise.resolve(onDevSignIn?.()).catch(() => setError(t("auth.failed")));
+          }}
+        >
+          {t("auth.devSignIn")}
+          <small>{t("auth.devSignInHint")}</small>
+        </button>
         {error ? <p className="auth-error">{error}</p> : null}
         {reason === "report" ? (
           <button type="button" className="text-link" onClick={onGuest}>

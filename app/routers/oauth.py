@@ -8,10 +8,11 @@ from fastapi.responses import RedirectResponse
 
 from app.core.limiter import limiter
 
-from app.schemas.oauth_schema import AuthProviderList, OAuthStart, UserSession
+from app.schemas.oauth_schema import AuthProviderList, DevSignIn, OAuthStart, UserSession
 from app.services.oauth_service import (
     OAuthExchangeError,
     authorize_url,
+    complete_dev_login,
     complete_social_login,
     fetch_provider_profile,
     frontend_base,
@@ -52,6 +53,13 @@ def get_providers() -> AuthProviderList:
 def get_session(authorization: Optional[str] = Header(default=None)) -> UserSession:
     user = require_user(authorization)
     return UserSession.model_validate(public_session(user))
+
+
+@router.post("/dev-signin", response_model=DevSignIn)
+@limiter.limit("10/minute")
+def dev_signin(request: Request) -> DevSignIn:
+    """소셜 제공자가 연결되지 않았을 때 테스트 계정으로 세션을 연다."""
+    return DevSignIn.model_validate(complete_dev_login())
 
 
 @router.get("/signin/{provider}", response_model=OAuthStart)

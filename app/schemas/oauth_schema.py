@@ -36,6 +36,10 @@ class UserSession(BaseModel):
     migrated_point_logs: int = 0
 
 
+class DevSignIn(UserSession):
+    access_token: str
+
+
 class WalletLog(BaseModel):
     id: int
     amount: int
