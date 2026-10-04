@@ -37,6 +37,7 @@ from app.services.dashboard_service import build_dashboard_stats
 from app.services.globe_service import build_globe_map
 from app.services.vote_service import counts_for_period
 from app.services.marketing_service import dismiss_marketing_alert
+from app.services.guide_qa_worker import start_guide_qa_worker
 from app.services.guide_service import approve_all_pending_guides, get_guide, list_guides
 from app.services.opengraph_service import render_opengraph_html
 from app.services.partner_service import ensure_demo_cafe
@@ -129,6 +130,7 @@ async def lifespan(_app: FastAPI):
     if approved:
         print("✅ [Review] 대기 가이드 {0}건을 APPROVED로 변경".format(len(approved)))
     start_scheduler()
+    start_guide_qa_worker()
     yield
     shutdown_scheduler()
 
