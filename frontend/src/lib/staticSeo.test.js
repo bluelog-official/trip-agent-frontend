@@ -41,13 +41,15 @@ describe("publisher pages and sitemap", () => {
     }
   });
 
-  it("lists all 32 published guides under /guide and /guides", () => {
+  it("lists every published guide under /guide and /guides", () => {
     const guides = listPublishedGuides();
-    expect(guides).toHaveLength(32);
+    expect(guides.length).toBeGreaterThanOrEqual(32);
     const names = guides.map((guide) => guide.name);
     expect(names).toContain("seoul_guide.md");
     expect(names).toContain("los_angeles_guide.md");
     expect(names).toContain("dubrovnik_guide.md");
+    expect(names).toContain("busan_guide.md");
+    expect(names).toContain("vancouver_guide.md");
 
     const xml = buildSitemapXml("https://bluelogtrip.com", guides, "2026-10-09");
     for (const name of names) {

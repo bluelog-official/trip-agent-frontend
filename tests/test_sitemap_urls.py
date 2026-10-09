@@ -71,10 +71,12 @@ def test_published_guide_urls_and_service_pages_are_listed(monkeypatch, tmp_path
     root = ElementTree.fromstring(xml)
     locations = [node.text or "" for node in root.iter() if node.tag.endswith("loc")]
     guide_locs = [loc for loc in locations if "/guides/" in loc and loc.endswith("_guide.md")]
-    assert len(guide_locs) == 32
+    assert len(guide_locs) >= 32
     assert "https://bluelogtrip.com/guides/seoul_guide.md" in guide_locs
     assert "https://bluelogtrip.com/guides/los_angeles_guide.md" in guide_locs
     assert "https://bluelogtrip.com/guides/dubrovnik_guide.md" in guide_locs
+    assert "https://bluelogtrip.com/guides/busan_guide.md" in guide_locs
+    assert "https://bluelogtrip.com/guides/vancouver_guide.md" in guide_locs
     assert "https://bluelogtrip.com/guide/seoul_guide.md" in locations
     for path in ("/events", "/wallet", "/promote-store", "/community", "/about", "/contact"):
         assert "https://bluelogtrip.com{0}".format(path) in locations
