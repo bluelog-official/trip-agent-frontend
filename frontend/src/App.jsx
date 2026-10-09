@@ -369,6 +369,7 @@ export default function App() {
         destinations: t("meta.destinationsTitle"),
         food: t("meta.foodTitle"),
         community: t("meta.communityTitle"),
+        promoteStore: t("meta.promoteTitle"),
         dashboard: t("meta.dashboardTitle"),
         privacy: t("meta.privacyTitle"),
         terms: t("meta.termsTitle"),
@@ -387,6 +388,8 @@ export default function App() {
         magazineRequest: t("meta.magazineDescription"),
         events: t("meta.eventsDescription"),
         wallet: t("meta.walletDescription"),
+        community: t("meta.communityDescription"),
+        promoteStore: t("meta.promoteDescription"),
         notFound: t("meta.notFoundDescription"),
       };
       title = titles[route.name] || t("meta.homeTitle");
@@ -629,7 +632,12 @@ export default function App() {
           session ? (
             <WalletPage session={session} onNavigate={go} />
           ) : (
-            <p className="dash-note">{t("wallet.signInRequired")}</p>
+            <article className="policy-page wallet-page">
+              <p className="policy-kicker">{t("wallet.kicker")}</p>
+              <h1>{t("wallet.title")}</h1>
+              <p>{t("wallet.purpose")}</p>
+              <p className="dash-note">{t("wallet.signInRequired")}</p>
+            </article>
           )
         ) : route.name === "notFound" ? (
           <NotFound onNavigate={go} />

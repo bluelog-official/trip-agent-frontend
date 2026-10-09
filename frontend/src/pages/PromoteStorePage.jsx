@@ -82,6 +82,7 @@ export default function PromoteStorePage({ onNavigate }) {
     <article className="policy-page magazine-request-page">
       <h1>{t("promote.pageTitle")}</h1>
       <p>{t("promote.pageLead")}</p>
+      <p>{t("promote.purpose")}</p>
       <form className="contact-form" onSubmit={onSubmit}>
         <label className="contact-label" htmlFor="partner-name">{t("promote.storeName")}</label>
         <input id="partner-name" className="contact-input" required value={storeName} onChange={(event) => setStoreName(event.target.value)} />

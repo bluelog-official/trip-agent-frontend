@@ -16,6 +16,33 @@
           "value": "no-cache"
         }
       ]
+    },
+    {
+      "source": "/guide/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/guides/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/seo/guide/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        }
+      ]
     }
   ],
   "redirects": [
@@ -32,7 +59,31 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!sitemap\\.xml$).*)",
+      "source": "/events",
+      "destination": "/events.html"
+    },
+    {
+      "source": "/wallet",
+      "destination": "/wallet.html"
+    },
+    {
+      "source": "/promote-store",
+      "destination": "/promote-store.html"
+    },
+    {
+      "source": "/community",
+      "destination": "/community.html"
+    },
+    {
+      "source": "/guide/:path+",
+      "destination": "/seo/guide/:path+"
+    },
+    {
+      "source": "/guides/:path+",
+      "destination": "/seo/guide/:path+"
+    },
+    {
+      "source": "/((?!sitemap\\.xml$|ads\\.txt$|robots\\.txt$).*)",
       "destination": "/index.html"
     }
   ]

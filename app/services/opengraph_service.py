@@ -68,6 +68,22 @@ def _frontmatter(markdown: str) -> Dict[str, str]:
     return found
 
 
+def _article_text(markdown: str, limit: int = 1200) -> str:
+    """가이드 본문에서 크롤러가 읽는 문단을 모은다."""
+    body = re.sub(r"^---[\s\S]*?---", "", markdown or "", count=1).strip()
+    parts = []
+    for block in re.split(r"\n\s*\n", body):
+        line = " ".join(block.split())
+        if not line or line.startswith("#") or line.startswith("!") or line.startswith("|"):
+            continue
+        if line.lower().startswith("*photo by") or line.lower().startswith("photo by"):
+            continue
+        parts.append(line)
+        if sum(len(part) for part in parts) >= limit:
+            break
+    return " ".join(parts)[:limit]
+
+
 def _paragraph(markdown: str) -> str:
     body = re.sub(r"^---[\s\S]*?---", "", markdown or "", count=1).strip()
     for block in re.split(r"\n\s*\n", body):
@@ -115,8 +131,9 @@ def _card_from_markdown(guide_id: str, markdown: str, site_url: str) -> Dict[str
     return {
         "title": "{0} · BlueLog Trip".format(title.replace(" · BlueLog Trip", "")),
         "description": description,
+        "text": _article_text(markdown) or description,
         "image": image if image.startswith("http") else "",
-        "url": _abs_url(site_url, "/guide/{0}".format(guide_id)),
+        "url": _abs_url(site_url, "/guides/{0}".format(guide_id)),
         "type": "article",
     }
 
@@ -254,7 +271,11 @@ def render_opengraph_html(path: str, site_url: str = "") -> str:
         _meta("name", "twitter:image", image),
         "</head>",
         "<body>",
+        "<article>",
+        "<h1>{0}</h1>".format(escape(card["title"])),
+        "<p>{0}</p>".format(escape(card.get("text") or card["description"])),
         "<p><a href=\"{0}\">{1}</a></p>".format(escape(card["url"], quote=True), escape(card["title"])),
+        "</article>",
         "</body>",
         "</html>",
     ]

@@ -52,7 +52,16 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = ROOT_DIR / "output"
 GUIDES_DIR = ROOT_DIR / "guides"
 SITEMAP_PATH = OUTPUT_DIR / "sitemap.xml"
-PUBLIC_SITEMAP_PATHS = ("/about", "/contact", "/privacy", "/terms", "/events")
+PUBLIC_SITEMAP_PATHS = (
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+    "/events",
+    "/wallet",
+    "/promote-store",
+    "/community",
+)
 K_CULTURE_SITEMAP_PATHS = (
     "/k-culture",
     "/k-culture/k-food",
@@ -308,8 +317,11 @@ def refresh_sitemap(base_url: str = "") -> Path:
         entries.append(_sitemap_url(loc, changefreq="weekly", priority=priority, lastmod=today))
     for path in _sitemap_sources():
         lastmod = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).date().isoformat()
-        loc = "{0}/guide/{1}".format(site_url, path.name) if site_url else "/guide/{0}".format(path.name)
-        entries.append(_sitemap_url(loc, changefreq="weekly", priority="0.8", lastmod=lastmod))
+        guide_name = path.name
+        for prefix in ("/guide/", "/guides/"):
+            public_path = "{0}{1}".format(prefix, guide_name)
+            loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
+            entries.append(_sitemap_url(loc, changefreq="weekly", priority="0.8", lastmod=lastmod))
     for partner in _active_partner_paths():
         loc = "{0}{1}".format(site_url, partner["path"]) if site_url else partner["path"]
         entries.append(

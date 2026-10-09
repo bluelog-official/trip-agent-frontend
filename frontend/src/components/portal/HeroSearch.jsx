@@ -8,6 +8,7 @@ export default function HeroSearch({ query, onQueryChange, onSearch, onPromote }
       <p className="hero-kicker">{t("hero.kicker")}</p>
       <h1 className="hero-title">{t("hero.title")}</h1>
       <p className="hero-copy">{t("hero.copy")}</p>
+      <p className="hero-copy">{t("hero.about")}</p>
       <form className="hero-search" onSubmit={onSearch}>
         <Search size={18} aria-hidden="true" />
         <input

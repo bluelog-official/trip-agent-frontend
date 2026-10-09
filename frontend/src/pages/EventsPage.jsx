@@ -10,6 +10,7 @@ export default function EventsPage({ onNavigate, onCheckPoints, onIssueVoucher, 
       <p className="policy-kicker">{t("events.kicker")}</p>
       <h1>{t("events.title")}</h1>
       <p>{t("events.lead")}</p>
+      <p>{t("events.purpose")}</p>
       <ShareSheet
         title={t("meta.eventsTitle")}
         description={t("meta.eventsDescription")}

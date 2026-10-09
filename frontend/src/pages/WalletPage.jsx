@@ -80,6 +80,7 @@ export default function WalletPage({ session, onNavigate }) {
     <article className="policy-page wallet-page">
       <p className="policy-kicker">{t("wallet.kicker")}</p>
       <h1>{t("wallet.title")}</h1>
+      <p>{t("wallet.purpose")}</p>
       <p className="wallet-profile">
         <strong>{profile.name || profile.email}</strong>
         <span>{profile.email}</span>

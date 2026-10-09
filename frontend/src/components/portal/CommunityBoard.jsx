@@ -80,6 +80,7 @@ export default function CommunityBoard({ posts, query, onCreate }) {
         <p className="hero-kicker">{t("community.kicker")}</p>
         <h1>{t("community.title")}</h1>
         <p className="board-lead">{t("community.lead")}</p>
+        <p className="board-lead">{t("community.purpose")}</p>
       </header>
 
       <div className="board-tabs" role="tablist" aria-label={t("community.tabsLabel")}>

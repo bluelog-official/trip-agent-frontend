@@ -61,7 +61,10 @@ A morning ticket hall and an afternoon neighborhood.
     card = opengraph_service.resolve_share_card("/guide/seoul_kpop_guide.md", "https://bluelogtrip.com")
     assert card["title"].startswith("Seoul K-Pop Walk")
     assert card["image"] == "https://images.example/seoul.jpg"
-    assert card["url"] == "https://bluelogtrip.com/guide/seoul_kpop_guide.md"
+    assert card["url"] == "https://bluelogtrip.com/guides/seoul_kpop_guide.md"
+    guide_html = opengraph_service.render_opengraph_html("/guides/seoul_kpop_guide.md", "https://bluelogtrip.com")
+    assert "A morning ticket hall" in guide_html
+    assert "<h1>" in guide_html
 
     html = opengraph_service.render_opengraph_html("/k-culture/k-pop", "https://bluelogtrip.com")
     assert 'property="og:title"' in html
@@ -117,6 +120,10 @@ def test_sitemap_lists_kculture_and_active_partners(monkeypatch, tmp_path):
     assert "https://bluelogtrip.com/k-culture/k-food" in locations
     assert "https://bluelogtrip.com/k-culture/k-pop" in locations
     assert "https://bluelogtrip.com/guide/rome_guide.md" in locations
+    assert "https://bluelogtrip.com/guides/rome_guide.md" in locations
+    assert "https://bluelogtrip.com/wallet" in locations
+    assert "https://bluelogtrip.com/promote-store" in locations
+    assert "https://bluelogtrip.com/community" in locations
     assert "https://bluelogtrip.com/partners/{0}".format(partner_id) in locations
     assert "https://bluelogtrip.com/events" in locations
     tags = {node.tag.rsplit("}", 1)[-1] for node in root.iter()}

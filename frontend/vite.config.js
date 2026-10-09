@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
 import { adsTxtBody, normalizePublisherId } from "./src/lib/adsTxt.js";
+import { buildSitemapXml, listPublishedGuides, SITE_ORIGIN, writePublisherSite } from "./src/lib/staticSeo.js";
 
 const FRONTEND_DIR = path.dirname(fileURLToPath(import.meta.url));
-const GUIDES_DIR = path.resolve(FRONTEND_DIR, "../guides");
-const DEFAULT_SITE_URL = "https://www.bluelogtrip.com";
+const DEFAULT_SITE_URL = SITE_ORIGIN;
 
 function stripScripts(xml) {
   return String(xml || "")
@@ -25,60 +25,24 @@ function requestOrigin(req) {
   return `${proto}://${host}`;
 }
 
-function sitemapUrl({ loc, lastmod, changefreq, priority }) {
-  const lines = ["  <url>", `    <loc>${loc}</loc>`];
-  if (lastmod) lines.push(`    <lastmod>${lastmod}</lastmod>`);
-  lines.push(`    <changefreq>${changefreq}</changefreq>`);
-  lines.push(`    <priority>${priority}</priority>`);
-  lines.push("  </url>");
-  return lines.join("\n");
-}
-
 function buildStaticSitemap(siteUrl) {
   const origin = String(siteUrl || DEFAULT_SITE_URL).replace(/\/$/, "") || DEFAULT_SITE_URL;
-  const today = new Date().toISOString().slice(0, 10);
-  const entries = [sitemapUrl({ loc: `${origin}/`, lastmod: today, changefreq: "daily", priority: "1.0" })];
-  for (const publicPath of ["/about", "/contact", "/privacy", "/terms", "/events"]) {
-    entries.push(
-      sitemapUrl({ loc: `${origin}${publicPath}`, lastmod: today, changefreq: "monthly", priority: "0.4" }),
-    );
-  }
-  for (const publicPath of [
-    "/k-culture",
-    "/k-culture/k-food",
-    "/k-culture/k-beauty",
-    "/k-culture/k-pop",
-    "/k-culture/k-trend",
-  ]) {
-    entries.push(
-      sitemapUrl({
-        loc: `${origin}${publicPath}`,
-        lastmod: today,
-        changefreq: "weekly",
-        priority: publicPath === "/k-culture" ? "0.9" : "0.7",
-      }),
-    );
-  }
-  if (fs.existsSync(GUIDES_DIR)) {
-    const names = fs
-      .readdirSync(GUIDES_DIR)
-      .filter((name) => /^[a-z0-9_]+_guide\.md$/.test(name))
-      .sort();
-    for (const name of names) {
-      const modified = fs.statSync(path.join(GUIDES_DIR, name)).mtime.toISOString().slice(0, 10);
-      entries.push(
-        sitemapUrl({
-          loc: `${origin}/guide/${name}`,
-          lastmod: modified,
-          changefreq: "weekly",
-          priority: "0.8",
-        }),
-      );
-    }
-  }
-  return stripScripts(
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`,
-  );
+  return stripScripts(buildSitemapXml(origin, listPublishedGuides()));
+}
+
+function publisherHtmlPlugin(env) {
+  const siteUrl = env.VITE_SITE_URL || DEFAULT_SITE_URL;
+  return {
+    name: "publisher-html",
+    apply: "build",
+    closeBundle() {
+      const dist = path.resolve(FRONTEND_DIR, "dist");
+      const indexPath = path.join(dist, "index.html");
+      if (!fs.existsSync(indexPath)) return;
+      const shell = fs.readFileSync(indexPath, "utf8");
+      writePublisherSite(dist, shell, { origin: siteUrl });
+    },
+  };
 }
 
 function adsTxtPlugin(env) {
@@ -156,7 +120,7 @@ function pureSitemapPlugin(env) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
-    plugins: [adsTxtPlugin(env), pureSitemapPlugin(env), react()],
+    plugins: [adsTxtPlugin(env), pureSitemapPlugin(env), publisherHtmlPlugin(env), react()],
     test: {
       environment: "jsdom",
       globals: false,
