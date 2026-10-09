@@ -13,7 +13,13 @@ type AdsWindow = Window & {
   adsbygoogle?: Record<string, unknown>[];
 };
 
-const CLIENT_ID = String(import.meta.env.VITE_ADSENSE_CLIENT_ID || "").trim();
+const CANONICAL_CLIENT_ID = "ca-pub-5217183178047160";
+const LEGACY_CLIENT_ID = "ca-pub-5217133176047160";
+const envClient = String(import.meta.env.VITE_ADSENSE_CLIENT_ID || "").trim();
+const CLIENT_ID =
+  !envClient || envClient === LEGACY_CLIENT_ID || envClient.startsWith("%") || envClient.includes("VITE_")
+    ? CANONICAL_CLIENT_ID
+    : envClient;
 
 let scriptPromise: Promise<void> | null = null;
 

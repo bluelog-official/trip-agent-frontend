@@ -22,12 +22,15 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="BlueLog Trip - Curated Local City Guides" />
     <meta name="twitter:description" content="BlueLog Trip publishes city guides that name the neighborhood, the meal, the walk, and the price a traveler actually pays." />
-    <!-- AdSense account meta and adsbygoogle.js are filled only when VITE_ADSENSE_CLIENT_ID is set at build time. -->
-    <meta name="google-adsense-account" content="%VITE_ADSENSE_CLIENT_ID%" data-adsense-meta="pending" />
+    <meta name="google-adsense-account" content="ca-pub-5217183178047160" />
     <script>
       (function () {
         var meta = document.querySelector('meta[name="google-adsense-account"]');
         var client = meta ? String(meta.getAttribute("content") || "").trim() : "";
+        if (client === "ca-pub-5217133176047160") {
+          client = "ca-pub-5217183178047160";
+          if (meta) meta.setAttribute("content", client);
+        }
         var missing = !client || client.charAt(0) === "%" || client.indexOf("VITE_") !== -1;
         if (missing) {
           if (meta && meta.parentNode) meta.parentNode.removeChild(meta);
