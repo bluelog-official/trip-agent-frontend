@@ -279,21 +279,9 @@ def build_document(city: str, article: str, image: dict, variation) -> str:
     return frontmatter + body
 
 
-def main(argv=None) -> int:
-    load_dotenv(ROOT_DIR / ".env")
-    parser = argparse.ArgumentParser(
-        description="Generate one English city guide and save it under /guides.",
-        epilog=(
-            "Examples: python scripts/daily_guide_generator.py\n"
-            '         python scripts/daily_guide_generator.py --city "Rome"\n'
-            "Install dependencies with: pip install -r requirements.txt"
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    parser.add_argument("--city", default="", help='City name, for example "Rome". Omit to pick the next unpublished city.')
-    args = parser.parse_args(argv)
-
-    city = choose_city(args.city)
+def generate_and_save(city_name: str = "") -> Path:
+    """Generate a guide and write it to the configured output directory."""
+    city = choose_city(city_name)
     variation = choose_variation(
         city,
         load_reserved(GUIDES_DIR),
@@ -307,6 +295,38 @@ def main(argv=None) -> int:
     GUIDES_DIR.mkdir(parents=True, exist_ok=True)
     path = output_path(city)
     path.write_text(document, encoding="utf-8")
+    return path
+
+
+def main(argv=None) -> int:
+    load_dotenv(ROOT_DIR / ".env")
+    parser = argparse.ArgumentParser(
+        description="Generate one English city guide and save it under /guides.",
+        epilog=(
+            "Examples: python scripts/daily_guide_generator.py\n"
+            '         python scripts/daily_guide_generator.py --city "Rome"\n'
+            "Install dependencies with: pip install -r requirements.txt"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--city", default="", help='City name, for example "Rome". Omit to pick the next unpublished city.')
+    parser.add_argument(
+        "--skip-on-error",
+        action="store_true",
+        help="Log API and output-path failures without failing the scheduled publish job.",
+    )
+    args = parser.parse_args(argv)
+
+    try:
+        path = generate_and_save(args.city)
+    except (RuntimeError, OSError) as exc:
+        if not args.skip_on_error:
+            raise
+        print(
+            "::warning title=Daily guide skipped::{0}".format(str(exc).replace("\n", " ")),
+            file=sys.stderr,
+        )
+        return 0
     print("Saved {0}".format(path.relative_to(ROOT_DIR)))
     return 0
 
