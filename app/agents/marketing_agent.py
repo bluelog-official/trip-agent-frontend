@@ -15,12 +15,14 @@ from app.services.reddit_draft_service import (
 )
 
 _IMAGE_URL = re.compile(r"!\[[^\]]*\]\((https?://[^)\s]+)\)")
-_DEFAULT_SITE_URL = "https://bluelogtrip.com"
+_DEFAULT_SITE_URL = "https://www.bluelogtrip.com"
 
 
 def _site_url() -> str:
     raw = os.getenv("SITE_URL", _DEFAULT_SITE_URL).strip().rstrip("/")
     if raw.startswith("[") or "://" not in raw:
+        raw = _DEFAULT_SITE_URL
+    if raw in ("https://bluelogtrip.com", "http://bluelogtrip.com", "http://www.bluelogtrip.com"):
         return _DEFAULT_SITE_URL
     return raw
 
@@ -56,7 +58,7 @@ def _guide_url(guide_data: Dict[str, Any]) -> str:
     guide_id = str(guide_data.get("id") or "").strip()
     if not guide_id:
         return _site_url()
-    return "{0}/guide/{1}".format(_site_url(), quote(guide_id, safe=""))
+    return "{0}/guides/{1}".format(_site_url(), quote(guide_id, safe=""))
 
 
 def _first_image_url(guide_data: Dict[str, Any]) -> str:

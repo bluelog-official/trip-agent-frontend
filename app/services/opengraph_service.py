@@ -5,7 +5,12 @@ from html import escape
 from pathlib import Path
 from typing import Dict
 
-from app.services.scheduler_service import GUIDES_DIR, OUTPUT_DIR, resolve_site_base_url
+from app.services.scheduler_service import (
+    GUIDES_DIR,
+    OUTPUT_DIR,
+    canonical_public_path,
+    canonical_site_origin,
+)
 
 
 _IMAGE = re.compile(r"!\[[^\]]*\]\((https?://[^)\s]+)\)")
@@ -47,15 +52,6 @@ _THEME_TOKENS = {
     "k-pop": ("k-pop", "kpop"),
     "k-trend": ("k-trend", "ktrend", "heritage"),
 }
-
-
-def clean_public_path(raw: str) -> str:
-    path = (raw or "/").split("?", 1)[0].split("#", 1)[0].strip()
-    if not path.startswith("/"):
-        path = "/{0}".format(path)
-    if path != "/":
-        path = path.rstrip("/") or "/"
-    return path
 
 
 def _frontmatter(markdown: str) -> Dict[str, str]:
@@ -117,6 +113,30 @@ def _read_guide(guide_id: str) -> str:
         return path.read_text(encoding="utf-8")
     except OSError:
         return ""
+
+
+def _guide_markdown(guide_id: str) -> str:
+    """파일명 또는 slug로 가이드 본문을 찾는다."""
+    if _GUIDE_ID.match(guide_id):
+        text = _read_guide(guide_id)
+        if text:
+            return text
+    for directory in (GUIDES_DIR, OUTPUT_DIR):
+        if not directory.is_dir():
+            continue
+        for path in sorted(directory.glob("*_guide.md")):
+            text = _read_guide(path.name)
+            if not text:
+                continue
+            slug = _frontmatter(text).get("slug") or ""
+            if guide_id == path.name or (slug and guide_id == slug):
+                return text
+    return ""
+
+
+def _canonical_guide_id(guide_id: str, markdown: str) -> str:
+    slug = (_frontmatter(markdown).get("slug") or "").strip()
+    return slug or guide_id
 
 
 def _card_from_markdown(guide_id: str, markdown: str, site_url: str) -> Dict[str, str]:
@@ -200,15 +220,14 @@ def _partner_card(partner_id: int, site_url: str) -> Dict[str, str]:
 
 def resolve_share_card(path: str, site_url: str = "") -> Dict[str, str]:
     """공개 경로의 제목, 설명, 이미지, 절대 URL."""
-    origin = resolve_site_base_url(site_url) or "https://bluelogtrip.com"
-    public_path = clean_public_path(path)
-    guide_match = re.match(r"^/guides?/([^/]+)$", public_path)
+    origin = canonical_site_origin(site_url) or "https://www.bluelogtrip.com"
+    public_path = canonical_public_path(path)
+    guide_match = re.match(r"^/guides/([^/]+)$", public_path)
     if guide_match:
         guide_id = guide_match.group(1)
-        if _GUIDE_ID.match(guide_id):
-            markdown = _read_guide(guide_id)
-            if markdown:
-                return _card_from_markdown(guide_id, markdown, origin)
+        markdown = _guide_markdown(guide_id)
+        if markdown:
+            return _card_from_markdown(_canonical_guide_id(guide_id, markdown), markdown, origin)
     if public_path in K_CULTURE_PAGES:
         page = K_CULTURE_PAGES[public_path]
         return {

@@ -1,11 +1,6 @@
-export const SITE_ORIGIN = "https://www.bluelogtrip.com";
+import { canonicalHref, SITE_ORIGIN } from "./canonicalPath.js";
 
-export function canonicalHref(pathname) {
-  const raw = String(pathname || "/").split("?")[0].split("#")[0] || "/";
-  const withSlash = raw.startsWith("/") ? raw : `/${raw}`;
-  const path = withSlash === "/" ? "/" : withSlash.replace(/\/+$/, "") || "/";
-  return path === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${path}`;
-}
+export { canonicalHref, SITE_ORIGIN };
 
 function absoluteImage(image) {
   const value = String(image || "").trim();

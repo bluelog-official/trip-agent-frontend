@@ -19,4 +19,4 @@ Allow: /
 User-agent: AdsBot-Google-Mobile
 Allow: /
 
-Sitemap: https://bluelogtrip.com/sitemap.xml
+Sitemap: https://www.bluelogtrip.com/sitemap.xml

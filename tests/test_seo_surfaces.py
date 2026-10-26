@@ -45,6 +45,7 @@ def test_opengraph_html_for_a_guide_and_kculture(tmp_path, monkeypatch):
     (guides / "seoul_kpop_guide.md").write_text(
         """---
 title: "Seoul K-Pop Walk"
+slug: "seoul-kpop-walk"
 image_url: "https://images.example/seoul.jpg"
 ---
 # Seoul K-Pop Walk
@@ -58,11 +59,11 @@ A morning ticket hall and an afternoon neighborhood.
     monkeypatch.setattr(opengraph_service, "OUTPUT_DIR", tmp_path / "output")
     monkeypatch.setenv("SITE_URL", "https://bluelogtrip.com")
 
-    card = opengraph_service.resolve_share_card("/guide/seoul_kpop_guide.md", "https://bluelogtrip.com")
+    card = opengraph_service.resolve_share_card("/guide/seoul_kpop_guide.md/", "https://bluelogtrip.com")
     assert card["title"].startswith("Seoul K-Pop Walk")
     assert card["image"] == "https://images.example/seoul.jpg"
-    assert card["url"] == "https://bluelogtrip.com/guides/seoul_kpop_guide.md"
-    guide_html = opengraph_service.render_opengraph_html("/guides/seoul_kpop_guide.md", "https://bluelogtrip.com")
+    assert card["url"] == "https://www.bluelogtrip.com/guides/seoul-kpop-walk"
+    guide_html = opengraph_service.render_opengraph_html("/guides/seoul-kpop-walk", "https://bluelogtrip.com")
     assert "A morning ticket hall" in guide_html
     assert "<h1>" in guide_html
 
@@ -70,7 +71,7 @@ A morning ticket hall and an afternoon neighborhood.
     assert 'property="og:title"' in html
     assert 'property="og:description"' in html
     assert 'property="og:url"' in html
-    assert "https://bluelogtrip.com/k-culture/k-pop" in html
+    assert "https://www.bluelogtrip.com/k-culture/k-pop" in html
     assert 'name="twitter:card"' in html
     assert "<script" not in html.lower()
 
@@ -79,6 +80,7 @@ A morning ticket hall and an afternoon neighborhood.
     assert response.status_code == 200
     assert "og:title" in response.text
     assert "Events" in response.text
+    assert 'rel="canonical" href="https://www.bluelogtrip.com/events"' in response.text
 
 
 def test_sitemap_lists_kculture_and_active_partners(monkeypatch, tmp_path):
@@ -116,15 +118,16 @@ def test_sitemap_lists_kculture_and_active_partners(monkeypatch, tmp_path):
     xml = scheduler_service.read_sitemap("http://127.0.0.1:8000")
     root = ElementTree.fromstring(xml)
     locations = [node.text or "" for node in root.iter() if node.tag.endswith("loc")]
-    assert "https://bluelogtrip.com/k-culture" in locations
-    assert "https://bluelogtrip.com/k-culture/k-food" in locations
-    assert "https://bluelogtrip.com/k-culture/k-pop" in locations
-    assert "https://bluelogtrip.com/guide/rome_guide.md" in locations
-    assert "https://bluelogtrip.com/guides/rome_guide.md" in locations
-    assert "https://bluelogtrip.com/wallet" in locations
-    assert "https://bluelogtrip.com/promote-store" in locations
-    assert "https://bluelogtrip.com/community" in locations
-    assert "https://bluelogtrip.com/partners/{0}".format(partner_id) in locations
-    assert "https://bluelogtrip.com/events" in locations
+    assert "https://www.bluelogtrip.com/k-culture" in locations
+    assert "https://www.bluelogtrip.com/k-culture/k-food" in locations
+    assert "https://www.bluelogtrip.com/k-culture/k-pop" in locations
+    assert "https://www.bluelogtrip.com/guide/rome_guide.md" not in locations
+    assert "https://www.bluelogtrip.com/guides/rome_guide.md" in locations
+    assert "https://www.bluelogtrip.com/wallet" in locations
+    assert "https://www.bluelogtrip.com/promote-store" in locations
+    assert "https://www.bluelogtrip.com/community" in locations
+    assert "https://www.bluelogtrip.com/partners/{0}".format(partner_id) in locations
+    assert "https://www.bluelogtrip.com/events" in locations
+    assert len(locations) == len(set(locations))
     tags = {node.tag.rsplit("}", 1)[-1] for node in root.iter()}
     assert {"loc", "lastmod", "changefreq", "priority"} <= tags

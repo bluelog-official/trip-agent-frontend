@@ -62,7 +62,7 @@ def test_pinterest_payload_uses_image_and_summary(isolated_db, monkeypatch):
     assert pin["description"] == "One quiet route through Kyoto."
     assert pin["media_source"]["source_type"] == "image_url"
     assert pin["media_source"]["url"] == "https://images.example/kyoto.jpg"
-    assert pin["link"].endswith("/guide/kyoto_guide.md")
+    assert pin["link"].endswith("/guides/kyoto_guide.md")
 
 
 def test_discord_skips_without_webhook(isolated_db):

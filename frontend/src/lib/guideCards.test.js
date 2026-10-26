@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { presentGuideCard } from "./localeCopy";
-import { toGuideCard } from "./guideCards";
+import { fetchGuideCards, fetchGuideDetail, toGuideCard } from "./guideCards";
 
 const ARTICLE = `---
 title: "A Perfect Weekend in Vienna"
@@ -58,5 +58,43 @@ A one-day Tokyo walk that stays inside a small daily budget and eats at market c
     expect(card.budgetFilter).toBe("under_50");
     expect(card.tags).toContain("1 Day");
     expect(card.tags).toContain("Under $50/day");
+  });
+});
+
+describe("static guide fallback", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("loads published routes when the guide API is down", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => {
+      throw new Error("offline");
+    }));
+    const cards = await fetchGuideCards();
+    expect(cards.length).toBeGreaterThanOrEqual(10);
+    expect(cards.some((card) => card.publicSlug === "korea-seoul-food-route")).toBe(true);
+
+    const detail = await fetchGuideDetail("japan-tokyo-night-bus");
+    expect(String(detail.article_markdown || detail.content).length).toBeGreaterThanOrEqual(1500);
+    expect(detail.qa_result.is_approved).toBe(true);
+  });
+
+  it("keeps the static article when the API responds without a body", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ id: "japan_tokyo_night_bus_guide.md", content: "" }),
+    })));
+    const detail = await fetchGuideDetail("japan-tokyo-night-bus");
+    expect(String(detail.article_markdown || detail.content)).toContain("Highway night buses");
+  });
+
+  it("ignores an API not-found essay and keeps the static route", async () => {
+    const stub = `${"데이터를 찾을 수 없습니다. ".repeat(40)}\n\nThe desk could not open this file.`;
+    vi.stubGlobal("fetch", vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ id: "korea_seoul_food_route_guide.md", content: stub }),
+    })));
+    const detail = await fetchGuideDetail("korea-seoul-food-route");
+    expect(detail.content).toContain("Gwangjang Market");
   });
 });

@@ -1,135 +1,440 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bluelogtrip.com/</loc>
+    <loc>https://www.bluelogtrip.com/</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/about</loc>
+    <loc>https://www.bluelogtrip.com/about</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/contact</loc>
+    <loc>https://www.bluelogtrip.com/contact</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/privacy</loc>
+    <loc>https://www.bluelogtrip.com/privacy</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/terms</loc>
+    <loc>https://www.bluelogtrip.com/terms</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/bali_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/events</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/wallet</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/promote-store</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/community</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/k-culture</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/k-culture/k-food</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/k-culture/k-beauty</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/k-culture/k-pop</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/k-culture/k-trend</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/destinations</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/destinations/asia</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/destinations/europe</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/destinations/americas</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/local-food</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/amsterdam_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/bangkok_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/athens_guide.md</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/barcelona_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/bali_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/danang_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/bangkok_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/kyoto_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/barcelona_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/lisbon_guide.md</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/berlin_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/london_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/buenos_aires_guide.md</loc>
+    <lastmod>2026-10-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/los_angeles_guide.md</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/busan_guide.md</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/new_york_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/busan-seomyeon-kbeauty</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/osaka_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/chiang_mai_guide.md</loc>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/paris_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/danang_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/prague_guide.md</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/dubrovnik_guide.md</loc>
+    <lastmod>2026-10-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/rome_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/florence_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/seoul_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/hanoi_guide.md</loc>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/singapore_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/hong_kong_guide.md</loc>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/sydney_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/istanbul_guide.md</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/taipei_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/japan-tokyo-night-bus</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bluelogtrip.com/guide/tokyo_guide.md</loc>
-    <lastmod>2026-09-24</lastmod>
+    <loc>https://www.bluelogtrip.com/guides/korea_1_week_heritage_luxury_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/korea_3_days_kbeauty_kfood_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/korea-seoul-food-route</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/kyoto_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/lisbon_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/london_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/los_angeles_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/madrid_guide.md</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/mexico_city_guide.md</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/new_york_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/osaka_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/paris_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/prague_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/rome_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/san_francisco_guide.md</loc>
+    <lastmod>2026-10-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul_1_day_kpop_trend_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul_guide.md</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-hannam-ktrend-cafes</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-hapjeong-kpop-street</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-hongdae-kbeauty-skincare</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-hongdae-kpop-night</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-ikseon-ktrend-lanes</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-jamsil-kpop-show</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-jongno-soup-route</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-myeongdong-kbeauty-counters</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-seongsu-kbeauty-loop</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-seongsu-ktrend-walk</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/seoul-yeonnam-kpop-cafes</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/singapore_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/sydney_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/taipei_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/tokyo_1_days_50usd_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/tokyo_1_week_budget_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/tokyo_3_days_200usd_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/tokyo_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/vancouver_guide.md</loc>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bluelogtrip.com/guides/vienna_guide.md</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

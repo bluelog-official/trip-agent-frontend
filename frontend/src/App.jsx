@@ -34,6 +34,8 @@ import {
   fetchGuideCards,
   fetchGuideDetail,
   matchesGuideQuery,
+  staticGuideCards,
+  toGuideCard,
 } from "./lib/guideCards";
 import {
   adminAuthHeaders,
@@ -60,6 +62,7 @@ import {
   startSocialSignIn,
   authHeaders,
 } from "./lib/session";
+import { staticGuidePayload } from "./lib/staticGuides";
 import { usePortalRoute } from "./lib/usePortalRoute";
 import "./App.css";
 
@@ -82,11 +85,12 @@ export default function App() {
   const [destination, setDestination] = useState("");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [guidesLoading, setGuidesLoading] = useState(true);
-  const [guidesError, setGuidesError] = useState("");
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState(() => staticGuideCards());
+  const [guidesLoading, setGuidesLoading] = useState(() => staticGuideCards().length === 0);
   const [reloadToken, setReloadToken] = useState(0);
-  const [selectedGuide, setSelectedGuide] = useState(null);
+  const [selectedGuide, setSelectedGuide] = useState(() =>
+    route.name === "article" ? staticGuidePayload(route.guideId) : null,
+  );
   const [detailTab, setDetailTab] = useState("article");
   const [statusMessage, setStatusMessage] = useState("");
   const [publishing, setPublishing] = useState(false);
@@ -105,18 +109,12 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    setGuidesLoading(true);
     fetchGuideCards()
       .then((next) => {
-        if (cancelled) return;
-        setCards(next);
-        setGuidesError("");
+        if (!cancelled && next.length) setCards(next);
       })
       .catch((err) => {
         console.error("가이드 목록 로드 실패:", err);
-        if (!cancelled) {
-          setGuidesError("failed");
-        }
       })
       .finally(() => {
         if (!cancelled) setGuidesLoading(false);
@@ -133,13 +131,15 @@ export default function App() {
     }
     let cancelled = false;
     setDetailTab("article");
+    const local = staticGuidePayload(route.guideId);
+    if (local) setSelectedGuide(local);
     fetchGuideDetail(route.guideId)
       .then((data) => {
-        if (!cancelled) setSelectedGuide(data);
+        if (!cancelled && data) setSelectedGuide(data);
       })
       .catch((err) => {
         console.error("가이드 본문 로드 실패:", err);
-        if (!cancelled) setSelectedGuide(null);
+        if (!cancelled && local) setSelectedGuide(local);
       });
     return () => {
       cancelled = true;
@@ -333,10 +333,9 @@ export default function App() {
   }, [route.name, session, authDismissed]);
 
   useEffect(() => {
-    const card = presentGuideCard(
-      cards.find((item) => item.id === route.guideId),
-      language,
-    );
+    const matched = cards.find((item) => item.id === route.guideId || item.publicSlug === route.guideId)
+      || (selectedGuide ? toGuideCard(selectedGuide.id || route.guideId, selectedGuide) : undefined);
+    const card = presentGuideCard(matched, language);
     const locale = language === "ko" ? "ko_KR" : "en_US";
     let title = t("meta.homeTitle");
     let description = t("meta.siteDescription");
@@ -410,7 +409,7 @@ export default function App() {
       locale,
       image,
     });
-  }, [route, cards, language, t, partnerShare]);
+  }, [route, cards, language, t, partnerShare, selectedGuide]);
 
   const localizedCards = useMemo(
     () => cards.map((card) => presentGuideCard(card, language)),
@@ -441,7 +440,8 @@ export default function App() {
   };
 
   const openGuide = (card) => {
-    go(`/guide/${encodeURIComponent(card.id)}`);
+    const slug = card.publicSlug || card.id;
+    go(`/guides/${encodeURIComponent(slug)}`);
     window.scrollTo({ top: 0 });
   };
 
@@ -525,7 +525,7 @@ export default function App() {
       setDestination("");
       setAdminOpen(false);
       setReloadToken((token) => token + 1);
-      go(`/guide/${encodeURIComponent(newFileName)}`);
+      go(`/guides/${encodeURIComponent(newFileName)}`);
       window.scrollTo({ top: 0 });
     } catch (err) {
       setStatusMessage(t("status.failed", { message: err.message }));
@@ -703,7 +703,7 @@ export default function App() {
                 <ArticleGrid
                   cards={visibleCards}
                   loading={guidesLoading}
-                  error={guidesError ? t("catalog.loadError") : ""}
+                  error=""
                   emptyLabel={matrixActive ? t("matrix.empty") : ""}
                   onOpen={openGuide}
                 />

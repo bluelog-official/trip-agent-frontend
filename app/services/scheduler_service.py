@@ -69,6 +69,21 @@ K_CULTURE_SITEMAP_PATHS = (
     "/k-culture/k-pop",
     "/k-culture/k-trend",
 )
+CATEGORY_SITEMAP_PATHS = (
+    "/destinations",
+    "/destinations/asia",
+    "/destinations/europe",
+    "/destinations/americas",
+    "/local-food",
+)
+_SLUG_LINE = re.compile(r'(?m)^slug:\s*"?([a-z0-9-]+)"?\s*$')
+_PAGE_ALIASES = {
+    "/guide": "/",
+    "/guides": "/",
+    "/mypage": "/wallet",
+    "/partner-apply": "/promote-store",
+}
+_GUIDE_PATH = re.compile(r"^/guides?/([^/]+)$")
 STATE_PATH = OUTPUT_DIR / "scheduler_state.json"
 GOOGLE_SITEMAP_PING = "http://www.google.com/ping"
 _SCRIPT_TAG = re.compile(
@@ -230,6 +245,61 @@ def strip_script_tags(document: str) -> str:
     return _SCRIPT_TAG.sub("", document or "")
 
 
+def canonical_site_origin(candidate: str = "") -> str:
+    """공개 표준 호스트. apex bluelogtrip.com은 www로 모은다."""
+    origin = resolve_site_base_url(candidate)
+    if not origin:
+        return ""
+    host = (urlparse(origin).hostname or "").lower()
+    if host in ("bluelogtrip.com", "www.bluelogtrip.com"):
+        return "https://www.bluelogtrip.com"
+    return origin
+
+
+def canonical_public_path(raw: str) -> str:
+    """슬래시, /guide 별칭, 리다이렉트 전용 경로를 표준 경로 하나로 접는다."""
+    path = (raw or "/").split("?", 1)[0].split("#", 1)[0].strip() or "/"
+    if not path.startswith("/"):
+        path = "/{0}".format(path)
+    if path != "/":
+        path = path.rstrip("/") or "/"
+    aliased = _PAGE_ALIASES.get(path)
+    if aliased:
+        return aliased
+    match = _GUIDE_PATH.match(path)
+    if match:
+        return "/guides/{0}".format(match.group(1))
+    return path
+
+
+def canonical_loc(site_url: str, public_path: str) -> str:
+    """sitemap <loc>에 넣는 최종 절대 URL."""
+    path = canonical_public_path(public_path)
+    origin = canonical_site_origin(site_url)
+    if not origin:
+        return "/" if path == "/" else path
+    if path == "/":
+        return "{0}/".format(origin)
+    return "{0}{1}".format(origin, path)
+
+
+def _canonical_guide_id(path: Path) -> str:
+    """slug가 있으면 slug, 없으면 파일명. 같은 글의 표준 id는 하나다."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return path.name
+    front = ""
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) > 1:
+            front = parts[1]
+    match = _SLUG_LINE.search(front)
+    if match and match.group(1):
+        return match.group(1)
+    return path.name
+
+
 def _sitemap_sources() -> List[Path]:
     """guides 마크다운을 실시간으로 읽고, 승인된 output 가이드만 더한다."""
     found: Dict[str, Path] = {}
@@ -301,31 +371,43 @@ def _sitemap_url(loc: str, changefreq: str, priority: str, lastmod: str = "") ->
     return "\n".join(lines)
 
 
+def _append_sitemap_entry(entries: List[str], seen: set, loc: str, changefreq: str, priority: str, lastmod: str) -> None:
+    """리다이렉트·중복 loc는 sitemap에 넣지 않는다."""
+    if not loc or loc in seen:
+        return
+    path = urlparse(loc).path or loc
+    if path != canonical_public_path(path):
+        return
+    seen.add(loc)
+    entries.append(_sitemap_url(loc, changefreq=changefreq, priority=priority, lastmod=lastmod))
+
+
 def refresh_sitemap(base_url: str = "") -> Path:
     """guides 디렉터리의 마크다운을 표준 Sitemap XML urlset으로 다시 쓴다."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    site_url = resolve_site_base_url(base_url)
     today = _today()
-    home = "{0}/".format(site_url) if site_url else "/"
-    entries = [_sitemap_url(home, changefreq="daily", priority="1.0", lastmod=today)]
+    seen: set = set()
+    entries: List[str] = []
+    _append_sitemap_entry(entries, seen, canonical_loc(base_url, "/"), "daily", "1.0", today)
     for public_path in PUBLIC_SITEMAP_PATHS:
-        loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
-        entries.append(_sitemap_url(loc, changefreq="monthly", priority="0.4", lastmod=today))
+        _append_sitemap_entry(entries, seen, canonical_loc(base_url, public_path), "monthly", "0.4", today)
     for public_path in K_CULTURE_SITEMAP_PATHS:
-        loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
         priority = "0.9" if public_path == "/k-culture" else "0.7"
-        entries.append(_sitemap_url(loc, changefreq="weekly", priority=priority, lastmod=today))
+        _append_sitemap_entry(entries, seen, canonical_loc(base_url, public_path), "weekly", priority, today)
+    for public_path in CATEGORY_SITEMAP_PATHS:
+        _append_sitemap_entry(entries, seen, canonical_loc(base_url, public_path), "weekly", "0.7", today)
     for path in _sitemap_sources():
         lastmod = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).date().isoformat()
-        guide_name = path.name
-        for prefix in ("/guide/", "/guides/"):
-            public_path = "{0}{1}".format(prefix, guide_name)
-            loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
-            entries.append(_sitemap_url(loc, changefreq="weekly", priority="0.8", lastmod=lastmod))
+        public_path = "/guides/{0}".format(_canonical_guide_id(path))
+        _append_sitemap_entry(entries, seen, canonical_loc(base_url, public_path), "weekly", "0.8", lastmod)
     for partner in _active_partner_paths():
-        loc = "{0}{1}".format(site_url, partner["path"]) if site_url else partner["path"]
-        entries.append(
-            _sitemap_url(loc, changefreq="weekly", priority="0.6", lastmod=partner["lastmod"])
+        _append_sitemap_entry(
+            entries,
+            seen,
+            canonical_loc(base_url, partner["path"]),
+            "weekly",
+            "0.6",
+            partner["lastmod"],
         )
     document = strip_script_tags(
         (
@@ -346,7 +428,7 @@ def read_sitemap(site_url: str = "") -> str:
 
 
 def sitemap_public_url(base_url: str = "") -> str:
-    site_url = resolve_site_base_url(base_url)
+    site_url = canonical_site_origin(base_url)
     if not site_url:
         return "/sitemap.xml"
     return "{0}/sitemap.xml".format(site_url.rstrip("/"))

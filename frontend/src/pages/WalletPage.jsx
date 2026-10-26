@@ -150,7 +150,7 @@ export default function WalletPage({ session, onNavigate }) {
           <ul className="wallet-list">
             {profile.saved_guides.map((guideId) => (
               <li key={guideId}>
-                <button type="button" className="text-link" onClick={() => onNavigate?.(`/guide/${encodeURIComponent(guideId)}`)}>
+                <button type="button" className="text-link" onClick={() => onNavigate?.(`/guides/${encodeURIComponent(guideId)}`)}>
                   {guideId}
                 </button>
                 <button type="button" onClick={() => removeSaved(guideId)}>

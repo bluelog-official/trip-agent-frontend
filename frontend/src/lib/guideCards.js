@@ -1,4 +1,5 @@
 import { stripFrontmatter } from "./articleDocument";
+import { listStaticGuideRecords, staticGuidePayload } from "./staticGuides";
 import { readKCulture } from "./kculture";
 import {
   budgetFilterFor,
@@ -209,7 +210,19 @@ export function toGuideCard(summary, detail) {
     budgetFilter: budgetFilterFor(budgetKey),
     kThemes: culture.kThemes,
     hotCountry: culture.hotCountry,
+    publicSlug: frontmatterValue(rawMarkdown, "slug"),
   };
+}
+
+export function staticGuideCards() {
+  return listStaticGuideRecords().map((record) =>
+    toGuideCard(record.id, {
+      content: record.markdown,
+      article_markdown: record.markdown,
+      is_approved: true,
+      qa_result: { is_approved: true, quality_score: 80 },
+    }),
+  );
 }
 
 export function matchesGuideQuery(card, query) {
@@ -234,36 +247,63 @@ export function popularDestinations(cards, limit = 5) {
     .slice(0, limit);
 }
 
+function guideBody(data) {
+  return String(data?.content || data?.article_markdown || "").trim();
+}
+
+function usableGuideDetail(data) {
+  const text = guideBody(data);
+  if (text.length < 400 || text.includes("데이터를 찾을 수 없습니다")) return false;
+  return /^#\s+\S/m.test(text.replace(/^---[\s\S]*?---\s*/, ""));
+}
+
 export async function fetchGuideCards() {
-  const res = await fetch(`${API_BASE_URL}/guides`);
-  if (!res.ok) {
-    throw new Error("guide list failed");
+  try {
+    const res = await fetch(`${API_BASE_URL}/guides`);
+    if (!res.ok) throw new Error("guide list failed");
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : data.guides || [];
+    const cards = (
+      await Promise.all(
+        items.map(async (item) => {
+          const id = typeof item === "string" ? item : item?.id;
+          if (!id) return null;
+          try {
+            const detailRes = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(id)}`);
+            const detail = detailRes.ok ? await detailRes.json() : null;
+            const source = usableGuideDetail(detail) ? detail : staticGuidePayload(id);
+            return toGuideCard(item, source);
+          } catch (err) {
+            console.error("가이드 카드 로드 실패:", err);
+            return toGuideCard(item, staticGuidePayload(id));
+          }
+        }),
+      )
+    ).filter(Boolean);
+    if (cards.length) {
+      const seen = new Set(cards.map((card) => card.id));
+      return [...staticGuideCards().filter((card) => !seen.has(card.id)), ...cards];
+    }
+  } catch (err) {
+    console.error("가이드 목록 로드 실패:", err);
   }
-  const data = await res.json();
-  const items = Array.isArray(data) ? data : data.guides || [];
-  const cards = await Promise.all(
-    items.map(async (item) => {
-      const id = typeof item === "string" ? item : item?.id;
-      if (!id) return null;
-      try {
-        const detailRes = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(id)}`);
-        const detail = detailRes.ok ? await detailRes.json() : null;
-        return toGuideCard(item, detail);
-      } catch (err) {
-        console.error("가이드 카드 로드 실패:", err);
-        return toGuideCard(item, null);
-      }
-    }),
-  );
-  return cards.filter(Boolean);
+  return staticGuideCards();
 }
 
 export async function fetchGuideDetail(guideId) {
-  const res = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(guideId)}`);
-  if (!res.ok) {
-    throw new Error("guide detail failed");
+  const local = staticGuidePayload(guideId);
+  const apiId = local?.id || guideId;
+  try {
+    const res = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(apiId)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (usableGuideDetail(data)) return data;
+    }
+  } catch (err) {
+    console.error("가이드 본문 로드 실패:", err);
   }
-  return res.json();
+  if (local) return local;
+  throw new Error("guide detail failed");
 }
 
 export { API_BASE_URL };

@@ -1,4 +1,5 @@
 {
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/sitemap.xml",
@@ -47,6 +48,22 @@
   ],
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "bluelogtrip.com" }],
+      "destination": "https://www.bluelogtrip.com/$1",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
       "source": "/guides",
       "destination": "/",
       "statusCode": 301
@@ -54,6 +71,171 @@
     {
       "source": "/guides/",
       "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/mypage",
+      "destination": "/wallet",
+      "statusCode": 301
+    },
+    {
+      "source": "/mypage/",
+      "destination": "/wallet",
+      "statusCode": 301
+    },
+    {
+      "source": "/partner-apply",
+      "destination": "/promote-store",
+      "statusCode": 301
+    },
+    {
+      "source": "/partner-apply/",
+      "destination": "/promote-store",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/busan_seomyeon_kbeauty_guide.md",
+      "destination": "/guides/busan-seomyeon-kbeauty",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/busan_seomyeon_kbeauty_guide.md",
+      "destination": "/guides/busan-seomyeon-kbeauty",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/japan_tokyo_night_bus_guide.md",
+      "destination": "/guides/japan-tokyo-night-bus",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/japan_tokyo_night_bus_guide.md",
+      "destination": "/guides/japan-tokyo-night-bus",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/korea_seoul_food_route_guide.md",
+      "destination": "/guides/korea-seoul-food-route",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/korea_seoul_food_route_guide.md",
+      "destination": "/guides/korea-seoul-food-route",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_hannam_ktrend_cafes_guide.md",
+      "destination": "/guides/seoul-hannam-ktrend-cafes",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_hannam_ktrend_cafes_guide.md",
+      "destination": "/guides/seoul-hannam-ktrend-cafes",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_hapjeong_kpop_street_guide.md",
+      "destination": "/guides/seoul-hapjeong-kpop-street",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_hapjeong_kpop_street_guide.md",
+      "destination": "/guides/seoul-hapjeong-kpop-street",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_hongdae_kbeauty_skincare_guide.md",
+      "destination": "/guides/seoul-hongdae-kbeauty-skincare",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_hongdae_kbeauty_skincare_guide.md",
+      "destination": "/guides/seoul-hongdae-kbeauty-skincare",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_hongdae_kpop_night_guide.md",
+      "destination": "/guides/seoul-hongdae-kpop-night",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_hongdae_kpop_night_guide.md",
+      "destination": "/guides/seoul-hongdae-kpop-night",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_ikseon_ktrend_lanes_guide.md",
+      "destination": "/guides/seoul-ikseon-ktrend-lanes",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_ikseon_ktrend_lanes_guide.md",
+      "destination": "/guides/seoul-ikseon-ktrend-lanes",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_jamsil_kpop_show_guide.md",
+      "destination": "/guides/seoul-jamsil-kpop-show",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_jamsil_kpop_show_guide.md",
+      "destination": "/guides/seoul-jamsil-kpop-show",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_jongno_soup_kfood_guide.md",
+      "destination": "/guides/seoul-jongno-soup-route",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_jongno_soup_kfood_guide.md",
+      "destination": "/guides/seoul-jongno-soup-route",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_myeongdong_kbeauty_counters_guide.md",
+      "destination": "/guides/seoul-myeongdong-kbeauty-counters",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_myeongdong_kbeauty_counters_guide.md",
+      "destination": "/guides/seoul-myeongdong-kbeauty-counters",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_seongsu_kbeauty_loop_guide.md",
+      "destination": "/guides/seoul-seongsu-kbeauty-loop",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_seongsu_kbeauty_loop_guide.md",
+      "destination": "/guides/seoul-seongsu-kbeauty-loop",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_seongsu_ktrend_walk_guide.md",
+      "destination": "/guides/seoul-seongsu-ktrend-walk",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_seongsu_ktrend_walk_guide.md",
+      "destination": "/guides/seoul-seongsu-ktrend-walk",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/seoul_yeonnam_kpop_cafes_guide.md",
+      "destination": "/guides/seoul-yeonnam-kpop-cafes",
+      "statusCode": 301
+    },
+    {
+      "source": "/guides/seoul_yeonnam_kpop_cafes_guide.md",
+      "destination": "/guides/seoul-yeonnam-kpop-cafes",
+      "statusCode": 301
+    },
+    {
+      "source": "/guide/:path+",
+      "destination": "/guides/:path+",
       "statusCode": 301
     }
   ],
@@ -73,6 +255,62 @@
     {
       "source": "/community",
       "destination": "/community.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/local-food",
+      "destination": "/local-food.html"
+    },
+    {
+      "source": "/destinations",
+      "destination": "/destinations.html"
+    },
+    {
+      "source": "/destinations/asia",
+      "destination": "/destinations/asia.html"
+    },
+    {
+      "source": "/destinations/europe",
+      "destination": "/destinations/europe.html"
+    },
+    {
+      "source": "/destinations/americas",
+      "destination": "/destinations/americas.html"
+    },
+    {
+      "source": "/k-culture",
+      "destination": "/k-culture.html"
+    },
+    {
+      "source": "/k-culture/k-food",
+      "destination": "/k-culture/k-food.html"
+    },
+    {
+      "source": "/k-culture/k-beauty",
+      "destination": "/k-culture/k-beauty.html"
+    },
+    {
+      "source": "/k-culture/k-pop",
+      "destination": "/k-culture/k-pop.html"
+    },
+    {
+      "source": "/k-culture/k-trend",
+      "destination": "/k-culture/k-trend.html"
     },
     {
       "source": "/guide/:path+",

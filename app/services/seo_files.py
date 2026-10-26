@@ -10,7 +10,7 @@ from app.services.scheduler_service import resolve_site_base_url, sitemap_public
 _ROOT = Path(__file__).resolve().parents[2]
 FALLBACK_ADS_TXT = _ROOT / "frontend" / "public" / "ads.txt"
 ADS_TXT_CERT = "f08c47fec0942fa0"
-DEFAULT_SITEMAP_ORIGIN = "https://bluelogtrip.com"
+DEFAULT_SITEMAP_ORIGIN = "https://www.bluelogtrip.com"
 _PUBLISHER = re.compile(r"^(?:ca-)?pub-(\d{10,20})$", re.IGNORECASE)
 _ADS_LINE = re.compile(
     r"^google\.com,\s*(pub-\d{10,20}),\s*DIRECT,\s*f08c47fec0942fa0\s*$",
@@ -65,7 +65,15 @@ def ads_txt_body() -> str:
 
 
 def robots_txt_body(site_url: str = "") -> str:
-    """모든 크롤러를 허용하고 공개 sitemap 주소를 적는다."""
+    """Googlebot과 AdSense 크롤러를 포함해 공개 경로를 허용한다."""
     origin = resolve_site_base_url(site_url) or DEFAULT_SITEMAP_ORIGIN
     sitemap = sitemap_public_url(origin)
-    return "User-agent: *\nAllow: /\n\nSitemap: {0}\n".format(sitemap)
+    return (
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        "User-agent: Googlebot\n"
+        "Allow: /\n\n"
+        "User-agent: Mediapartners-Google\n"
+        "Allow: /\n\n"
+        "Sitemap: {0}\n"
+    ).format(sitemap)

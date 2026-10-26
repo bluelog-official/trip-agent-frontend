@@ -16,7 +16,7 @@ describe("ads.txt publisher line", () => {
 describe("social share payloads", () => {
   it("builds an absolute page url, an X intent, and a Kakao feed", () => {
     expect(absoluteShareUrl("/guide/kyoto_guide.md")).toBe(
-      "https://www.bluelogtrip.com/guide/kyoto_guide.md",
+      "https://www.bluelogtrip.com/guides/kyoto_guide.md",
     );
     expect(xShareUrl({ title: "Kyoto", url: "https://www.bluelogtrip.com/guide/kyoto_guide.md" })).toContain(
       "twitter.com/intent/tweet",

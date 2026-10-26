@@ -16,6 +16,35 @@
     <meta property="og:site_name" content="BlueLog Trip" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.bluelogtrip.com/" />
+    <script>
+(function () {
+  var aliases = {"busan_seomyeon_kbeauty_guide.md":"busan-seomyeon-kbeauty","japan_tokyo_night_bus_guide.md":"japan-tokyo-night-bus","korea_seoul_food_route_guide.md":"korea-seoul-food-route","seoul_hannam_ktrend_cafes_guide.md":"seoul-hannam-ktrend-cafes","seoul_hapjeong_kpop_street_guide.md":"seoul-hapjeong-kpop-street","seoul_hongdae_kbeauty_skincare_guide.md":"seoul-hongdae-kbeauty-skincare","seoul_hongdae_kpop_night_guide.md":"seoul-hongdae-kpop-night","seoul_ikseon_ktrend_lanes_guide.md":"seoul-ikseon-ktrend-lanes","seoul_jamsil_kpop_show_guide.md":"seoul-jamsil-kpop-show","seoul_jongno_soup_kfood_guide.md":"seoul-jongno-soup-route","seoul_myeongdong_kbeauty_counters_guide.md":"seoul-myeongdong-kbeauty-counters","seoul_seongsu_kbeauty_loop_guide.md":"seoul-seongsu-kbeauty-loop","seoul_seongsu_ktrend_walk_guide.md":"seoul-seongsu-ktrend-walk","seoul_yeonnam_kpop_cafes_guide.md":"seoul-yeonnam-kpop-cafes"};
+  var pageAliases = {"/guide":"/","/guides":"/","/mypage":"/wallet","/partner-apply":"/promote-store"};
+  var origin = "https://www.bluelogtrip.com";
+  var raw = location.pathname || "/";
+  if (raw.charAt(0) !== "/") raw = "/" + raw;
+  var path = raw.length > 1 ? raw.replace(/\/+$/, "") || "/" : "/";
+  if (pageAliases[path]) path = pageAliases[path];
+  else {
+    var match = /^\/guides?\/([^/]+)$/.exec(path);
+    if (match) {
+      var id = match[1];
+      try { id = decodeURIComponent(id); } catch (err) {}
+      path = "/guides/" + (aliases[id] || id);
+    }
+  }
+  var href = path === "/" ? origin + "/" : origin + path;
+  var link = document.querySelector('link[rel="canonical"]');
+  if (!link) {
+    link = document.createElement("link");
+    link.setAttribute("rel", "canonical");
+    document.head.appendChild(link);
+  }
+  link.setAttribute("href", href);
+  var og = document.querySelector('meta[property="og:url"]');
+  if (og) og.setAttribute("content", href);
+})();
+    </script>
     <meta property="og:title" content="BlueLog Trip - Curated Local City Guides" />
     <meta property="og:description" content="BlueLog Trip publishes city guides that name the neighborhood, the meal, the walk, and the price a traveler actually pays." />
     <meta property="og:locale" content="en_US" />

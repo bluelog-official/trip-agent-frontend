@@ -121,9 +121,19 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [adsTxtPlugin(env), pureSitemapPlugin(env), publisherHtmlPlugin(env), react()],
+    server: {
+      fs: {
+        allow: [path.resolve(FRONTEND_DIR, "..")],
+      },
+    },
     test: {
       environment: "jsdom",
       globals: false,
+      server: {
+        fs: {
+          allow: [path.resolve(FRONTEND_DIR, "..")],
+        },
+      },
     },
   };
 });

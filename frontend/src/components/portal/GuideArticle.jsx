@@ -6,6 +6,7 @@ import ShareSheet from "./ShareSheet";
 import VoteButton from "./VoteButton";
 import AdSenseUnit from "../AdSenseUnit";
 import { prepareArticle, buildGuideJsonLd } from "../../lib/articleDocument";
+import { canonicalHref } from "../../lib/documentHead";
 import { toGuideCard } from "../../lib/guideCards";
 import { appLanguage } from "../../i18n/i18n";
 import {
@@ -85,14 +86,12 @@ export default function GuideArticle({ guide, fileName, onNavigate }) {
         description: card.summary,
         image: card.image || article.image,
         publishedAt,
-        url: typeof window === "undefined"
-          ? `/guide/${encodeURIComponent(card.id || "")}`
-          : `${window.location.origin}/guide/${encodeURIComponent(card.id || "")}`,
+        url: canonicalHref(`/guides/${encodeURIComponent(card.publicSlug || fileName || card.id || "")}`),
         destination: card.destination,
         region: regionLabel,
         inLanguage: english ? "en" : "ko",
       }),
-    [card.title, card.summary, card.image, card.id, card.destination, article.image, publishedAt, regionLabel, english],
+    [card.title, card.summary, card.image, card.id, card.publicSlug, card.destination, fileName, article.image, publishedAt, regionLabel, english],
   );
 
   useEffect(() => {
@@ -204,7 +203,7 @@ export default function GuideArticle({ guide, fileName, onNavigate }) {
           <ShareSheet
             title={card.title}
             description={card.summary}
-            pathname={`/guide/${encodeURIComponent(fileName || card.id)}`}
+            pathname={`/guides/${encodeURIComponent(card.publicSlug || fileName || card.id || "")}`}
             image={card.image}
           />
         </footer>
