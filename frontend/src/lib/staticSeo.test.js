@@ -106,6 +106,9 @@ describe("publisher pages and sitemap", () => {
     expect(html).toContain("<h1>");
     expect(html).toContain("<h2>");
     expect(html).toContain("<p>");
+    expect(html).toContain("Day-by-day route");
+    expect(html).toContain("<table>");
+    expect(html).toContain("Estimated Cost");
     expect(html).toContain("application/ld+json");
     expect(html).toContain('"@type":"Article"');
     expect(html).toContain('"@type":"TouristAttraction"');
@@ -138,10 +141,26 @@ describe("publisher pages and sitemap", () => {
     expect(xml).toContain("https://www.bluelogtrip.com/privacy");
     expect(xml).toContain("https://www.bluelogtrip.com/local-food");
 
-    const privacy = publisherPages(en, guides).find((page) => page.path === "/privacy");
+    const pages = publisherPages(en, guides);
+    const home = pages.find((page) => page.path === "/");
+    expect(home.body).toContain('href="/about"');
+    expect(home.body).toContain('href="/terms"');
+    expect(home.body).toContain('href="/privacy"');
+    expect(home.body).toContain("About");
+    expect(home.body).toContain("Terms of Service");
+    expect(home.body).toContain("Privacy Policy");
+    const privacy = pages.find((page) => page.path === "/privacy");
+    expect(privacy.body).toContain('href="/about"');
+    expect(privacy.body).toContain('href="/terms"');
     expect(privacy.body).toContain("Google AdSense");
     expect(privacy.body).toContain("DART");
     expect(privacy.body.toLowerCase()).toContain("third-party");
+    for (const path of ["/about", "/terms"]) {
+      const page = pages.find((item) => item.path === path);
+      expect(page.body.length, path).toBeGreaterThan(300);
+      expect(page.body).toContain("<h1>");
+      expect(page.body).toContain('href="/privacy"');
+    }
 
     for (const page of categoryPages(guides)) {
       const links = page.body.match(/<li><a /g) || [];
@@ -176,6 +195,9 @@ describe("publisher pages and sitemap", () => {
     expect(indexHtml).toContain('property="og:title"');
     expect(indexHtml).toContain("<h1>");
     expect(indexHtml).toContain("BlueLog Trip publishes city guides");
+    expect(indexHtml).toContain('href="/about"');
+    expect(indexHtml).toContain('href="/terms"');
+    expect(indexHtml).toContain('href="/privacy"');
   });
 });
 

@@ -1,4 +1,5 @@
 import { Trans, useTranslation } from "react-i18next";
+import PolicyNav from "../components/PolicyNav";
 
 const CONTACT_EMAIL = "bluelog.official@gmail.com";
 const ADS_URL = "https://policies.google.com/technologies/ads";
@@ -7,7 +8,7 @@ const CHOICES_URL = "https://www.aboutads.info/choices";
 const EEA_URL = "https://www.youronlinechoices.eu";
 const MAIL = { mail: <a href={`mailto:${CONTACT_EMAIL}`} /> };
 
-export default function PrivacyPolicy() {
+export default function PrivacyPolicy({ onNavigate }) {
   const { t } = useTranslation();
 
   return (
@@ -15,6 +16,7 @@ export default function PrivacyPolicy() {
       <p className="policy-kicker">{t("privacy.kicker")}</p>
       <h1>{t("privacy.title")}</h1>
       <p className="policy-updated">{t("privacy.updated")}</p>
+      <PolicyNav onNavigate={onNavigate} current="/privacy" variant="page" />
 
       <section>
         <h2>{t("privacy.whoTitle")}</h2>

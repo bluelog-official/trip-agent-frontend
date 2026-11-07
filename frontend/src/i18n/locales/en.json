@@ -205,7 +205,12 @@
     "reviewPendingHelp": "This draft stays unpublished until it is approved.",
     "reviewApprovedHelp": "This guide is published.",
     "publishing": "Publishing...",
-    "approve": "Approve & Publish"
+    "approve": "Approve & Publish",
+    "planTitle": "Route at a glance",
+    "planDuration": "Time needed",
+    "planBudget": "Daily cost",
+    "planRoute": "Day-by-day route",
+    "planCosts": "Estimated cost"
   },
   "viral": {
     "empty": "This guide has no export copy yet.",

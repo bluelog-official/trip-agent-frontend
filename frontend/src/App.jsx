@@ -568,6 +568,7 @@ export default function App() {
             onQueryChange={setQuery}
             onSearch={handleSearch}
             onPromote={() => go("/promote-store")}
+            onNavigate={go}
           />
           <GlobeMap
             onOpenCity={openCityGuides}
@@ -600,11 +601,11 @@ export default function App() {
             onCreate={handleCreatePost}
           />
         ) : route.name === "privacy" ? (
-          <PrivacyPolicy />
+          <PrivacyPolicy onNavigate={go} />
         ) : route.name === "terms" ? (
-          <TermsOfService />
+          <TermsOfService onNavigate={go} />
         ) : route.name === "about" ? (
-          <About />
+          <About onNavigate={go} />
         ) : route.name === "contact" ? (
           <Contact />
         ) : route.name === "magazineRequest" ? (

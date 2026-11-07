@@ -144,6 +144,9 @@ describe("language switcher", () => {
     expect(screen.getByRole("heading", { name: "Privacy Policy" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Terms of Service" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "About BlueLog Trip" })).toBeTruthy();
+    expect(screen.getAllByRole("link", { name: "About" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Terms of Service" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Privacy Policy" }).length).toBeGreaterThan(0);
     expect(screen.getByText("Verified Guide")).toBeTruthy();
     expect(HANGUL.test(view.container.textContent)).toBe(false);
 
@@ -165,6 +168,9 @@ describe("language switcher", () => {
     expect(screen.getByRole("heading", { name: "개인정보 처리방침" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "이용약관" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "BlueLog Trip 소개" })).toBeTruthy();
+    expect(screen.getAllByRole("link", { name: "소개" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "이용약관" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "개인정보 처리방침" }).length).toBeGreaterThan(0);
     expect(screen.getByText("검증된 가이드")).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "Privacy Policy" })).toBeNull();
     expect(screen.queryByText("Verified Guide")).toBeNull();

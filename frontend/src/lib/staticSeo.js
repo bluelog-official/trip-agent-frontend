@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { extractTripPlan } from "./articleDocument.js";
 import { absoluteCanonical, canonicalPath, publicOrigin, SITE_ORIGIN } from "./canonicalPath.js";
 import { readKCulture } from "./kculture.js";
 
@@ -139,6 +140,49 @@ function firstImageUrl(markdown) {
   return match ? match[1] : frontmatterValue(markdown, "image_url");
 }
 
+function markdownTableHtml(block) {
+  const rows = String(block || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("|"));
+  const data = rows.filter((line) => !/^\|?\s*:?-{3,}/.test(line));
+  if (data.length < 2) return "";
+  const cellsOf = (line) => line.replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
+  const header = cellsOf(data[0]);
+  const body = data.slice(1).map((line) => `<tr>${cellsOf(line).map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("");
+  const head = `<thead><tr>${header.map((cell) => `<th>${escapeHtml(cell)}</th>`).join("")}</tr></thead>`;
+  return `<table>${head}<tbody>${body}</tbody></table>`;
+}
+
+function tripPlanHtml(markdown) {
+  const plan = extractTripPlan(markdown);
+  const parts = [];
+  if (plan.duration) parts.push(`<p>Time needed: ${escapeHtml(plan.duration)}</p>`);
+  if (plan.budget) parts.push(`<p>Daily cost: ${escapeHtml(plan.budget)}</p>`);
+  if (plan.days.length) {
+    const items = plan.days
+      .map((day) => `<li><strong>${escapeHtml(day.label)}</strong>${day.note ? ` ${escapeHtml(day.note)}` : ""}</li>`)
+      .join("");
+    parts.push(`<h2>Day-by-day route</h2><ol>${items}</ol>`);
+  }
+  if (plan.costs.length) {
+    const items = plan.costs.map((row) => `<li>${escapeHtml(row.place)}: ${escapeHtml(row.amount)}</li>`).join("");
+    parts.push(`<h2>Estimated cost</h2><ul>${items}</ul>`);
+  }
+  return parts.length ? `<section>${parts.join("")}</section>` : "";
+}
+
+function policyNavHtml(copy) {
+  const footer = copy?.footer || {};
+  const links = [
+    ["/about", footer.about || "About"],
+    ["/terms", footer.terms || "Terms of Service"],
+    ["/privacy", footer.privacy || "Privacy Policy"],
+  ];
+  const items = links.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join("");
+  return `<nav aria-label="${escapeHtml(footer.requiredLinks || "Required site links")}">${items}</nav>`;
+}
+
 export function renderGuideArticle(markdown, slug) {
   const body = stripFrontmatter(markdown);
   const heading = body.match(/^#\s+(.+)$/m);
@@ -149,16 +193,12 @@ export function renderGuideArticle(markdown, slug) {
     const block = raw.trim();
     if (!block || block.startsWith("!") || /^\*?\s*photo by\b/i.test(block)) continue;
     if (block.startsWith("|")) {
-      const rows = block
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line && !/^\|?\s*:?-{3,}/.test(line));
-      if (!rows.length) continue;
-      const text = rows
-        .map((line) => line.replace(/^\||\|$/g, "").split("|").map((cell) => cell.trim()).join(" · "))
-        .join(". ");
-      if (!description) description = text.slice(0, 180);
-      blocks.push(`<p>${escapeHtml(text)}</p>`);
+      const table = markdownTableHtml(block);
+      if (!table) continue;
+      if (!description) {
+        description = table.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+      }
+      blocks.push(table);
       continue;
     }
     if (block.startsWith("#")) {
@@ -171,7 +211,7 @@ export function renderGuideArticle(markdown, slug) {
     blocks.push(`<p>${escapeHtml(text)}</p>`);
   }
   const title = titleCore.includes("BlueLog Trip") ? titleCore : `${titleCore} · BlueLog Trip`;
-  const article = `<article><h1>${escapeHtml(titleCore)}</h1>${blocks.join("")}<p><a href="/">BlueLog Trip city guides</a></p></article>`;
+  const article = `<article><h1>${escapeHtml(titleCore)}</h1>${tripPlanHtml(markdown)}${blocks.join("")}<p><a href="/">BlueLog Trip city guides</a></p></article>`;
   return {
     title,
     description: description || titleCore,
@@ -197,7 +237,7 @@ export function publisherPages(copy = readEnglishCopy(), guides = []) {
       return `<li><a href="/guides/${escapeHtml(slug)}">${escapeHtml(label)}</a></li>`;
     })
     .join("");
-  const homeBody = `${article(copy.hero.title, [copy.hero.copy, copy.hero.about])}<section><h2>Published guides</h2><ul>${homeLinks}</ul></section>`;
+  const homeBody = `${policyNavHtml(copy)}${article(copy.hero.title, [copy.hero.copy, copy.hero.about])}<section><h2>Published guides</h2><ul>${homeLinks}</ul></section>`;
   const pages = [
     {
       id: "home",
@@ -272,7 +312,7 @@ function legalPage(copy, group, publicPath, file) {
     file,
     title: `${section.title || group} · BlueLog Trip`,
     description: description.slice(0, 180),
-    body: article(section.title || group, paragraphs),
+    body: `${policyNavHtml(copy)}${article(section.title || group, paragraphs)}`,
   };
 }
 

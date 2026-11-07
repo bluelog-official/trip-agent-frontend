@@ -205,7 +205,12 @@
     "reviewPendingHelp": "이 초안은 승인되기 전까지 게시되지 않습니다.",
     "reviewApprovedHelp": "이 가이드는 게시되었습니다.",
     "publishing": "게시 중...",
-    "approve": "검수 후 게시"
+    "approve": "검수 후 게시",
+    "planTitle": "한눈에 보는 동선",
+    "planDuration": "소요 시간",
+    "planBudget": "하루 비용",
+    "planRoute": "날짜별 동선",
+    "planCosts": "예상 비용"
   },
   "viral": {
     "empty": "이 가이드에는 아직 내보낼 문구가 없습니다.",

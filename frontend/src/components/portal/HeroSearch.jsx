@@ -1,12 +1,14 @@
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import PolicyNav from "../PolicyNav";
 
-export default function HeroSearch({ query, onQueryChange, onSearch, onPromote }) {
+export default function HeroSearch({ query, onQueryChange, onSearch, onPromote, onNavigate }) {
   const { t } = useTranslation();
   return (
     <section className="hero">
       <p className="hero-kicker">{t("hero.kicker")}</p>
       <h1 className="hero-title">{t("hero.title")}</h1>
+      <PolicyNav onNavigate={onNavigate} />
       <p className="hero-copy">{t("hero.copy")}</p>
       <p className="hero-copy">{t("hero.about")}</p>
       <form className="hero-search" onSubmit={onSearch}>

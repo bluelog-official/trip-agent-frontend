@@ -185,6 +185,100 @@ export function localizeEnglishMarkdown(markdown) {
     .join("\n");
 }
 
+const DURATION_LABELS = {
+  "1_days": "1 Day",
+  "3_days": "3 Days",
+  "1_week": "1 Week",
+};
+
+const DAY_HEADING = /^###\s+((?:Day|일차)\s*\d+[^\n:：]*|\d+\s*일차[^\n:：]*)(?:\s*[:：]\s*(.+))?$/i;
+
+function readFrontmatterValue(markdown, key) {
+  const block = /^---\r?\n([\s\S]*?)\r?\n---/.exec(String(markdown || ""));
+  if (!block) return "";
+  const match = new RegExp(`^${key}:\\s*"?([^"\\n]+)"?\\s*$`, "m").exec(block[1]);
+  return match ? match[1].trim() : "";
+}
+
+function clipSentence(text, max = 180) {
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const clipped = clean.slice(0, max).replace(/\s+\S*$/, "").trim();
+  return `${clipped || clean.slice(0, max)}…`;
+}
+
+function tableCells(line) {
+  return String(line || "")
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+function nextDayNote(lines, start) {
+  for (let index = start; index < lines.length; index += 1) {
+    const text = lines[index].trim();
+    if (!text) continue;
+    if (/^#{1,6}\s/.test(text) || text.startsWith("|") || text.startsWith("!") || /^#\w/.test(text)) return "";
+    if (PHOTO_CREDIT_LINE.test(text)) continue;
+    const clean = text
+      .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+      .replace(/[*_`]/g, "")
+      .trim();
+    return clipSentence(clean);
+  }
+  return "";
+}
+
+function extractCostRows(markdown) {
+  const lines = String(markdown || "").split(/\r?\n/);
+  const rows = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index].trim();
+    if (!line.startsWith("|") || !isTableSeparator(lines[index + 1])) continue;
+    const header = tableCells(line);
+    const costIndex = header.findIndex((cell) => /cost|비용|가격|budget/i.test(cell));
+    const placeIndex = header.findIndex((cell) => /location|place|장소|추천/i.test(cell));
+    const amountIndex = costIndex >= 0 ? costIndex : header.length >= 3 ? 2 : -1;
+    const nameIndex = placeIndex >= 0 ? placeIndex : 0;
+    if (amountIndex < 0) continue;
+    index += 2;
+    while (index < lines.length && lines[index].trim().startsWith("|")) {
+      const cells = tableCells(lines[index]);
+      const place = cells[nameIndex] || "";
+      const amount = cells[amountIndex] || "";
+      if (place && amount) rows.push({ place, amount });
+      if (rows.length >= 6) return rows;
+      index += 1;
+    }
+    index -= 1;
+  }
+  return rows;
+}
+
+export function extractTripPlan(markdown) {
+  const source = String(markdown || "");
+  const durationKey = readFrontmatterValue(source, "duration_key");
+  const duration = readFrontmatterValue(source, "duration") || DURATION_LABELS[durationKey] || "";
+  const budget = readFrontmatterValue(source, "budget");
+  const body = stripFrontmatter(source);
+  const lines = body.split(/\r?\n/);
+  const days = [];
+  lines.forEach((line, index) => {
+    const match = DAY_HEADING.exec(line.trim());
+    if (!match) return;
+    const label = [match[1].trim(), (match[2] || "").trim()].filter(Boolean).join(": ");
+    days.push({ label, note: nextDayNote(lines, index + 1) });
+  });
+  return {
+    duration,
+    budget,
+    days,
+    costs: extractCostRows(body),
+  };
+}
+
 export function prepareArticle(markdown, languageEnglish, destination) {
   const source = stripFrontmatter(markdown);
   const readable = languageEnglish && MISSING_GUIDE.test(source)

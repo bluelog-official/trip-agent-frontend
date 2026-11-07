@@ -269,6 +269,36 @@
   color: #e7f4f1 !important;
 }
 
+.policy-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  max-width: 680px;
+  margin: 0 auto 18px;
+}
+
+.policy-nav a {
+  color: #f8fafc !important;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.policy-nav a:hover {
+  color: #fde68a !important;
+}
+
+.policy-nav-page {
+  justify-content: flex-start;
+  max-width: none;
+  margin: 14px 0 4px;
+}
+
+.policy-nav-page a {
+  color: #0f766e !important;
+}
+
 .hero {
   text-align: center;
 }
@@ -1545,6 +1575,92 @@
 .guide-sheet h2,
 .guide-sheet h3 {
   scroll-margin-top: 88px;
+}
+
+.trip-plan {
+  margin: 16px 0 8px;
+  padding: 16px 16px 8px;
+  border: 1px solid #d7efe8;
+  border-radius: 12px;
+  background: #f4fbf8;
+}
+
+.trip-plan h2,
+.trip-plan h3 {
+  margin: 0 0 10px !important;
+  color: #102a3a !important;
+}
+
+.trip-plan h2 {
+  font-size: 1.05rem !important;
+}
+
+.trip-plan h3 {
+  margin-top: 14px !important;
+  font-size: 0.95rem !important;
+}
+
+.trip-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.trip-facts div {
+  margin: 0;
+}
+
+.trip-facts dt {
+  margin: 0;
+  color: #0f766e !important;
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.trip-facts dd {
+  margin: 4px 0 0;
+  color: #102a3a !important;
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.trip-days {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.trip-days li {
+  margin: 0 0 10px;
+}
+
+.trip-days p {
+  margin: 4px 0 0 !important;
+  color: #44403c !important;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.trip-costs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.trip-costs li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid #e6dfd4;
+  color: #1c1917 !important;
+}
+
+.trip-costs strong {
+  flex-shrink: 0;
+  color: #102a3a !important;
 }
 
 .guide-toc {

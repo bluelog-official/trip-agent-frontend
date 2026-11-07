@@ -5,7 +5,7 @@ import ArticleView from "../ArticleView";
 import ShareSheet from "./ShareSheet";
 import VoteButton from "./VoteButton";
 import AdSenseUnit from "../AdSenseUnit";
-import { prepareArticle, buildGuideJsonLd } from "../../lib/articleDocument";
+import { prepareArticle, buildGuideJsonLd, extractTripPlan } from "../../lib/articleDocument";
 import { canonicalHref } from "../../lib/documentHead";
 import { toGuideCard } from "../../lib/guideCards";
 import { appLanguage } from "../../i18n/i18n";
@@ -34,6 +34,58 @@ function CrumbLink({ crumb, onNavigate }) {
   );
 }
 
+function TripPlan({ plan }) {
+  const { t } = useTranslation();
+  if (!plan.duration && !plan.budget && plan.days.length === 0 && plan.costs.length === 0) return null;
+  return (
+    <section className="trip-plan">
+      <h2>{t("guide.planTitle")}</h2>
+      {plan.duration || plan.budget ? (
+        <dl className="trip-facts">
+          {plan.duration ? (
+            <div>
+              <dt>{t("guide.planDuration")}</dt>
+              <dd>{plan.duration}</dd>
+            </div>
+          ) : null}
+          {plan.budget ? (
+            <div>
+              <dt>{t("guide.planBudget")}</dt>
+              <dd>{plan.budget}</dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
+      {plan.days.length > 0 ? (
+        <>
+          <h3>{t("guide.planRoute")}</h3>
+          <ol className="trip-days">
+            {plan.days.map((day) => (
+              <li key={day.label}>
+                <strong>{day.label}</strong>
+                {day.note ? <p>{day.note}</p> : null}
+              </li>
+            ))}
+          </ol>
+        </>
+      ) : null}
+      {plan.costs.length > 0 ? (
+        <>
+          <h3>{t("guide.planCosts")}</h3>
+          <ul className="trip-costs">
+            {plan.costs.map((row) => (
+              <li key={`${row.place}-${row.amount}`}>
+                <span>{row.place}</span>
+                <strong>{row.amount}</strong>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+    </section>
+  );
+}
+
 function GuideHero({ src, alt }) {
   const [failed, setFailed] = useState(false);
   if (!src || failed) return null;
@@ -57,6 +109,7 @@ export default function GuideArticle({ guide, fileName, onNavigate }) {
     () => prepareArticle(markdown, english, card.destination),
     [markdown, english, card.destination],
   );
+  const tripPlan = useMemo(() => extractTripPlan(markdown), [markdown]);
   const publishedAt = guide?.published_at || "";
   const publishedLabel = formatPublishedDate(publishedAt, language);
   const regionLabel = card.region ? t(`nav.${card.region}`) : "";
@@ -145,6 +198,7 @@ export default function GuideArticle({ guide, fileName, onNavigate }) {
       <GuideHero src={card.image || article.image} alt={card.title} />
 
       <div className="guide-sheet">
+        <TripPlan plan={tripPlan} />
         {toc.length > 0 ? (
           <nav className="guide-toc" aria-label={t("guide.toc")}>
             <h2>{t("guide.toc")}</h2>

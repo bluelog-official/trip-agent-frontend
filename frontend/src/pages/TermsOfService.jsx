@@ -1,9 +1,10 @@
 import { Trans, useTranslation } from "react-i18next";
+import PolicyNav from "../components/PolicyNav";
 
 const CONTACT_EMAIL = "bluelog.official@gmail.com";
 const MAIL = { mail: <a href={`mailto:${CONTACT_EMAIL}`} /> };
 
-export default function TermsOfService() {
+export default function TermsOfService({ onNavigate }) {
   const { t } = useTranslation();
 
   return (
@@ -11,6 +12,7 @@ export default function TermsOfService() {
       <p className="policy-kicker">{t("terms.kicker")}</p>
       <h1>{t("terms.title")}</h1>
       <p className="policy-updated">{t("terms.updated")}</p>
+      <PolicyNav onNavigate={onNavigate} current="/terms" variant="page" />
 
       <section>
         <h2>{t("terms.useTitle")}</h2>
